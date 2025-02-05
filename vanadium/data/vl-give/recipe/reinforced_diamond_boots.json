@@ -1,0 +1,65 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:diamond_boots",
+    "addition": "minecraft:diamond_block",
+    "template": "minecraft:heavy_core",
+    "result": {
+        "id": "minecraft:diamond_boots",
+        "components": {
+            "item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Reinforced Diamond Boots\"}",
+            "enchantable": {
+                "value": 10
+            },
+            "equippable": {
+                "slot": "feet",
+                "equip_sound": "item.armor.equip_diamond",
+                "dispensable": true,
+                "swappable": true,
+                "damage_on_hurt": true
+            },
+            "max_damage": 698,
+            "rarity": "epic",
+            "attribute_modifiers": {
+                "modifiers": [
+                    {
+                        "id": "69c229f7-5688-47f9-bfb3-d63621812b58",
+                        "type": "armor",
+                        "amount": 5,
+                        "operation": "add_value",
+                        "slot": "feet"
+                    },
+                    {
+                        "id": "31672641-001f-4ac1-a41d-090fd484cb6e",
+                        "type": "armor_toughness",
+                        "amount": 3,
+                        "operation": "add_value",
+                        "slot": "feet"
+                    },
+                    {
+                        "id": "6fb90588-b85b-4780-bec8-a4521ecf6495",
+                        "type": "attack_speed",
+                        "amount": -0.15,
+                        "operation": "add_multiplied_total",
+                        "slot": "feet"
+                    },
+                    {
+                        "id": "414dffb3-3c7c-4995-aa5e-80dcd28e16c7",
+                        "type": "max_health",
+                        "amount": -2,
+                        "operation": "add_value",
+                        "slot": "feet"
+                    },
+                    {
+                        "id": "18ada72e-7516-4846-9fc1-f28da114251b",
+                        "type": "movement_speed",
+                        "amount": -0.05,
+                        "operation": "add_multiplied_base",
+                        "slot": "feet"
+                    }
+                ],
+                "show_in_tooltip": true
+            }
+        },
+        "count": 1
+    }
+}

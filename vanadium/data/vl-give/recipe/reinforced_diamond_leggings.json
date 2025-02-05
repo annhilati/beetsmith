@@ -1,0 +1,65 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:diamond_leggings",
+    "addition": "minecraft:diamond_block",
+    "template": "minecraft:heavy_core",
+    "result": {
+        "id": "minecraft:diamond_leggings",
+        "components": {
+            "item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Reinforced Diamond Leggings\"}",
+            "enchantable": {
+                "value": 10
+            },
+            "equippable": {
+                "slot": "legs",
+                "equip_sound": "item.armor.equip_diamond",
+                "dispensable": true,
+                "swappable": true,
+                "damage_on_hurt": true
+            },
+            "max_damage": 698,
+            "rarity": "epic",
+            "attribute_modifiers": {
+                "modifiers": [
+                    {
+                        "id": "cd517062-c351-4425-8c9e-15b9ff66d87f",
+                        "type": "armor",
+                        "amount": 9,
+                        "operation": "add_value",
+                        "slot": "legs"
+                    },
+                    {
+                        "id": "da3fbd07-45d1-4ca0-b891-47f057e4239c",
+                        "type": "armor_toughness",
+                        "amount": 6,
+                        "operation": "add_value",
+                        "slot": "legs"
+                    },
+                    {
+                        "id": "7f549aa8-d5a6-47d0-9bd0-e6c7caabca7f",
+                        "type": "attack_speed",
+                        "amount": -0.15,
+                        "operation": "add_multiplied_total",
+                        "slot": "legs"
+                    },
+                    {
+                        "id": "3a6b87e1-5191-49d0-88da-4d841b4ef213",
+                        "type": "max_health",
+                        "amount": -2,
+                        "operation": "add_value",
+                        "slot": "legs"
+                    },
+                    {
+                        "id": "fe315eea-0f63-4b6b-8b6c-24d2575e8af6",
+                        "type": "movement_speed",
+                        "amount": -0.05,
+                        "operation": "add_multiplied_base",
+                        "slot": "legs"
+                    }
+                ],
+                "show_in_tooltip": true
+            }
+        },
+        "count": 1
+    }
+}
