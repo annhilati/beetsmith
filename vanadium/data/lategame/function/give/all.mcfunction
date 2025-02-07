@@ -1,4 +1,6 @@
-function vl-give:materials
-function vl-give:reinforced_diamond_armor
-function vl-give:wither_armor
-function vl-give:young_dragon_armor
+function lategame:give/armor_of_divan
+function lategame:give/materials
+function lategame:give/necrons_blade
+function lategame:give/reinforced_diamond_armor
+function lategame:give/wither_armor
+function lategame:give/young_dragon_armor
