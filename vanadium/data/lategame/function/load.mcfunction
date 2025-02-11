@@ -1,0 +1,1 @@
+scoreboard objectives add lategame.aotd_cooldown dummy
