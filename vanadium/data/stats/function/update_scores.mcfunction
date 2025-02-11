@@ -1,0 +1,1 @@
+execute store result score @s stats.armor_toughness run attribute @s armor_toughness get
