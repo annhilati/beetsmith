@@ -1,6 +1,7 @@
 function lategame:give/armor_of_divan
 function lategame:give/materials
 function lategame:give/necrons_blade
+function lategame:give/aspect_of_the_dragons
 function lategame:give/reinforced_diamond_armor
 function lategame:give/wither_armor
 function lategame:give/young_dragon_armor
