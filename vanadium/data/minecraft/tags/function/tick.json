@@ -1,5 +1,6 @@
 {
     "values": [
-        "itemlib:prevent_placement"
+        "itemlib:prevent_placement",
+        "lategame:cooldown"
     ]
 }

@@ -5,5 +5,5 @@
 			"minecraft:custom_data": {"ability":"rage"}
 		}}}
 	}},
-	"rewards": { "function": "lategame:aotd_rage" }
+	"rewards": { "function": "lategame:abilities/aspect_of_the_dragons" }
 }
