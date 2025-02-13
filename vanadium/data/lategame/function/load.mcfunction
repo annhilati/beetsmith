@@ -1,1 +1,2 @@
 scoreboard objectives add lategame.aotd_cooldown dummy
+scoreboard objectives add lategame.healing_wand_cooldown dummy

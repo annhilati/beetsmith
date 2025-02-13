@@ -1,0 +1,9 @@
+{
+	"criteria": { "use_item": {
+		"trigger": "minecraft:using_item",
+		"conditions": { "item": { "predicates": {
+			"minecraft:custom_data": {"ability":"heal"}
+		}}}
+	}},
+	"rewards": { "function": "lategame:abilities/healing_wand" }
+}

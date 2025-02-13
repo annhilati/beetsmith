@@ -1,4 +1,4 @@
-execute if score @s lategame.aotd_cooldown matches 0 run function lategame:abilities/aspect_of_the_dragons_particles
+execute if score @s lategame.aotd_cooldown matches 0 run function lategame:abilities/aspect_of_the_dragons.particles
 execute if score @s lategame.aotd_cooldown matches 0 run playsound entity.ender_dragon.ambient player @a[distance=..10] ~ ~ ~ 0.6
 
 tag @s add lategame.ignore
