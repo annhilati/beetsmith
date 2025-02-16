@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+      "layer0": "lategame:aspect_of_the_dragons"
+    }
+}
