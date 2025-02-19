@@ -2,11 +2,11 @@
 
 tag @s add lategame.ignore
 
-# summon the temporary entity at the players position
-execute positioned 0.0 0.0 0.0 run summon marker ^ ^ ^1 {Tags:["direction"]}
+# Marker beim Spieler spawnen. Der wird dann noch von get_motion verschoben
+summon marker ~ ~ ~ {Tags:["direction"]}
 
-# Motion in den storage laden
-execute as @e[tag=direction,limit=1] run function lategame:abilities/get_motion
+# Motion in den storage laden. Wird zwar bei 0 0 0 ausgeführt, aber von get_motion noch verschoben
+execute as @e[tag=direction,limit=1] positioned 0.0 0.0 0.0 run function lategame:abilities/aspect_of_the_dragons.knockback.get_motion
 
 # Auswählen, welche Entities knockback bekommen sollen
 execute anchored eyes as @e[distance=..5,tag=!lategame.ignore] run tag @s add lategame.apply_knockback
@@ -20,5 +20,5 @@ execute store result score $y player_motion.api.launch run data get storage late
 execute store result score $z player_motion.api.launch run data get storage lategame:knockback_motion Motion[2]
 execute as @a[tag=lategame.apply_knockback,distance=..5] run function player_motion:api/launch_xyz
 
-# clean up the tag
+
 tag @e[tag=lategame.apply_knockback] remove lategame.apply_knockback
