@@ -1,0 +1,67 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:diamond_sword",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Reaper Scythe\"}",
+                                "minecraft:item_model": "diamond_hoe",
+                                "minecraft:repairable": {
+                                    "items": "minecraft:bone"
+                                },
+                                "minecraft:max_damage": 117,
+                                "minecraft:enchantable": {
+                                    "value": 10
+                                },
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "base_attack_damage",
+                                        "amount": 6.5,
+                                        "type": "minecraft:attack_damage",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    },
+                                    {
+                                        "id": "base_attack_speed",
+                                        "amount": -1.8,
+                                        "type": "minecraft:attack_speed",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    },
+                                    {
+                                        "id": "6fcb8475-ce19-4ead-a96b-9cfef2ef89cb",
+                                        "amount": 1,
+                                        "type": "sweeping_damage_ratio",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    },
+                                    {
+                                        "id": "0a854bc4-8be6-4f5b-ad9c-fe54349be3c2",
+                                        "amount": 1,
+                                        "type": "entity_interaction_range",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    },
+                                    {
+                                        "id": "0a854bc4-8be6-4f5b-3d88-fe54349be3c2",
+                                        "amount": 0.1,
+                                        "type": "movement_speed",
+                                        "operation": "add_multiplied_base",
+                                        "slot": "mainhand"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

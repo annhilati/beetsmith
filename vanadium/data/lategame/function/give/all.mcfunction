@@ -4,6 +4,6 @@ function lategame:give/necrons_blade
 function lategame:give/aspect_of_the_dragons
 function lategame:give/reaper_scythe
 function lategame:give/healing_wand
-function lategame:give/reinforced_diamond_armor
+function lategame:give/heavy_diamond_armor
 function lategame:give/necrotic_netherite_armor
 function lategame:give/young_dragon_armor

@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:gold_block",
+    "addition": "diamond",
+    "template": "minecraft:emerald",
+    "result": {
+      "id": "minecraft:music_disc_11",
+      "components": {
+        "!minecraft:jukebox_playable": {},
+        "minecraft:item_model": "minecraft:gold_ingot",
+        "minecraft:item_name": "\"Divan's Alloy\"",
+        "minecraft:rarity": "epic",
+        "minecraft:enchantment_glint_override": true
+      }
+    }
+}
