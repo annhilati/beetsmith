@@ -3,11 +3,10 @@
   "pools": [
     {
       "rolls": 1,
-      "bonus_rolls": 0,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:player_head",
+          "type": "minecraft:loot_table",
+          "value": "lategame:young_dragon_helmet",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -16,10 +15,63 @@
                 "n": 1,
                 "p": 0.25
               }
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "lategame:young_dragon_chestplate",
+          "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {}
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:binomial",
+                "n": 1,
+                "p": 0.25
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "lategame:young_dragon_leggings",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:binomial",
+                "n": 1,
+                "p": 0.25
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "lategame:young_dragon_boots",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:binomial",
+                "n": 1,
+                "p": 0.25
+              }
             }
           ]
         }
@@ -30,80 +82,8 @@
       "bonus_rolls": 0,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:leather_chestplate",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:binomial",
-                "n": 1,
-                "p": 0.25
-              }
-            },
-            {
-              "function": "minecraft:set_components",
-              "components": {}
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "bonus_rolls": 0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_leggings",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:binomial",
-                "n": 1,
-                "p": 0.25
-              }
-            },
-            {
-              "function": "minecraft:set_components",
-              "components": {}
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "bonus_rolls": 0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_boots",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:binomial",
-                "n": 1,
-                "p": 0.25
-              }
-            },
-            {
-              "function": "minecraft:set_components",
-              "components": {}
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "bonus_rolls": 0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:player_head",
+          "type": "minecraft:loot_table",
+          "value": "lategame:young_dragon_fragment",
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -112,10 +92,6 @@
                 "n": 25,
                 "p": 0.1
               }
-            },
-            {
-              "function": "minecraft:set_components",
-              "components": {}
             }
           ]
         }
