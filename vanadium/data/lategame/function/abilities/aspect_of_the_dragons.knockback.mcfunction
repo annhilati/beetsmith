@@ -4,6 +4,7 @@ tag @s add lategame.ignore
 
 # Marker beim Spieler spawnen. Der wird dann noch von get_motion verschoben
 execute rotated as @s run summon marker ~ ~ ~ {Tags:["direction"]}
+data modify entity @e[tag=direction,limit=1] Rotation set from entity @s Rotation
 
 # Motion in den storage laden. Wird zwar bei 0 0 0 ausgeführt, aber von get_motion noch verschoben
 execute as @e[tag=direction,limit=1] positioned 0 0 0 run function lategame:abilities/aspect_of_the_dragons.knockback.get_motion
