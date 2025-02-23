@@ -1,0 +1,90 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:player_head",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Heavy Diamond Helmet\"}",
+                                "minecraft:item_model": "minecraft:player_head",
+                                "minecraft:profile": {
+                                    "id": [825483865,-1753530139,-1596662301,-1107927],
+                                    "properties": [
+                                        {
+                                            "name": "textures",
+                                            "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODU1YjcyZjUyOWY5YmQzM2E2ZWMxZGYxNmYxN2YwNTRkZWNlNmI1NTNjMjFkMjg2YWQ0ZTkzZmM2NTgxNDdkMyJ9fX0="
+                                        }
+                                    ]
+                                },
+                                "minecraft:rarity": "epic",
+                                "minecraft:max_damage": 512,
+                                "minecraft:enchantable": {
+                                    "value": 10
+                                },
+                                "minecraft:repairable": {
+                                    "items": "minecraft:diamond_block"
+                                },
+                                "minecraft:equippable": {
+                                    "slot": "head",
+                                    "equip_sound": "item.armor.equip_netherite",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true
+                                },
+                                "minecraft:attribute_modifiers": {
+                                    "modifiers": [
+                                        {
+                                            "id": "00fa6675-b4ba-452b-b505-81942d0aea3b",
+                                            "type": "armor",
+                                            "amount": 5,
+                                            "operation": "add_value",
+                                            "slot": "head"
+                                        },
+                                        {
+                                            "id": "9aae5e87-c19c-469c-ac61-9e939d9c2a1e",
+                                            "type": "armor_toughness",
+                                            "amount": 3,
+                                            "operation": "add_value",
+                                            "slot": "head"
+                                        },
+                                        {
+                                            "id": "9a56452e-a3ba-4421-8774-26b61ec85a1b",
+                                            "type": "attack_damage",
+                                            "amount": -0.1,
+                                            "operation": "add_multiplied_total",
+                                            "slot": "head"
+                                        },
+                                        {
+                                            "id": "1dff5dbe-bb21-462d-912d-43fb2939d4f9",
+                                            "type": "attack_speed",
+                                            "amount": -0.15,
+                                            "operation": "add_multiplied_total",
+                                            "slot": "head"
+                                        },
+                                        {
+                                            "id": "a0a413d9-6eac-40e4-96a2-58c32696f0c5",
+                                            "type": "movement_speed",
+                                            "amount": -0.05,
+                                            "operation": "add_multiplied_base",
+                                            "slot": "head"
+                                        }
+                                    ],
+                                    "show_in_tooltip": true
+                                },
+                                "minecraft:custom_data": {
+                                    "prevent_placement": true
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
