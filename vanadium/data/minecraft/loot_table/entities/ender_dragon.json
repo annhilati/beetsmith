@@ -13,7 +13,7 @@
               "count": {
                 "type": "minecraft:binomial",
                 "n": 1,
-                "p": 0.25
+                "p": 0.15
               }
             }
           ]
@@ -32,7 +32,7 @@
               "count": {
                 "type": "minecraft:binomial",
                 "n": 1,
-                "p": 0.25
+                "p": 0.15
               }
             }
           ]
@@ -51,7 +51,7 @@
               "count": {
                 "type": "minecraft:binomial",
                 "n": 1,
-                "p": 0.25
+                "p": 0.15
               }
             }
           ]
@@ -70,7 +70,7 @@
               "count": {
                 "type": "minecraft:binomial",
                 "n": 1,
-                "p": 0.25
+                "p": 0.15
               }
             }
           ]
@@ -79,7 +79,6 @@
     },
     {
       "rolls": 1,
-      "bonus_rolls": 0,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -98,6 +97,5 @@
       ]
     }
   ],
-  "functions": [],
   "random_sequence": "minecraft:entities/ender_dragon"
 }
