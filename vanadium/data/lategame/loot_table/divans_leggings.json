@@ -1,0 +1,67 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:golden_leggings",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Leggings of Divan\"}",
+                                "minecraft:enchantable": {
+                                    "value": 25
+                                },
+                                "minecraft:equippable": {
+                                    "asset_id": "minecraft:gold",
+                                    "slot": "legs",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true
+                                },
+                                "minecraft:max_damage": 484,
+                                "minecraft:rarity": "epic",
+                                "minecraft:attribute_modifiers": {
+                                    "modifiers": [
+                                        {
+                                            "id": "a849896e-c39e-4818-b35a-606364e27f9d",
+                                            "type": "armor",
+                                            "amount": 6,
+                                            "operation": "add_value",
+                                            "slot": "legs"
+                                        },
+                                        {
+                                            "id": "d83ac0bc-a6d8-40cf-8c86-782b3f2d7ad7",
+                                            "type": "armor_toughness",
+                                            "amount": 2,
+                                            "operation": "add_value",
+                                            "slot": "legs"
+                                        },
+                                        {
+                                            "id": "2f2afbaa-7a1f-429f-b4cc-9862aa67ba3b",
+                                            "type": "luck",
+                                            "amount": 2,
+                                            "operation": "add_value",
+                                            "slot": "legs"
+                                        },
+                                        {
+                                            "id": "9b5dbd28-70c6-4ebc-a3fe-db7b346ae584",
+                                            "type": "mining_efficiency",
+                                            "amount": 0.1,
+                                            "operation": "add_multiplied_base",
+                                            "slot": "legs"
+                                        }
+                                    ],
+                                    "show_in_tooltip": true
+                                }                     
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

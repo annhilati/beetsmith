@@ -12,11 +12,6 @@
                             "function": "minecraft:set_components",
                             "components": {
                                 "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Young Dragon Leggings\"}",
-                                "minecraft:trim": {
-                                    "material": "minecraft:iron",
-                                    "pattern": "minecraft:tide",
-                                    "show_in_tooltip": false
-                                },
                                 "minecraft:enchantable": {
                                     "value": 12
                                 },

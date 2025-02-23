@@ -12,6 +12,11 @@ loot give @s loot lategame:divans_alloy
 loot give @s loot lategame:wardens_heart
 loot give @s loot lategame:young_dragon_fragment
 
+loot give @s loot lategame:divans_helmet
+loot give @s loot lategame:divans_chestplate
+loot give @s loot lategame:divans_leggings
+loot give @s loot lategame:divans_boots
+
 loot give @s loot lategame:young_dragon_helmet
 loot give @s loot lategame:young_dragon_chestplate
 loot give @s loot lategame:young_dragon_leggings

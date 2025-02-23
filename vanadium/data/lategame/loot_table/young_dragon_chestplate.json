@@ -13,12 +13,7 @@
                             "components": {
                                 "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Young Dragon Chestplate\"}",
                                 "minecraft:dyed_color": {
-                                    "rgb": 14542064,
-                                    "show_in_tooltip": false
-                                },
-                                "minecraft:trim": {
-                                    "material": "minecraft:iron",
-                                    "pattern": "minecraft:bolt",
+                                    "rgb": 16777215,
                                     "show_in_tooltip": false
                                 },
                                 "minecraft:glider": {},

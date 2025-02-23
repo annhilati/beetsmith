@@ -12,9 +12,8 @@
                             "function": "minecraft:set_components",
                             "components": {
                                 "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Young Dragon Boots\"}",
-                                "minecraft:trim": {
-                                    "material": "minecraft:iron",
-                                    "pattern": "minecraft:flow",
+                                "minecraft:dyed_color": {
+                                    "rgb": 16777215,
                                     "show_in_tooltip": false
                                 },
                                 "minecraft:enchantable": {
@@ -25,7 +24,7 @@
                                 },
                                 "minecraft:equippable": {
                                     "slot": "feet",
-                                    "asset_id": "minecraft:iron",
+                                    "asset_id": "minecraft:leather",
                                     "equip_sound": "item.armor.equip_gold",
                                     "dispensable": true,
                                     "swappable": true,
