@@ -1,6 +1,5 @@
 function lategame:give/armor_of_divan
 function lategame:give/necrons_blade
-function lategame:give/healing_wand
 function lategame:give/heavy_diamond_armor
 function lategame:give/necrotic_netherite_armor
 
