@@ -1,5 +1,0 @@
-give @p music_disc_11[!jukebox_playable,item_model="minecraft:player_head",profile={id:[I;-375021975,857554978,-2083636233,-1277249446],properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGI1YmQ2YjY0ZThiZDZjNThmNWNkMWU3OWE1NTAyZDQ0NDhiYWZjMDA2ZDJmZTA1NjhmNmEwZDZiODZkNDQ5ZSJ9fX0="}]},item_name='{"italic":false,"text":"Young Dragon Fragment"}',rarity="epic",custom_data={prevent_placement:true}] 1
-
-give @p music_disc_11[!jukebox_playable,item_model="minecraft:player_head",profile={id:[I;387880012,-852013811,-1662650742,-442542396],properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTA2MGIyMjM4NTYzOWFiOWJhN2UzMjRjYWYwY2E0NjQ2ZTY0ZGM5ODA5NzBmMWEwZWE2ZGFkMjE5OGExMTcwZCJ9fX0="}]},item_name='{"italic":false,"text":"Warden\'s Heart"}',rarity="epic",custom_data={prevent_placement:true}] 1
-
-give @p music_disc_11[!jukebox_playable,item_model="minecraft:gold_ingot",item_name='"Divan\'s Alloy"',rarity="epic",enchantment_glint_override=true] 1
