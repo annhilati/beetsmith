@@ -62,7 +62,7 @@
                                 "minecraft:rarity": "epic",
                                 "minecraft:trim": {
                                     "material": "minecraft:netherite",
-                                    "pattern": "minecraft:silence",
+                                    "pattern": "minecraft:dune",
                                     "show_in_tooltip": false
                                 }
                             }
