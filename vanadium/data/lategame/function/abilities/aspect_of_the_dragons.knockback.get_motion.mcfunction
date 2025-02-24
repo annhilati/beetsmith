@@ -4,8 +4,8 @@
 # (as that wasn't changed with the function call)
 
 # Die gewünschte Geschwindigkeit als 3-Vektor in Blöcken pro Tick
-tp @s ^ ^ ^10
-tp @s ~ 0.1 ~
+tp @s ^ ^ ^500
+tp @s ~ ~ ~
 
 # Geschwindigkeit als Pos an den storage übergeben
 data modify storage lategame:knockback_motion Motion set from entity @s Pos
