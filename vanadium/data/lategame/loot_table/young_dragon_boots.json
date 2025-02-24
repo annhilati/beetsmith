@@ -12,10 +12,6 @@
                             "function": "minecraft:set_components",
                             "components": {
                                 "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Young Dragon Boots\"}",
-                                "minecraft:dyed_color": {
-                                    "rgb": 16777215,
-                                    "show_in_tooltip": false
-                                },
                                 "minecraft:enchantable": {
                                     "value": 12
                                 },
@@ -29,6 +25,10 @@
                                     "dispensable": true,
                                     "swappable": true,
                                     "damage_on_hurt": true
+                                },
+                                "minecraft:dyed_color": {
+                                    "rgb": 16777215,
+                                    "show_in_tooltip": false
                                 },
                                 "minecraft:max_damage": 420,
                                 "minecraft:attribute_modifiers": [

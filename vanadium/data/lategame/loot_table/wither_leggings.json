@@ -1,0 +1,75 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:netherite_leggings",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:attribute_modifiers": {
+                                    "modifiers": [
+                                        {
+                                            "id": "13e6c833-9022-4314-b3fd-ff15dc803aa3",
+                                            "type": "armor",
+                                            "amount": 6,
+                                            "operation": "add_value",
+                                            "slot": "legs"
+                                        },
+                                        {
+                                            "id": "ae31d828-1631-4c04-a0fa-c5f82bc81f9d",
+                                            "type": "armor_toughness",
+                                            "amount": 4,
+                                            "operation": "add_value",
+                                            "slot": "legs"
+                                        },
+                                        {
+                                            "id": "95edecea-6e9e-4ac3-a49f-866ce9f1d642",
+                                            "type": "knockback_resistance",
+                                            "amount": 0.1,
+                                            "operation": "add_value",
+                                            "slot": "legs"
+                                        },
+                                        {
+                                            "id": "fc5cfd3a-8ee7-4c69-a5d5-a847703e8dbb",
+                                            "type": "fall_damage_multiplier",
+                                            "amount": -0.1,
+                                            "operation": "add_multiplied_base",
+                                            "slot": "legs"
+                                        }
+                                    ],
+                                    "show_in_tooltip": true
+                                },
+                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Leggings\"}",
+                                "minecraft:enchantable": {
+                                    "value": 20
+                                },
+                                "minecraft:equippable": {
+                                    "slot": "legs",
+                                    "equip_sound": "item.armor.equip_diamond",
+                                    "asset_id": "minecraft:netherite",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true
+                                },
+                                "minecraft:max_damage": 574,
+                                "minecraft:repairable": {
+                                    "items": "netherite_ingot"
+                                },
+                                "minecraft:rarity": "epic",
+                                "minecraft:trim": {
+                                    "material": "minecraft:netherite",
+                                    "pattern": "minecraft:silence",
+                                    "show_in_tooltip": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
