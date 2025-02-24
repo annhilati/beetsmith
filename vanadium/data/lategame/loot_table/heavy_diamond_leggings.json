@@ -41,13 +41,6 @@
                                             "slot": "legs"
                                         },
                                         {
-                                            "id": "3a6b87e1-5191-49d0-88da-4d841b4ef213",
-                                            "type": "attack_damage",
-                                            "amount": -0.1,
-                                            "operation": "add_multiplied_total",
-                                            "slot": "legs"
-                                        },
-                                        {
                                             "id": "7f549aa8-d5a6-47d0-9bd0-e6c7caabca7f",
                                             "type": "attack_speed",
                                             "amount": -0.15,

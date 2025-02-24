@@ -54,13 +54,6 @@
                                             "slot": "head"
                                         },
                                         {
-                                            "id": "9a56452e-a3ba-4421-8774-26b61ec85a1b",
-                                            "type": "attack_damage",
-                                            "amount": -0.1,
-                                            "operation": "add_multiplied_total",
-                                            "slot": "head"
-                                        },
-                                        {
                                             "id": "1dff5dbe-bb21-462d-912d-43fb2939d4f9",
                                             "type": "attack_speed",
                                             "amount": -0.15,

@@ -41,13 +41,6 @@
                                             "slot": "chest"
                                         },
                                         {
-                                            "id": "bb399bcf-2278-48d7-93da-664d0346d7ef",
-                                            "type": "attack_damage",
-                                            "amount": -0.1,
-                                            "operation": "add_multiplied_total",
-                                            "slot": "chest"
-                                        },
-                                        {
                                             "id": "1097bd17-df76-498e-b9ee-0893a922e8f0",
                                             "type": "attack_speed",
                                             "amount": -0.15,

@@ -41,13 +41,6 @@
                                             "slot": "feet"
                                         },
                                         {
-                                            "id": "414dffb3-3c7c-4995-aa5e-80dcd28e16c7",
-                                            "type": "attack_damage",
-                                            "amount": -0.1,
-                                            "operation": "add_multiplied_total",
-                                            "slot": "feet"
-                                        },
-                                        {
                                             "id": "6fb90588-b85b-4780-bec8-a4521ecf6495",
                                             "type": "attack_speed",
                                             "amount": -0.15,
