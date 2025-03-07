@@ -63,6 +63,11 @@
                                 "minecraft:dyed_color": {
                                     "rgb": 0,
                                     "show_in_tooltip": false
+                                },
+                                "trim": {
+                                    "material": "minecraft:netherite",
+                                    "pattern": "minecraft:spire",
+                                    "show_in_tooltip": false
                                 }
                             }
                         }
