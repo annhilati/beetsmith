@@ -95,6 +95,25 @@
                     ]
                 }
             ]
+        },
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:loot_table",
+                    "value": "lategame:aspect_of_the_dragons",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_count",
+                            "count": {
+                                "type": "minecraft:binomial",
+                                "n": 1,
+                                "p": 0.05
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "random_sequence": "minecraft:entities/ender_dragon"
