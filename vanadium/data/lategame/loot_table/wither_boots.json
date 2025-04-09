@@ -62,9 +62,7 @@
                                 },
                                 "minecraft:rarity": "epic",
                                 "minecraft:dyed_color": {
-                                    "rgb": 0,
-                                    "show_in_tooltip": false
-                                },
+                                    "rgb": 0                                },
                                 "trim": {
                                     "material": "minecraft:netherite",
                                     "pattern": "minecraft:spire"
