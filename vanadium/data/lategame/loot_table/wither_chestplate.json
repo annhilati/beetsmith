@@ -10,39 +10,36 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:attribute_modifiers": {
-                                    "modifiers": [
-                                        {
-                                            "id": "f0a87450-635b-4bfb-bcd8-b3d2bc75d99d",
-                                            "type": "armor",
-                                            "amount": 8,
-                                            "operation": "add_value",
-                                            "slot": "chest"
-                                        },
-                                        {
-                                            "id": "1a6eb7bf-0b9b-4702-b731-14c8659d791d",
-                                            "type": "armor_toughness",
-                                            "amount": 4,
-                                            "operation": "add_value",
-                                            "slot": "chest"
-                                        },
-                                        {
-                                            "id": "23ce247c-07ac-4171-b857-e1fbeab9a354",
-                                            "type": "knockback_resistance",
-                                            "amount": 0.1,
-                                            "operation": "add_value",
-                                            "slot": "chest"
-                                        },
-                                        {
-                                            "id": "cfe125db-99c6-4a92-973f-b6ef81230ce7",
-                                            "type": "fall_damage_multiplier",
-                                            "amount": -0.1,
-                                            "operation": "add_multiplied_base",
-                                            "slot": "chest"
-                                        }
-                                    ],
-                                    "show_in_tooltip": true
-                                },
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "f0a87450-635b-4bfb-bcd8-b3d2bc75d99d",
+                                        "type": "armor",
+                                        "amount": 8,
+                                        "operation": "add_value",
+                                        "slot": "chest"
+                                    },
+                                    {
+                                        "id": "1a6eb7bf-0b9b-4702-b731-14c8659d791d",
+                                        "type": "armor_toughness",
+                                        "amount": 4,
+                                        "operation": "add_value",
+                                        "slot": "chest"
+                                    },
+                                    {
+                                        "id": "23ce247c-07ac-4171-b857-e1fbeab9a354",
+                                        "type": "knockback_resistance",
+                                        "amount": 0.1,
+                                        "operation": "add_value",
+                                        "slot": "chest"
+                                    },
+                                    {
+                                        "id": "cfe125db-99c6-4a92-973f-b6ef81230ce7",
+                                        "type": "fall_damage_multiplier",
+                                        "amount": -0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "chest"
+                                    }
+                                ],
                                 "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Chestplate\"}",
                                 "minecraft:enchantable": {
                                     "value": 20
@@ -66,8 +63,13 @@
                                 },
                                 "minecraft:trim": {
                                     "material": "minecraft:netherite",
-                                    "pattern": "minecraft:silence",
-                                    "show_in_tooltip": false
+                                    "pattern": "minecraft:silence"
+                                },
+                                "tooltip_display": {
+                                    "hidden_components": [
+                                        "trim",
+                                        "dyed_color"
+                                    ]
                                 }
                             }
                         }

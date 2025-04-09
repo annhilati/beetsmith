@@ -10,39 +10,36 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:attribute_modifiers": {
-                                    "modifiers": [
-                                        {
-                                            "id": "e8eaf30b-5244-4ca7-a917-4403e96914bc",
-                                            "type": "armor",
-                                            "amount": 3,
-                                            "operation": "add_value",
-                                            "slot": "feet"
-                                        },
-                                        {
-                                            "id": "b2c8bf6e-4da6-4183-a4c5-931b6b3c08fb",
-                                            "type": "armor_toughness",
-                                            "amount": 4,
-                                            "operation": "add_value",
-                                            "slot": "feet"
-                                        },
-                                        {
-                                            "id": "57fd9413-103d-4a9c-9654-ef7483b3a68d",
-                                            "type": "knockback_resistance",
-                                            "amount": 0.1,
-                                            "operation": "add_value",
-                                            "slot": "feet"
-                                        },
-                                        {
-                                            "id": "0f52e6dd-0617-4bcf-99c2-adb0733a74eb",
-                                            "type": "fall_damage_multiplier",
-                                            "amount": -0.1,
-                                            "operation": "add_multiplied_base",
-                                            "slot": "feet"
-                                        }
-                                    ],
-                                    "show_in_tooltip": true
-                                },
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "e8eaf30b-5244-4ca7-a917-4403e96914bc",
+                                        "type": "armor",
+                                        "amount": 3,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
+                                        "id": "b2c8bf6e-4da6-4183-a4c5-931b6b3c08fb",
+                                        "type": "armor_toughness",
+                                        "amount": 4,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
+                                        "id": "57fd9413-103d-4a9c-9654-ef7483b3a68d",
+                                        "type": "knockback_resistance",
+                                        "amount": 0.1,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
+                                        "id": "0f52e6dd-0617-4bcf-99c2-adb0733a74eb",
+                                        "type": "fall_damage_multiplier",
+                                        "amount": -0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "feet"
+                                    }
+                                ],
                                 "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Boots\"}",
                                 "minecraft:enchantable": {
                                     "value": 20
@@ -66,8 +63,12 @@
                                 },
                                 "trim": {
                                     "material": "minecraft:netherite",
-                                    "pattern": "minecraft:spire",
-                                    "show_in_tooltip": false
+                                    "pattern": "minecraft:spire"
+                                },
+                                "tooltip_display": {
+                                    "hidden_components": [
+                                        "trim"
+                                    ]
                                 }
                             }
                         }

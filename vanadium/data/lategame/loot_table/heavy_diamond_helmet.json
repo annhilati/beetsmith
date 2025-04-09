@@ -37,39 +37,36 @@
                                     "swappable": true,
                                     "damage_on_hurt": true
                                 },
-                                "minecraft:attribute_modifiers": {
-                                    "modifiers": [
-                                        {
-                                            "id": "00fa6675-b4ba-452b-b505-81942d0aea3b",
-                                            "type": "armor",
-                                            "amount": 5,
-                                            "operation": "add_value",
-                                            "slot": "head"
-                                        },
-                                        {
-                                            "id": "9aae5e87-c19c-469c-ac61-9e939d9c2a1e",
-                                            "type": "armor_toughness",
-                                            "amount": 3,
-                                            "operation": "add_value",
-                                            "slot": "head"
-                                        },
-                                        {
-                                            "id": "1dff5dbe-bb21-462d-912d-43fb2939d4f9",
-                                            "type": "attack_speed",
-                                            "amount": -0.15,
-                                            "operation": "add_multiplied_total",
-                                            "slot": "head"
-                                        },
-                                        {
-                                            "id": "a0a413d9-6eac-40e4-96a2-58c32696f0c5",
-                                            "type": "movement_speed",
-                                            "amount": -0.05,
-                                            "operation": "add_multiplied_base",
-                                            "slot": "head"
-                                        }
-                                    ],
-                                    "show_in_tooltip": true
-                                },
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "00fa6675-b4ba-452b-b505-81942d0aea3b",
+                                        "type": "armor",
+                                        "amount": 5,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "9aae5e87-c19c-469c-ac61-9e939d9c2a1e",
+                                        "type": "armor_toughness",
+                                        "amount": 3,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "1dff5dbe-bb21-462d-912d-43fb2939d4f9",
+                                        "type": "attack_speed",
+                                        "amount": -0.15,
+                                        "operation": "add_multiplied_total",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "a0a413d9-6eac-40e4-96a2-58c32696f0c5",
+                                        "type": "movement_speed",
+                                        "amount": -0.05,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "head"
+                                    }
+                                ],
                                 "minecraft:custom_data": "{prevent_placement:true}",
                                 "max_stack_size": 1
                             }

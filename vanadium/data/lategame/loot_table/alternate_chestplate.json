@@ -10,10 +10,7 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:attribute_modifiers": {
-                                    "modifiers": [],
-                                    "show_in_tooltip": true
-                                },
+                                "minecraft:attribute_modifiers": [],
                                 "minecraft:item_name": "{\"color\": \"gold\",\"italic\": false,\"text\": \"Alternate Armor\"}",
                                 "minecraft:enchantable": {
                                     "value": 20
@@ -23,8 +20,10 @@
                                 "minecraft:rarity": "epic",
                                 "minecraft:trim": {
                                     "material": "minecraft:redstone",
-                                    "pattern": "minecraft:silence",
-                                    "show_in_tooltip": false
+                                    "pattern": "minecraft:silence"
+                                },
+                                "tooltip_display": {
+                                    "hidden_components": ["trim"]
                                 }
                             }
                         }

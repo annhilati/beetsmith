@@ -24,8 +24,7 @@
                                 },
                                 "minecraft:max_damage": 516,
                                 "minecraft:rarity": "epic",
-                                "minecraft:attribute_modifiers": {
-                                    "modifiers": [
+                                "minecraft:attribute_modifiers":[
                                         {
                                             "id": "262f4f01-8faa-4079-9d08-197d011b0760",
                                             "type": "armor",
@@ -54,10 +53,9 @@
                                             "operation": "add_multiplied_base",
                                             "slot": "chest"
                                         }
-                                    ],
-                                    "show_in_tooltip": true
-                                }                     
-                            }
+                                ]
+                            }  
+                                               
                         }
                     ]
                 }
