@@ -11,7 +11,11 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Young Dragon Boots\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Young Dragon Boots"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 12
                                 },

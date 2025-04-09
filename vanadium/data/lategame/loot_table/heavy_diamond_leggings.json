@@ -10,7 +10,11 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Heavy Diamond Leggings\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Heavy Diamond Leggings"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 10
                                 },

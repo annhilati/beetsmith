@@ -11,11 +11,43 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "\"Wand Of Healing\"",
+                                "minecraft:item_name": "Wand Of Healing",
                                 "minecraft:lore": [
-                                    "[{\"color\":\"gold\",\"italic\":false,\"text\":\"Ability: Small Heal\"},{\"bold\":true,\"color\":\"yellow\",\"italic\":false,\"text\":\" RIGHT CLICK\"}]",
-                                    "[{\"color\":\"gray\",\"italic\":false,\"text\":\"Heal \"},{\"color\":\"red\",\"italic\":false,\"text\":\"0.4 Health\"},{\"color\":\"gray\",\"italic\":false,\"text\":\"/s for 5 seconds\"}]",
-                                    "{\"color\":\"dark_gray\",\"italic\":false,\"text\":\"Cooldown: 10s\"}"
+                                    [
+                                        {
+                                            "color": "gold",
+                                            "italic": false,
+                                            "text": "Ability: Small Heal"
+                                        },
+                                        {
+                                            "bold": true,
+                                            "color": "yellow",
+                                            "italic": false,
+                                            "text": " RIGHT CLICK"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "color": "gray",
+                                            "italic": false,
+                                            "text": "Heal "
+                                        },
+                                        {
+                                            "color": "red",
+                                            "italic": false,
+                                            "text": "0.4 Health"
+                                        },
+                                        {
+                                            "color": "gray",
+                                            "italic": false,
+                                            "text": "/s for 5 seconds"
+                                        }
+                                    ],
+                                    {
+                                        "color": "dark_gray",
+                                        "italic": false,
+                                        "text": "Cooldown: 10s"
+                                    }
                                 ],
                                 "minecraft:item_model": "stick",
                                 "minecraft:instrument": {

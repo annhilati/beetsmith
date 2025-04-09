@@ -11,7 +11,11 @@
                             "function": "minecraft:set_components",
                             "components": {
                                 "minecraft:attribute_modifiers": [],
-                                "minecraft:item_name": "{\"color\": \"gold\",\"italic\": false,\"text\": \"Alternate Armor\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Alternate Armor"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 20
                                 },

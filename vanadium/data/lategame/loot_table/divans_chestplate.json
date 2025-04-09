@@ -11,7 +11,11 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Chestplate of Divan\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Chestplate of Divan"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 25
                                 },

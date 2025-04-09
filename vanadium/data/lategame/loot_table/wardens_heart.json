@@ -11,7 +11,7 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"italic\":false,\"text\":\"Warden's Heart\"}",
+                                "minecraft:item_name": "Warden's Heart",
                                 "minecraft:item_model": "minecraft:player_head",
                                 "minecraft:profile": {
                                     "id": [387880012,-852013811,-1662650742,-442542396],

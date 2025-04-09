@@ -11,16 +11,27 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Young Dragon Chestplate\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Young Dragon Chestplate"
+                                },
                                 "minecraft:dyed_color": {
                                     "rgb": 16777215,
                                     "show_in_tooltip": false
                                 },
                                 "minecraft:glider": {},
                                 "minecraft:lore": [
-                                    "{\"text\":\" \"}",
-                                    "{\"color\":\"gold\",\"italic\":false,\"text\":\"Item Ability: Dragon's Flight\"}",
-                                    "{\"color\":\"gray\",\"italic\":false,\"text\":\"Can be used to fly like with an elytra.\"}"
+                                    {
+                                        "color": "gold",
+                                        "italic": false,
+                                        "text": "Item Ability: Dragon's Flight"
+                                    },
+                                    {
+                                        "color": "gray",
+                                        "italic": false,
+                                        "text": "Can be used to fly like with an elytra."
+                                    }
                                 ],
                                 "minecraft:enchantable": {
                                     "value": 12

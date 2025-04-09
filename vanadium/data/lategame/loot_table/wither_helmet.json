@@ -40,7 +40,11 @@
                                         "slot": "head"
                                     }
                                 ],
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Helmet\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Necrotic Netherite Helmet"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 20
                                 },

@@ -11,7 +11,11 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Heavy Diamond Helmet\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Heavy Diamond Helmet"
+                                },
                                 "minecraft:item_model": "minecraft:player_head",
                                 "minecraft:profile": {
                                     "id": [825483865,-1753530139,-1596662301,-1107927],

@@ -40,7 +40,11 @@
                                         "slot": "chest"
                                     }
                                 ],
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Chestplate\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Necrotic Netherite Chestplate"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 20
                                 },

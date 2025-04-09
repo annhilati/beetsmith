@@ -40,7 +40,11 @@
                                         "slot": "feet"
                                     }
                                 ],
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Boots\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Necrotic Netherite Boots"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 20
                                 },

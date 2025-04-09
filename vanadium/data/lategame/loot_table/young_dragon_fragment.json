@@ -11,7 +11,10 @@
                         {
                             "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:item_name": "{\"italic\":false,\"text\":\"Young Dragon Fragment\"}",
+                                "minecraft:item_name": {
+                                    "italic": false,
+                                    "text": "Young Dragon Fragment"
+                                },
                                 "minecraft:item_model": "minecraft:player_head",
                                 "minecraft:profile": {
                                     "id": [-375021975,857554978,-2083636233,-1277249446],

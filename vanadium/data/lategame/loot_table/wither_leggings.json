@@ -40,7 +40,11 @@
                                         "slot": "legs"
                                     }
                                 ],
-                                "minecraft:item_name": "{\"color\":\"gold\",\"italic\":false,\"text\":\"Necrotic Netherite Leggings\"}",
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Necrotic Netherite Leggings"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 20
                                 },
