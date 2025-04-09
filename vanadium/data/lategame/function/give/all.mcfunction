@@ -8,9 +8,9 @@ loot give @s loot lategame:wardens_heart
 loot give @s loot lategame:young_dragon_fragment
 
 loot give @s loot lategame:wither_helmet
-loot give @s loot lategame:wither_chestplate
+#loot give @s loot lategame:wither_chestplate
 loot give @s loot lategame:wither_leggings
-loot give @s loot lategame:wither_boots
+#loot give @s loot lategame:wither_boots
 
 loot give @s loot lategame:heavy_diamond_helmet
 loot give @s loot lategame:heavy_diamond_chestplate
@@ -23,6 +23,6 @@ loot give @s loot lategame:divans_leggings
 loot give @s loot lategame:divans_boots
 
 loot give @s loot lategame:young_dragon_helmet
-loot give @s loot lategame:young_dragon_chestplate
+#loot give @s loot lategame:young_dragon_chestplate
 loot give @s loot lategame:young_dragon_leggings
-loot give @s loot lategame:young_dragon_boots
+#loot give @s loot lategame:young_dragon_boots

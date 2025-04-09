@@ -53,7 +53,7 @@
                                     {
                                         "id": "192ea35d-23f5-4af9-b68a-af91d66ff95d",
                                         "type": "mining_efficiency",
-                                        "amount": 0.1,
+                                        "amount": 0.15,
                                         "operation": "add_multiplied_base",
                                         "slot": "head"
                                     }
