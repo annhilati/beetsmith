@@ -17,9 +17,7 @@
                                     "text": "Young Dragon Chestplate"
                                 },
                                 "minecraft:dyed_color": {
-                                    "rgb": 16777215,
-                                    "show_in_tooltip": false
-                                },
+                                    "rgb": 16777215                                },
                                 "minecraft:glider": {},
                                 "minecraft:lore": [
                                     {

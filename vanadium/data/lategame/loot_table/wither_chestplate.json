@@ -61,10 +61,7 @@
                                     "items": "netherite_ingot"
                                 },
                                 "minecraft:rarity": "epic",
-                                "minecraft:dyed_color": {
-                                    "rgb": 0,
-                                    "show_in_tooltip": false
-                                },
+                                "minecraft:dyed_color": {"rgb": 0},
                                 "minecraft:trim": {
                                     "material": "minecraft:netherite",
                                     "pattern": "minecraft:silence"
