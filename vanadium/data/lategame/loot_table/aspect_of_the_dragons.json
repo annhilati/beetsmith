@@ -20,34 +20,47 @@
                                     "italic": false,
                                     "text": "Aspect of the Dragons"
                                 },
-                                "minecraft:lore": [[{
+                                "minecraft:lore": [
+                                    [
+                                        {
+                                            "text": ""
+                                        }
+                                    ],
+                                    [
+                                        {
                                             "color": "gold",
                                             "italic": false,
                                             "text": "Ability: Dragon Rage"
-                                        },{
+                                        },
+                                        {
                                             "color": "yellow",
                                             "bold": true,
                                             "italic": false,
                                             "text": " RIGHT CLICK"
                                         }
-                                    ],[
+                                    ],
+                                    [
                                         {
                                             "color": "gray",
                                             "italic": false,
                                             "text": "All Monsters in front of you take "
-                                        },{
+                                        },
+                                        {
                                             "color": "red",
                                             "text": "22 "
-                                        },{
+                                        },
+                                        {
                                             "color": "gray",
                                             "italic": false,
                                             "text": "damage."
                                         }
-                                    ],{
+                                    ],
+                                    {
                                         "color": "gray",
                                         "italic": false,
                                         "text": "Hit monsters and players take large knockback."
-                                    },{
+                                    },
+                                    {
                                         "color": "dark_gray",
                                         "italic": false,
                                         "text": "Cooldown: 30s"
@@ -56,7 +69,10 @@
                                 "minecraft:item_model": "diamond_sword",
                                 "minecraft:instrument": {
                                     "range": 10,
-                                    "description": "",
+                                    "description": {
+                                        "text": "Legendary Sword",
+                                        "color": "dark_gray"
+                                    },
                                     "sound_event": "intentionally_empty",
                                     "use_duration": 0.001
                                 },
@@ -80,7 +96,14 @@
                                         "operation": "add_value",
                                         "slot": "mainhand"
                                     }
-                                ]
+                                ],
+                                "enchantable": {
+                                    "value": 14
+                                },
+                                "tool": {
+                                    "rules": [],
+                                    "can_destroy_blocks_in_creative": false
+                                }
                             }
                         }
                     ]

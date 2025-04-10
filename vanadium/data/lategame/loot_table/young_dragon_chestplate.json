@@ -16,7 +16,7 @@
                                     "italic": false,
                                     "text": "Young Dragon Chestplate"
                                 },
-                                "minecraft:dyed_color": {"rgb": 16777215},
+                                "minecraft:dyed_color": 16777215,
                                 "minecraft:glider": {},
                                 "minecraft:lore": [
                                     {
@@ -60,7 +60,10 @@
                                         "operation": "add_multiplied_base",
                                         "slot": "chest"
                                     }
-                                ]
+                                ],
+                                "tooltip_display": {
+                                    "hidden_components": ["dyed_color"]
+                                }
                             }
                         }
                     ]

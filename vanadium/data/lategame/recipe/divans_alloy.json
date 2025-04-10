@@ -16,7 +16,7 @@
     "components": {
       "!minecraft:jukebox_playable": {},
       "minecraft:item_model": "minecraft:gold_ingot",
-      "minecraft:item_name": "\"Divan's Alloy\"",
+      "minecraft:item_name": "Divan's Alloy",
       "minecraft:rarity": "epic",
       "minecraft:enchantment_glint_override": true,
       "max_stack_size": 64

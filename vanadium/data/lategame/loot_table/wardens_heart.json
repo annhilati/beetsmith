@@ -23,7 +23,6 @@
                                     ]
                                 },
                                 "minecraft:rarity": "epic",
-                                "minecraft:custom_data": "{prevent_placement:true}",
                                 "!minecraft:jukebox_playable": {}
                             }
                         }

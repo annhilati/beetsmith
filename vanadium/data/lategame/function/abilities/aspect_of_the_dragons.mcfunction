@@ -11,5 +11,5 @@ tag @s remove lategame.ignore
 execute if score @s lategame.aotd_cooldown matches 0 run function lategame:abilities/aspect_of_the_dragons.knockback
 
 # Cooldown
-advancement revoke @s only lategame:abilities/aspect_of_the_dragons
+advancement revoke @s only lategame:ability/aspect_of_the_dragons
 scoreboard players set @s lategame.aotd_cooldown 600

@@ -30,8 +30,7 @@
                                     "swappable": true,
                                     "damage_on_hurt": true
                                 },
-                                "minecraft:dyed_color": {
-                                    "rgb": 16777215                                },
+                                "minecraft:dyed_color": 16777215,
                                 "minecraft:max_damage": 420,
                                 "minecraft:attribute_modifiers": [
                                     {
@@ -55,7 +54,12 @@
                                         "operation": "add_value",
                                         "slot": "feet"
                                     }
-                                ]
+                                ],
+                                "tooltip_display": {
+                                    "hidden_components": [
+                                        "dyed_color"
+                                    ]
+                                }
                             }
                         }
                     ]
