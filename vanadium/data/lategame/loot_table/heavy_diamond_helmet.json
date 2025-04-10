@@ -72,7 +72,11 @@
                                     }
                                 ],
                                 "minecraft:custom_data": "{prevent_placement:true}",
-                                "max_stack_size": 1
+                                "max_stack_size": 1,
+                                "equippable": {
+                                    "slot": "head",
+                                    "damage_on_hurt": true
+                                }
                             }
                         }
                     ]

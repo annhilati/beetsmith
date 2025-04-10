@@ -62,7 +62,11 @@
                                 "minecraft:repairable": {
                                     "items": "phantom_membrane"
                                 },
-                                "minecraft:max_stack_size": 1
+                                "minecraft:max_stack_size": 1,
+                                "equippable": {
+                                    "slot": "head",
+                                    "damage_on_hurt": true
+                                }
                             }
                         }
                     ]

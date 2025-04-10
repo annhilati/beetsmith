@@ -29,7 +29,9 @@
                                             "color": "gold",
                                             "italic": false,
                                             "text": "Item Ability: Dragon's Flight"
-                                        },
+                                        }
+                                    ],
+                                    [
                                         {
                                             "color": "gray",
                                             "italic": false,

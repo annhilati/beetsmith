@@ -103,6 +103,10 @@
                                 "tool": {
                                     "rules": [],
                                     "can_destroy_blocks_in_creative": false
+                                },
+                                "max_damage": 2155,
+                                "weapon": {
+                                    "item_damage_per_attack": 1
                                 }
                             }
                         }
