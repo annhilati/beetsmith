@@ -14,7 +14,6 @@
                                 "minecraft:item_name": "Warden's Heart",
                                 "minecraft:item_model": "minecraft:player_head",
                                 "minecraft:profile": {
-                                    "id": [387880012,-852013811,-1662650742,-442542396],
                                     "properties": [
                                         {
                                             "name": "textures",

@@ -17,7 +17,6 @@
                                 },
                                 "minecraft:item_model": "minecraft:player_head",
                                 "minecraft:profile": {
-                                    "id": [-375021975,857554978,-2083636233,-1277249446],
                                     "properties": [
                                         {
                                             "name": "textures",

@@ -18,7 +18,6 @@
                                 },
                                 "minecraft:item_model": "minecraft:player_head",
                                 "minecraft:profile": {
-                                    "id": [825483865,-1753530139,-1596662301,-1107927],
                                     "properties": [
                                         {
                                             "name": "textures",
@@ -73,10 +72,8 @@
                                 ],
                                 "minecraft:custom_data": "{prevent_placement:true}",
                                 "max_stack_size": 1,
-                                "equippable": {
-                                    "slot": "head",
-                                    "damage_on_hurt": true
-                                }
+                                "weapon": {},
+                                "damage": 0
                             }
                         }
                     ]

@@ -1,1 +1,0 @@
-give @s netherite_sword[item_name='"One-Hit"',enchantments={levels:{"minecraft:sharpness":255}},attribute_modifiers=[{id:"armor",type:"attack_damage",amount:100,operation:"add_value",slot:"mainhand"}]] 1

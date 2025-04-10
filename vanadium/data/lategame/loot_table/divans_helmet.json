@@ -59,12 +59,6 @@
                                     }
                                 ],
                                 "minecraft:profile": {
-                                    "id": [
-                                        1578881874,
-                                        1972325563,
-                                        -1301105809,
-                                        567326386
-                                    ],
                                     "properties": [
                                         {
                                             "name": "textures",
@@ -74,10 +68,8 @@
                                 },
                                 "minecraft:max_stack_size": 1,
                                 "minecraft:custom_data": "{prevent_placement:true}",
-                                "equippable": {
-                                    "slot": "head",
-                                    "damage_on_hurt": true
-                                }
+                                "weapon": {},
+                                "damage": 0
                             }
                         }
                     ]

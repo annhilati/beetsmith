@@ -60,12 +60,6 @@
                                     "items": "netherite_ingot"
                                 },
                                 "minecraft:profile": {
-                                    "id": [
-                                        1630020081,
-                                        -985775136,
-                                        -1695417241,
-                                        -103524629
-                                    ],
                                     "properties": [
                                         {
                                             "name": "textures",
@@ -76,10 +70,8 @@
                                 "minecraft:max_stack_size": 1,
                                 "minecraft:rarity": "epic",
                                 "minecraft:custom_data": "{prevent_placement:true}",
-                                "equippable": {
-                                    "slot": "head",
-                                    "damage_on_hurt": true
-                                }
+                                "weapon": {},
+                                "damage": 0
                             }
                         }
                     ]
