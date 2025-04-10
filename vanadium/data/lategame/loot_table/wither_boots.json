@@ -28,7 +28,7 @@
                                     {
                                         "id": "57fd9413-103d-4a9c-9654-ef7483b3a68d",
                                         "type": "knockback_resistance",
-                                        "amount": 0.1,
+                                        "amount": 1,
                                         "operation": "add_value",
                                         "slot": "feet"
                                     },

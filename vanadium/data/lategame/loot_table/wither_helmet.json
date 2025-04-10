@@ -28,7 +28,7 @@
                                     {
                                         "id": "7b994a76-5192-46d6-968e-4fa0283f9659",
                                         "type": "knockback_resistance",
-                                        "amount": 0.1,
+                                        "amount": 1,
                                         "operation": "add_value",
                                         "slot": "head"
                                     },

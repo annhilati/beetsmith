@@ -35,7 +35,7 @@
                                         {
                                             "color": "red",
                                             "italic": false,
-                                            "text": "0.4 Health"
+                                            "text": "0.8 Health"
                                         },
                                         {
                                             "color": "gray",
@@ -46,7 +46,7 @@
                                     {
                                         "color": "dark_gray",
                                         "italic": false,
-                                        "text": "Cooldown: 10s"
+                                        "text": "Cooldown: 15s"
                                     }
                                 ],
                                 "minecraft:item_model": "stick",
@@ -58,7 +58,7 @@
                                 },
                                 "minecraft:custom_data": "{ability:\"heal\"}",
                                 "minecraft:use_cooldown": {
-                                    "seconds": 10,
+                                    "seconds": 15,
                                     "cooldown_group": "lategame:healing_wand"
                                 },
                                 "minecraft:rarity": "rare",

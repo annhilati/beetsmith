@@ -19,16 +19,23 @@
                                 "minecraft:dyed_color": 16777215,
                                 "minecraft:glider": {},
                                 "minecraft:lore": [
-                                    {
-                                        "color": "gold",
-                                        "italic": false,
-                                        "text": "Item Ability: Dragon's Flight"
-                                    },
-                                    {
-                                        "color": "gray",
-                                        "italic": false,
-                                        "text": "Can be used to fly like with an elytra."
-                                    }
+                                    [
+                                        {
+                                            "text": ""
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "color": "gold",
+                                            "italic": false,
+                                            "text": "Item Ability: Dragon's Flight"
+                                        },
+                                        {
+                                            "color": "gray",
+                                            "italic": false,
+                                            "text": "Can be used to fly like with an elytra."
+                                        }
+                                    ]
                                 ],
                                 "minecraft:enchantable": {
                                     "value": 12
