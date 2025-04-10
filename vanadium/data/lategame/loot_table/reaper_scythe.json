@@ -16,7 +16,7 @@
                                     "italic": false,
                                     "text": "Reaper Scythe"
                                 },
-                                "minecraft:item_model": "diamond_hoe",
+                                "minecraft:item_model": "netherite_hoe",
                                 "minecraft:repairable": {
                                     "items": "minecraft:bone"
                                 },
