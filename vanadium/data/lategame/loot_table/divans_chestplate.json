@@ -24,7 +24,8 @@
                                     "slot": "chest",
                                     "dispensable": true,
                                     "swappable": true,
-                                    "damage_on_hurt": true
+                                    "damage_on_hurt": true,
+                                    "equip_sound": "item.armor.equip_iron"
                                 },
                                 "minecraft:max_damage": 516,
                                 "minecraft:rarity": "epic",
@@ -46,7 +47,7 @@
                                         {
                                             "id": "c5118c3e-80a9-422a-9b8f-ea1fbdbabcac",
                                             "type": "luck",
-                                            "amount": 2,
+                                            "amount": 1,
                                             "operation": "add_value",
                                             "slot": "chest"
                                         },

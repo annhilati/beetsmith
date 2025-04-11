@@ -24,7 +24,8 @@
                                     "slot": "head",
                                     "dispensable": true,
                                     "swappable": true,
-                                    "damage_on_hurt": true
+                                    "damage_on_hurt": true,
+                                    "equip_sound": "item.armor.equip_iron"
                                 },
                                 "minecraft:max_damage": 355,
                                 "minecraft:rarity": "epic",
@@ -46,7 +47,7 @@
                                     {
                                         "id": "2ce33340-1855-486a-9c0f-c9a9720c44c9",
                                         "type": "luck",
-                                        "amount": 2,
+                                        "amount": 1,
                                         "operation": "add_value",
                                         "slot": "head"
                                     },

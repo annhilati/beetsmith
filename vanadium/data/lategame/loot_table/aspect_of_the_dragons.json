@@ -21,11 +21,9 @@
                                     "text": "Aspect of the Dragons"
                                 },
                                 "minecraft:lore": [
-                                    [
-                                        {
-                                            "text": ""
-                                        }
-                                    ],
+                                    {
+                                        "text": ""
+                                    },
                                     [
                                         {
                                             "color": "gold",
@@ -55,11 +53,6 @@
                                             "text": "damage."
                                         }
                                     ],
-                                    {
-                                        "color": "gray",
-                                        "italic": false,
-                                        "text": "Hit monsters and players take large knockback."
-                                    },
                                     {
                                         "color": "dark_gray",
                                         "italic": false,

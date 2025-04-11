@@ -1,5 +1,6 @@
 loot give @s loot lategame:aspect_of_the_dragons
 loot give @s loot lategame:reaper_scythe
+loot give @s loot lategame:final_destinations_axe
 
 loot give @s loot lategame:healing_wand
 

@@ -1,0 +1,42 @@
+{
+    "type": "empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:stone_axe",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "base_attack_damage",
+                                        "type": "attack_damage",
+                                        "amount": 239,
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    },
+                                    {
+                                        "id": "base_attack_speed",
+                                        "type": "attack_speed",
+                                        "amount": -3.99,
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    }
+                                ],
+                                "minecraft:item_name": "Final Destination's Axe",
+                                "!minecraft:enchantable": {},
+                                "!minecraft:repairable": {},
+                                "minecraft:rarity": "epic",
+                                "minecraft:max_damage": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
