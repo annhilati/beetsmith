@@ -30,7 +30,7 @@
                                     "swappable": true,
                                     "damage_on_hurt": true
                                 },
-                                "minecraft:dyed_color": "#000000",
+                                "minecraft:dyed_color": 0,
                                 "minecraft:max_damage": 420,
                                 "minecraft:attribute_modifiers": [
                                     {
@@ -57,7 +57,8 @@
                                 ],
                                 "tooltip_display": {
                                     "hidden_components": [
-                                        "dyed_color"
+                                        "dyed_color",
+                                        "trim"
                                     ]
                                 },
                                 "trim": {

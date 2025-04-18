@@ -6,7 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "minecraft:leather_leggings",
+                    "name": "minecraft:netherite_leggings",
                     "functions": [
                         {
                             "function": "minecraft:set_components",
@@ -16,7 +16,7 @@
                                     "italic": false,
                                     "text": "Young Dragon Leggings"
                                 },
-                                "minecraft:dyed_color": "#000000",
+                                "minecraft:dyed_color": 0,
                                 "minecraft:enchantable": {
                                     "value": 12
                                 },
@@ -25,14 +25,14 @@
                                 },
                                 "minecraft:equippable": {
                                     "slot": "legs",
-                                    "asset_id": "minecraft:leather",
+                                    "asset_id": "minecraft:netherite",
                                     "equip_sound": "item.armor.equip_gold",
                                     "dispensable": true,
                                     "swappable": true,
                                     "damage_on_hurt": true
                                 },
                                 "trim": {
-                                    "pattern": "silence",
+                                    "pattern": "dune",
                                     "material": "amethyst"
                                 },
                                 "minecraft:max_damage": 490,
@@ -51,7 +51,13 @@
                                         "operation": "add_multiplied_base",
                                         "slot": "legs"
                                     }
-                                ]
+                                ],
+                                "tooltip_display": {
+                                    "hidden_components": [
+                                        "dyed_color",
+                                        "trim"
+                                    ]
+                                }
                             }
                         }
                     ]
