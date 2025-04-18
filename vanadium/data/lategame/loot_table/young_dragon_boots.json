@@ -30,7 +30,7 @@
                                     "swappable": true,
                                     "damage_on_hurt": true
                                 },
-                                "minecraft:dyed_color": 16777215,
+                                "minecraft:dyed_color": "#000000",
                                 "minecraft:max_damage": 420,
                                 "minecraft:attribute_modifiers": [
                                     {
@@ -59,6 +59,10 @@
                                     "hidden_components": [
                                         "dyed_color"
                                     ]
+                                },
+                                "trim": {
+                                    "pattern": "rib",
+                                    "material": "minecraft:amethyst"
                                 }
                             }
                         }

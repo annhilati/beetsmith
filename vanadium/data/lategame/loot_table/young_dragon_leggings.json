@@ -6,7 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "minecraft:iron_leggings",
+                    "name": "minecraft:leather_leggings",
                     "functions": [
                         {
                             "function": "minecraft:set_components",
@@ -16,6 +16,7 @@
                                     "italic": false,
                                     "text": "Young Dragon Leggings"
                                 },
+                                "minecraft:dyed_color": "#000000",
                                 "minecraft:enchantable": {
                                     "value": 12
                                 },
@@ -24,11 +25,15 @@
                                 },
                                 "minecraft:equippable": {
                                     "slot": "legs",
-                                    "asset_id": "minecraft:iron",
+                                    "asset_id": "minecraft:leather",
                                     "equip_sound": "item.armor.equip_gold",
                                     "dispensable": true,
                                     "swappable": true,
                                     "damage_on_hurt": true
+                                },
+                                "trim": {
+                                    "pattern": "silence",
+                                    "material": "amethyst"
                                 },
                                 "minecraft:max_damage": 490,
                                 "minecraft:attribute_modifiers": [

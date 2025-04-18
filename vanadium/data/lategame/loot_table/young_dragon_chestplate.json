@@ -16,7 +16,7 @@
                                     "italic": false,
                                     "text": "Young Dragon Chestplate"
                                 },
-                                "minecraft:dyed_color": 16777215,
+                                "minecraft:dyed_color": "#000000",
                                 "minecraft:glider": {},
                                 "minecraft:lore": [
                                     [
@@ -39,6 +39,10 @@
                                         }
                                     ]
                                 ],
+                                "trim": {
+                                    "pattern": "flow",
+                                    "material": "minecraft:amethyst"
+                                },
                                 "minecraft:enchantable": {
                                     "value": 12
                                 },
