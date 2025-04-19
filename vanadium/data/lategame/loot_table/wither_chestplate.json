@@ -26,13 +26,6 @@
                                         "slot": "chest"
                                     },
                                     {
-                                        "id": "23ce247c-07ac-4171-b857-e1fbeab9a354",
-                                        "type": "knockback_resistance",
-                                        "amount": 1,
-                                        "operation": "add_value",
-                                        "slot": "chest"
-                                    },
-                                    {
                                         "id": "cfe125db-99c6-4a92-973f-b6ef81230ce7",
                                         "type": "fall_damage_multiplier",
                                         "amount": -0.1,

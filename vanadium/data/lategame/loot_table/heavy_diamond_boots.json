@@ -44,6 +44,13 @@
                                         "slot": "feet"
                                     },
                                     {
+                                        "id": "23ce247c-07ac-4171-b857-e1fbeab9a354",
+                                        "type": "knockback_resistance",
+                                        "amount": 1,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
                                         "id": "6fb90588-b85b-4780-bec8-a4521ecf6495",
                                         "type": "attack_speed",
                                         "amount": -0.15,

@@ -44,6 +44,13 @@
                                         "slot": "chest"
                                     },
                                     {
+                                        "id": "f6f4cbe0-311a-4790-b3d2-3adbc948f251",
+                                        "type": "knockback_resistance",
+                                        "amount": 1,
+                                        "operation": "add_value",
+                                        "slot": "chest"
+                                    },
+                                    {
                                         "id": "1097bd17-df76-498e-b9ee-0893a922e8f0",
                                         "type": "attack_speed",
                                         "amount": -0.15,

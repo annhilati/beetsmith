@@ -56,6 +56,13 @@
                                         "slot": "head"
                                     },
                                     {
+                                        "id": "df469d4a-caf8-4537-bc9b-9fb5d5a92860",
+                                        "type": "knockback_resistance",
+                                        "amount": 1,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
                                         "id": "1dff5dbe-bb21-462d-912d-43fb2939d4f9",
                                         "type": "attack_speed",
                                         "amount": -0.15,

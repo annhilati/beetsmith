@@ -26,13 +26,6 @@
                                         "slot": "legs"
                                     },
                                     {
-                                        "id": "95edecea-6e9e-4ac3-a49f-866ce9f1d642",
-                                        "type": "knockback_resistance",
-                                        "amount": 1,
-                                        "operation": "add_value",
-                                        "slot": "legs"
-                                    },
-                                    {
                                         "id": "fc5cfd3a-8ee7-4c69-a5d5-a847703e8dbb",
                                         "type": "fall_damage_multiplier",
                                         "amount": -0.1,

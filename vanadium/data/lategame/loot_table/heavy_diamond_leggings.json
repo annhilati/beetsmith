@@ -44,6 +44,13 @@
                                         "slot": "legs"
                                     },
                                     {
+                                        "id": "b355f9b7-73a5-4056-a00b-55c363bd6dbd",
+                                        "type": "knockback_resistance",
+                                        "amount": 1,
+                                        "operation": "add_value",
+                                        "slot": "legs"
+                                    },
+                                    {
                                         "id": "7f549aa8-d5a6-47d0-9bd0-e6c7caabca7f",
                                         "type": "attack_speed",
                                         "amount": -0.15,
