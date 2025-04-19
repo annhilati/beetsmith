@@ -2,14 +2,15 @@
     "type": "minecraft:crafting_shaped",
     "category": "misc",
     "pattern": [
-        "ggg",
+        "gag",
         "ded",
-        "ggg"
+        "gag"
     ],
     "key": {
         "g": "minecraft:gold_ingot",
         "d": "minecraft:diamond",
-        "e": "minecraft:emerald"
+        "e": "minecraft:emerald",
+        "a": "minecraft:amethyst_shard"
     },
     "result": {
         "id": "minecraft:music_disc_11",

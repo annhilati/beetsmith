@@ -34,7 +34,7 @@
                                     },
                                     {
                                         "id": "base_attack_speed",
-                                        "amount": -1.5,
+                                        "amount": -1.4,
                                         "type": "minecraft:attack_speed",
                                         "operation": "add_value",
                                         "slot": "mainhand"

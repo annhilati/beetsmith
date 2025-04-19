@@ -50,6 +50,13 @@
                                         "amount": 0.1,
                                         "operation": "add_multiplied_base",
                                         "slot": "legs"
+                                    },
+                                    {
+                                        "id": "4c49d735-73e1-48e7-9448-468ba12cb415",
+                                        "type": "sneaking_speed",
+                                        "amount": 0.4,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "legs"
                                     }
                                 ],
                                 "tooltip_display": {

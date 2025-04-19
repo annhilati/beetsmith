@@ -31,6 +31,13 @@
                                         "amount": 0.1,
                                         "operation": "add_multiplied_base",
                                         "slot": "head"
+                                    },
+                                    {
+                                        "id": "c9ba5e1d-c669-41f0-8e30-9a0634df4282",
+                                        "type": "movement_efficiency",
+                                        "amount": 0.4,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "head"
                                     }
                                 ],
                                 "minecraft:profile": {
