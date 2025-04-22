@@ -3,4 +3,4 @@ execute if score @s lategame.healing_wand_cooldown matches 0 run playsound minec
 execute if score @s lategame.healing_wand_cooldown matches 0 run particle minecraft:heart ~ ~1 ~ .6 .6 .6 1 10
 
 advancement revoke @s only lategame:ability/healing_wand
-scoreboard players set @s lategame.healing_wand_cooldown 200
+scoreboard players set @s lategame.healing_wand_cooldown 300
