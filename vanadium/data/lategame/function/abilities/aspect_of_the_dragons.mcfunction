@@ -5,7 +5,7 @@ execute if score @s lategame.aotd_cooldown matches 0 run playsound entity.ender_
 # Damage
 tag @s add lategame.ignore
 execute if score @s lategame.aotd_cooldown matches 0 at @s positioned ^ ^ ^2 as @e[distance=..2,tag=!lategame.ignore] run damage @s 22 player_attack by @p[tag=lategame.ignore]
-execute if score @s lategame.aotd_cooldown matches 0 at @s positioned ^ ^ ^6 as @e[distance=..2,tag=!lategame.ignore] run damage @s 22 player_attack by @p[tag=lategame.ignore]
+execute if score @s lategame.aotd_cooldown matches 0 at @s positioned ^ ^ ^6 as @e[distance=..3,tag=!lategame.ignore] run damage @s 22 player_attack by @p[tag=lategame.ignore]
 tag @s remove lategame.ignore
 
 # Knockback
