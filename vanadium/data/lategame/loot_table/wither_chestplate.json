@@ -26,6 +26,13 @@
                                         "slot": "chest"
                                     },
                                     {
+                                        "id": "186489a8-6fc8-4e65-93fa-ffe1de279346",
+                                        "type": "attack_damage",
+                                        "amount": 0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "chest"
+                                    },
+                                    {
                                         "id": "cfe125db-99c6-4a92-973f-b6ef81230ce7",
                                         "type": "fall_damage_multiplier",
                                         "amount": -0.1,

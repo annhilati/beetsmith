@@ -26,6 +26,13 @@
                                         "slot": "head"
                                     },
                                     {
+                                        "id": "60e921f6-edd4-4936-a7fa-174cd8cf301c",
+                                        "type": "attack_damage",
+                                        "amount": 0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "head"
+                                    },
+                                    {
                                         "id": "63747e75-c033-4872-9717-113c8b2caaed",
                                         "type": "fall_damage_multiplier",
                                         "amount": -0.1,

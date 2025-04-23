@@ -1,0 +1,78 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:diamond_chestplate",
+    "addition": "minecraft:diamond_block",
+    "template": "minecraft:heavy_core",
+    "result": {
+        "id": "minecraft:diamond_chestplate",
+        "components": {
+            "minecraft:item_name": {
+                "color": "gold",
+                "italic": false,
+                "text": "Heavy Diamond Chestplate"
+            },
+            "minecraft:enchantable": {
+                "value": 10
+            },
+            "minecraft:equippable": {
+                "slot": "chest",
+                "asset_id": "minecraft:diamond",
+                "equip_sound": "item.armor.equip_netherite",
+                "dispensable": true,
+                "swappable": true,
+                "damage_on_hurt": true
+            },
+            "minecraft:max_damage": 745,
+            "minecraft:rarity": "epic",
+            "minecraft:attribute_modifiers": [
+                {
+                    "id": "3b4880a3-3657-4014-a9e5-ad66ba07bddc",
+                    "type": "armor",
+                    "amount": 11,
+                    "operation": "add_value",
+                    "slot": "chest"
+                },
+                {
+                    "id": "c2dc343d-594d-4605-ae6e-8a11d277b6e2",
+                    "type": "armor_toughness",
+                    "amount": 8,
+                    "operation": "add_value",
+                    "slot": "chest"
+                },
+                {
+                    "id": "f6f4cbe0-311a-4790-b3d2-3adbc948f251",
+                    "type": "knockback_resistance",
+                    "amount": 1,
+                    "operation": "add_value",
+                    "slot": "chest"
+                },
+                {
+                    "id": "1097bd17-df76-498e-b9ee-0893a922e8f0",
+                    "type": "attack_speed",
+                    "amount": -0.15,
+                    "operation": "add_multiplied_total",
+                    "slot": "chest"
+                },
+                {
+                    "id": "3d0df32f-83fb-4e93-9c79-3cfbcd82c8a0",
+                    "type": "movement_speed",
+                    "amount": -0.05,
+                    "operation": "add_multiplied_base",
+                    "slot": "chest"
+                }
+            ],
+            "minecraft:trim": {
+                "material": "minecraft:diamond",
+                "pattern": "minecraft:silence"
+            },
+            "minecraft:repairable": {
+                "items": "diamond_block"
+            },
+            "tooltip_display": {
+                "hidden_components": [
+                    "trim"
+                ]
+            }
+        }
+    }
+}

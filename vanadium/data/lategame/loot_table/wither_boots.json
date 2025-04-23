@@ -26,6 +26,13 @@
                                         "slot": "feet"
                                     },
                                     {
+                                        "id": "8079cf35-e434-4b7f-a608-edcd00d57bc3",
+                                        "type": "attack_damage",
+                                        "amount": 0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "feet"
+                                    },
+                                    {
                                         "id": "0f52e6dd-0617-4bcf-99c2-adb0733a74eb",
                                         "type": "fall_damage_multiplier",
                                         "amount": -0.1,
