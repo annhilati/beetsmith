@@ -1,2 +1,3 @@
 *.json linguist-detectable=true
 *.mcmeta linguist-detectable=true
+*.conf linguist-detectable=true
