@@ -2,7 +2,7 @@
     "type": "minecraft:smithing_transform",
     "base": "minecraft:netherite_boots",
     "addition": "minecraft:nether_star",
-    "template": "minecraft:obsidian",
+    "template": "minecraft:wither_skeleton_skull",
     "result": {
         "id": "minecraft:leather_boots",
         "components": {
