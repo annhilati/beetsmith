@@ -1,0 +1,7 @@
+{
+    "data_pack": {
+        "load": ["src"]
+    },
+    "pipeline": ["plugin.main"],
+    "output": "Lategame Equipment"
+}

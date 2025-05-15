@@ -1,0 +1,6 @@
+{
+	"criteria": { "tick": {
+		"trigger": "minecraft:tick"
+	}},
+	"rewards": { "function": "lategame:cooldown" }
+}

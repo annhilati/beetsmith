@@ -1,0 +1,81 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:player_head",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Helmet of Divan"
+                                },
+                                "minecraft:enchantable": {
+                                    "value": 25
+                                },
+                                "minecraft:equippable": {
+                                    "asset_id": "minecraft:gold",
+                                    "slot": "head",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true,
+                                    "equip_sound": "item.armor.equip_iron"
+                                },
+                                "minecraft:max_damage": 355,
+                                "minecraft:rarity": "epic",
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "f5a4c54b-0622-4bf0-b95b-bbbc96c200c4",
+                                        "type": "armor",
+                                        "amount": 3,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "fba22965-7f8d-452e-8bdb-221813257233",
+                                        "type": "armor_toughness",
+                                        "amount": 2,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "2ce33340-1855-486a-9c0f-c9a9720c44c9",
+                                        "type": "luck",
+                                        "amount": 1,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "192ea35d-23f5-4af9-b68a-af91d66ff95d",
+                                        "type": "mining_efficiency",
+                                        "amount": 0.15,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "head"
+                                    }
+                                ],
+                                "minecraft:profile": {
+                                    "properties": [
+                                        {
+                                            "name": "textures",
+                                            "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTM2NmYyOTFmNTVmYmFkMjg0NmI0NjA5OTZmNzM2MWY0NTRiOWUzZDk0MDE1OTc4YThlNTFiNjU1YmU5MTMyOSJ9fX0="
+                                        }
+                                    ]
+                                },
+                                "minecraft:max_stack_size": 1,
+                                "minecraft:custom_data": "{prevent_placement:true}",
+                                "weapon": {},
+                                "damage": 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

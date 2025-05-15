@@ -3,5 +3,6 @@
 
 
 # Build
-**.beet**
+.beet_cache/
+__pycache__/
 Lategame Equipment/

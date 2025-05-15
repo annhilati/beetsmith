@@ -1,0 +1,73 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:netherite_chestplate",
+    "addition": "minecraft:nether_star",
+    "template": "minecraft:wither_skeleton_skull",
+    "result": {
+        "id": "minecraft:leather_chestplate",
+        "components": {
+            "minecraft:attribute_modifiers": [
+                {
+                    "id": "f0a87450-635b-4bfb-bcd8-b3d2bc75d99d",
+                    "type": "armor",
+                    "amount": 8,
+                    "operation": "add_value",
+                    "slot": "chest"
+                },
+                {
+                    "id": "1a6eb7bf-0b9b-4702-b731-14c8659d791d",
+                    "type": "armor_toughness",
+                    "amount": 4,
+                    "operation": "add_value",
+                    "slot": "chest"
+                },
+                {
+                    "id": "186489a8-6fc8-4e65-93fa-ffe1de279346",
+                    "type": "attack_damage",
+                    "amount": 0.1,
+                    "operation": "add_multiplied_base",
+                    "slot": "chest"
+                },
+                {
+                    "id": "cfe125db-99c6-4a92-973f-b6ef81230ce7",
+                    "type": "fall_damage_multiplier",
+                    "amount": -0.1,
+                    "operation": "add_multiplied_base",
+                    "slot": "chest"
+                }
+            ],
+            "minecraft:item_name": {
+                "color": "gold",
+                "italic": false,
+                "text": "Necrotic Netherite Chestplate"
+            },
+            "minecraft:enchantable": {
+                "value": 20
+            },
+            "minecraft:equippable": {
+                "slot": "chest",
+                "equip_sound": "item.armor.equip_diamond",
+                "asset_id": "minecraft:leather",
+                "dispensable": true,
+                "swappable": true,
+                "damage_on_hurt": true
+            },
+            "minecraft:max_damage": 612,
+            "minecraft:repairable": {
+                "items": "netherite_ingot"
+            },
+            "minecraft:rarity": "epic",
+            "minecraft:dyed_color": 0,
+            "minecraft:trim": {
+                "material": "minecraft:netherite",
+                "pattern": "minecraft:silence"
+            },
+            "tooltip_display": {
+                "hidden_components": [
+                    "trim",
+                    "dyed_color"
+                ]
+            }
+        }
+    }
+}

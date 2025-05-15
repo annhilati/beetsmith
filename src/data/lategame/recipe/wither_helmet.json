@@ -1,0 +1,73 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:netherite_helmet",
+    "addition": "minecraft:nether_star",
+    "template": "minecraft:wither_skeleton_skull",
+    "result": {
+        "id": "minecraft:player_head",
+        "components": {
+            "minecraft:attribute_modifiers": [
+                {
+                    "id": "399e36c4-1cde-43c0-80a6-adf1cba5db8e",
+                    "type": "armor",
+                    "amount": 3,
+                    "operation": "add_value",
+                    "slot": "head"
+                },
+                {
+                    "id": "796e4b74-44f6-4598-ada4-0283da42ce93",
+                    "type": "armor_toughness",
+                    "amount": 4,
+                    "operation": "add_value",
+                    "slot": "head"
+                },
+                {
+                    "id": "60e921f6-edd4-4936-a7fa-174cd8cf301c",
+                    "type": "attack_damage",
+                    "amount": 0.1,
+                    "operation": "add_multiplied_base",
+                    "slot": "head"
+                },
+                {
+                    "id": "63747e75-c033-4872-9717-113c8b2caaed",
+                    "type": "fall_damage_multiplier",
+                    "amount": -0.1,
+                    "operation": "add_multiplied_base",
+                    "slot": "head"
+                }
+            ],
+            "minecraft:item_name": {
+                "color": "gold",
+                "italic": false,
+                "text": "Necrotic Netherite Helmet"
+            },
+            "minecraft:enchantable": {
+                "value": 20
+            },
+            "minecraft:equippable": {
+                "slot": "head",
+                "equip_sound": "item.armor.equip_diamond",
+                "dispensable": true,
+                "swappable": true,
+                "damage_on_hurt": true
+            },
+            "minecraft:max_damage": 421,
+            "minecraft:repairable": {
+                "items": "netherite_ingot"
+            },
+            "minecraft:profile": {
+                "properties": [
+                    {
+                        "name": "textures",
+                        "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWM1ZmFmMjE4Yzc4ZTBhODQ3YWM0ZWMxYTY4OGZlNzllMWE3YWQxM2FlM2MzYjY4YjdmYzQ0MzYzMjBjZGFjNCJ9fX0="
+                    }
+                ]
+            },
+            "minecraft:max_stack_size": 1,
+            "minecraft:rarity": "epic",
+            "minecraft:custom_data": "{prevent_placement:true}",
+            "weapon": {},
+            "damage": 0
+        }
+    }
+}

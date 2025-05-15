@@ -1,0 +1,76 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:player_head",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Young Dragon Helmet"
+                                },
+                                "minecraft:max_damage": 360,
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "e93b4bee-3a74-487f-83c2-f222f6a93e38",
+                                        "type": "armor",
+                                        "amount": 3,
+                                        "operation": "add_value",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "006e2475-a2fd-4e37-9b19-447f85b84a01",
+                                        "type": "movement_speed",
+                                        "amount": 0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "head"
+                                    },
+                                    {
+                                        "id": "c9ba5e1d-c669-41f0-8e30-9a0634df4282",
+                                        "type": "movement_efficiency",
+                                        "amount": 0.4,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "head"
+                                    }
+                                ],
+                                "minecraft:profile": {
+                                    "properties": [
+                                        {
+                                            "name": "textures",
+                                            "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjkyMmI1ZjhkNTU0Y2E5MjNmOTY4MzJhNWE0ZTkxNjliYzJjZGIzNjBhMmIwNmViZWMwOWI2YTZhZjQ2MThlMyJ9fX0="
+                                        }
+                                    ]
+                                },
+                                "minecraft:rarity": "epic",
+                                "minecraft:custom_data": "{prevent_placement:1b}",
+                                "minecraft:enchantable": {
+                                    "value": 12
+                                },
+                                "minecraft:equippable": {
+                                    "slot": "head",
+                                    "equip_sound": "item.armor.equip_gold",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true
+                                },
+                                "minecraft:repairable": {
+                                    "items": "phantom_membrane"
+                                },
+                                "minecraft:max_stack_size": 1,
+                                "weapon": {},
+                                "damage": 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

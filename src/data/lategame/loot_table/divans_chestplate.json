@@ -1,0 +1,70 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:golden_chestplate",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Chestplate of Divan"
+                                },
+                                "minecraft:enchantable": {
+                                    "value": 25
+                                },
+                                "minecraft:equippable": {
+                                    "asset_id": "minecraft:gold",
+                                    "slot": "chest",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true,
+                                    "equip_sound": "item.armor.equip_iron"
+                                },
+                                "minecraft:max_damage": 516,
+                                "minecraft:rarity": "epic",
+                                "minecraft:attribute_modifiers":[
+                                        {
+                                            "id": "262f4f01-8faa-4079-9d08-197d011b0760",
+                                            "type": "armor",
+                                            "amount": 8,
+                                            "operation": "add_value",
+                                            "slot": "chest"
+                                        },
+                                        {
+                                            "id": "79b6a184-c5c4-4069-a17b-a321970d1d73",
+                                            "type": "armor_toughness",
+                                            "amount": 2,
+                                            "operation": "add_value",
+                                            "slot": "chest"
+                                        },
+                                        {
+                                            "id": "c5118c3e-80a9-422a-9b8f-ea1fbdbabcac",
+                                            "type": "luck",
+                                            "amount": 1,
+                                            "operation": "add_value",
+                                            "slot": "chest"
+                                        },
+                                        {
+                                            "id": "37c8adfc-7b6d-43a1-91fe-13e17d9c7288",
+                                            "type": "mining_efficiency",
+                                            "amount": 0.15,
+                                            "operation": "add_multiplied_base",
+                                            "slot": "chest"
+                                        }
+                                ]
+                            }  
+                                               
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

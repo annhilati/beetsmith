@@ -1,0 +1,39 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:netherite_chestplate",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:attribute_modifiers": [],
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Alternate Armor"
+                                },
+                                "minecraft:enchantable": {
+                                    "value": 20
+                                },
+                                "minecraft:max_damage": 612,
+                                "!minecraft:repairable": {},
+                                "minecraft:rarity": "epic",
+                                "minecraft:trim": {
+                                    "material": "minecraft:redstone",
+                                    "pattern": "minecraft:silence"
+                                },
+                                "tooltip_display": {
+                                    "hidden_components": ["trim"]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

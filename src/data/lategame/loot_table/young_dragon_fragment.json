@@ -1,0 +1,37 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:music_disc_11",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "italic": false,
+                                    "text": "Young Dragon Fragment"
+                                },
+                                "minecraft:item_model": "minecraft:player_head",
+                                "minecraft:profile": {
+                                    "properties": [
+                                        {
+                                            "name": "textures",
+                                            "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTgyMjhjMjM0YzM5MDNjNTEyYTVhMGFhNDUyNjBlN2I1NjdlMGUyMGVlZmM3ZDU2MWNjZWM5N2IyOTU4NzFhZiJ9fX0="
+                                        }
+                                    ]
+                                },
+                                "minecraft:rarity": "epic",
+                                "!minecraft:jukebox_playable": {},
+                                "max_stack_size": 64
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,78 @@
+{
+    "type": "minecraft:smithing_transform",
+    "base": "minecraft:diamond_boots",
+    "addition": "minecraft:diamond_block",
+    "template": "minecraft:heavy_core",
+    "result": {
+        "id": "minecraft:diamond_boots",
+        "components": {
+            "minecraft:item_name": {
+                "color": "gold",
+                "italic": false,
+                "text": "Heavy Diamond Boots"
+            },
+            "minecraft:enchantable": {
+                "value": 10
+            },
+            "minecraft:equippable": {
+                "slot": "feet",
+                "asset_id": "minecraft:diamond",
+                "equip_sound": "item.armor.equip_netherite",
+                "dispensable": true,
+                "swappable": true,
+                "damage_on_hurt": true
+            },
+            "minecraft:max_damage": 608,
+            "minecraft:rarity": "epic",
+            "minecraft:attribute_modifiers": [
+                {
+                    "id": "69c229f7-5688-47f9-bfb3-d63621812b58",
+                    "type": "armor",
+                    "amount": 5,
+                    "operation": "add_value",
+                    "slot": "feet"
+                },
+                {
+                    "id": "31672641-001f-4ac1-a41d-090fd484cb6e",
+                    "type": "armor_toughness",
+                    "amount": 3,
+                    "operation": "add_value",
+                    "slot": "feet"
+                },
+                {
+                    "id": "23ce247c-07ac-4171-b857-e1fbeab9a354",
+                    "type": "knockback_resistance",
+                    "amount": 1,
+                    "operation": "add_value",
+                    "slot": "feet"
+                },
+                {
+                    "id": "6fb90588-b85b-4780-bec8-a4521ecf6495",
+                    "type": "attack_speed",
+                    "amount": -0.15,
+                    "operation": "add_multiplied_total",
+                    "slot": "feet"
+                },
+                {
+                    "id": "18ada72e-7516-4846-9fc1-f28da114251b",
+                    "type": "movement_speed",
+                    "amount": -0.05,
+                    "operation": "add_multiplied_base",
+                    "slot": "feet"
+                }
+            ],
+            "minecraft:trim": {
+                "material": "minecraft:diamond",
+                "pattern": "minecraft:silence"
+            },
+            "minecraft:repairable": {
+                "items": "diamond_block"
+            },
+            "tooltip_display": {
+                "hidden_components": [
+                    "trim"
+                ]
+            }
+        }
+    }
+}

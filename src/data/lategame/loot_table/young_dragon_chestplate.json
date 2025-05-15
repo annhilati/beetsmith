@@ -1,0 +1,87 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:leather_chestplate",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Young Dragon Chestplate"
+                                },
+                                "minecraft:dyed_color": 0,
+                                "minecraft:glider": {},
+                                "minecraft:lore": [
+                                    [
+                                        {
+                                            "text": ""
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "color": "gold",
+                                            "italic": false,
+                                            "text": "Item Ability: Dragon's Flight"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "color": "gray",
+                                            "italic": false,
+                                            "text": "Can be used to fly like with an elytra."
+                                        }
+                                    ]
+                                ],
+                                "trim": {
+                                    "pattern": "flow",
+                                    "material": "minecraft:amethyst"
+                                }, 
+                                "minecraft:enchantable": {
+                                    "value": 12
+                                },
+                                "minecraft:repairable": {
+                                    "items": "phantom_membrane"
+                                },
+                                "minecraft:equippable": {
+                                    "slot": "chest",
+                                    "asset_id": "minecraft:leather",
+                                    "equip_sound": "item.armor.equip_gold",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true
+                                },
+                                "minecraft:max_damage": 520,
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "03827f7d-4bfe-43c4-941a-f26b0c97280c",
+                                        "type": "armor",
+                                        "amount": 8,
+                                        "operation": "add_value",
+                                        "slot": "chest"
+                                    },
+                                    {
+                                        "id": "a078b976-bbb7-4184-870d-20e67877f83b",
+                                        "type": "movement_speed",
+                                        "amount": 0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "chest"
+                                    }
+                                ],
+                                "tooltip_display": {
+                                    "hidden_components": ["dyed_color", "trim"]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

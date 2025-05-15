@@ -1,0 +1,69 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:golden_boots",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Boots of Divan"
+                                },
+                                "minecraft:enchantable": {
+                                    "value": 25
+                                },
+                                "minecraft:equippable": {
+                                    "asset_id": "minecraft:gold",
+                                    "slot": "feet",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true,
+                                    "equip_sound": "item.armor.equip_iron"
+                                },
+                                "minecraft:max_damage": 417,
+                                "minecraft:rarity": "epic",
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "262f4f01-8faa-4079-9d08-3855011b0760",
+                                        "type": "armor",
+                                        "amount": 3,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
+                                        "id": "4c4c29b2-5555-465a-bbff-7f79c9ec4678",
+                                        "type": "armor_toughness",
+                                        "amount": 2,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
+                                        "id": "2f2afbaa-7a1f-429f-1945-9862aa67ba3b",
+                                        "type": "luck",
+                                        "amount": 1,
+                                        "operation": "add_value",
+                                        "slot": "feet"
+                                    },
+                                    {
+                                        "id": "de916554-93d7-4bd9-8a14-c131d5f71cf6",
+                                        "type": "mining_efficiency",
+                                        "amount": 0.15,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "feet"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,75 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:netherite_leggings",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Young Dragon Leggings"
+                                },
+                                "minecraft:dyed_color": 0,
+                                "minecraft:enchantable": {
+                                    "value": 12
+                                },
+                                "minecraft:repairable": {
+                                    "items": "phantom_membrane"
+                                },
+                                "minecraft:equippable": {
+                                    "slot": "legs",
+                                    "asset_id": "minecraft:netherite",
+                                    "equip_sound": "item.armor.equip_gold",
+                                    "dispensable": true,
+                                    "swappable": true,
+                                    "damage_on_hurt": true
+                                },
+                                "trim": {
+                                    "pattern": "dune",
+                                    "material": "amethyst"
+                                },
+                                "minecraft:max_damage": 490,
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "7337f2fd-c024-4ad5-845e-93d1acba385f",
+                                        "type": "armor",
+                                        "amount": 6,
+                                        "operation": "add_value",
+                                        "slot": "legs"
+                                    },
+                                    {
+                                        "id": "241de6d7-1608-4a04-bc22-8fc35262fd26",
+                                        "type": "movement_speed",
+                                        "amount": 0.1,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "legs"
+                                    },
+                                    {
+                                        "id": "4c49d735-73e1-48e7-9448-468ba12cb415",
+                                        "type": "sneaking_speed",
+                                        "amount": 0.4,
+                                        "operation": "add_multiplied_base",
+                                        "slot": "legs"
+                                    }
+                                ],
+                                "tooltip_display": {
+                                    "hidden_components": [
+                                        "dyed_color",
+                                        "trim"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

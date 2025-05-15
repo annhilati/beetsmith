@@ -1,0 +1,112 @@
+{
+    "type": "minecraft:empty",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:goat_horn",
+                    "functions": [
+                        {
+                            "function": "minecraft:set_count",
+                            "count": 1
+                        },
+                        {
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:item_name": {
+                                    "color": "gold",
+                                    "italic": false,
+                                    "text": "Aspect of the Dragons"
+                                },
+                                "minecraft:lore": [
+                                    {
+                                        "text": ""
+                                    },
+                                    [
+                                        {
+                                            "color": "gold",
+                                            "italic": false,
+                                            "text": "Ability: Dragon Rage"
+                                        },
+                                        {
+                                            "color": "yellow",
+                                            "bold": true,
+                                            "italic": false,
+                                            "text": " RIGHT CLICK"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "color": "gray",
+                                            "italic": false,
+                                            "text": "All Monsters in front of you take "
+                                        },
+                                        {
+                                            "color": "red",
+                                            "text": "35 "
+                                        },
+                                        {
+                                            "color": "gray",
+                                            "italic": false,
+                                            "text": "damage."
+                                        }
+                                    ],
+                                    {
+                                        "color": "dark_gray",
+                                        "italic": false,
+                                        "text": "Cooldown: 30s"
+                                    }
+                                ],
+                                "minecraft:item_model": "diamond_sword",
+                                "minecraft:instrument": {
+                                    "range": 10,
+                                    "description": {
+                                        "text": "Legendary Sword",
+                                        "color": "dark_gray"
+                                    },
+                                    "sound_event": "intentionally_empty",
+                                    "use_duration": 0.001
+                                },
+                                "minecraft:custom_data": "{ability:\"rage\"}",
+                                "minecraft:use_cooldown": {
+                                    "seconds": 30,
+                                    "cooldown_group": "lategame:aspect_of_the_dragons"
+                                },
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "id": "base_attack_damage",
+                                        "amount": 7.5,
+                                        "type": "minecraft:attack_damage",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    },
+                                    {
+                                        "id": "base_attack_speed",
+                                        "amount": -2.4,
+                                        "type": "minecraft:attack_speed",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    }
+                                ],
+                                "enchantable": {
+                                    "value": 14
+                                },
+                                "tool": {
+                                    "rules": [],
+                                    "can_destroy_blocks_in_creative": false
+                                },
+                                "max_damage": 2155,
+                                "weapon": {
+                                    "item_damage_per_attack": 1
+                                },
+                                "damage": 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

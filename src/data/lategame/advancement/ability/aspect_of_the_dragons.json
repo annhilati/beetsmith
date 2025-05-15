@@ -1,0 +1,9 @@
+{
+	"criteria": { "use_item": {
+		"trigger": "minecraft:using_item",
+		"conditions": { "item": { "predicates": {
+			"minecraft:custom_data": {"ability":"rage"}
+		}}}
+	}},
+	"rewards": { "function": "lategame:abilities/aspect_of_the_dragons" }
+}

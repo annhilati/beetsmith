@@ -6,3 +6,4 @@
 *.py linguist-detectable=true
 
 max_damage.py linguist-detectable=false
+vanadium linguist-detectable=false
