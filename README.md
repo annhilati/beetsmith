@@ -1,6 +1,6 @@
 # lategame-equipment
 
 ### Build
-````bat
+```bat
 beet build
 ```
