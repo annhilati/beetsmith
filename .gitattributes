@@ -3,4 +3,6 @@
 *.conf linguist-detectable=true
 *.conf linguist-language=HOCON
 
-*.py linguist-detectable=false
+*.py linguist-detectable=true
+
+max_damage.py linguist-detectable=false

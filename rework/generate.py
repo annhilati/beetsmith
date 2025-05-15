@@ -1,9 +1,13 @@
 from beet import DataPack, Function
 
-dp = DataPack(name="Lategame Equipment")
+dp = DataPack(name="Lategame Equipment",
+              pack_format=61,
+              description="""\u00A76    Lategame Equipment    \n\u00A77     - Pack by \u00A7eAnnhilati\u00A77 -""")
 
 dp["itemlib:prevent_placement"] = Function([
-    """execute as @a[gamemode=survival,tag=!preventPlacement] if items entity @s weapon.* *[custom_data={prevent_placement:true\}] run tellraw @s {"text":"You were temporarily set to adventure mode to prevent you from placing a block-based item. Take the item out of your hand to return to suvival mode!","color":"red"}"""
+    """execute as @a[gamemode=survival,tag=!preventPlacement] if items entity @s weapon.* *[custom_data={prevent_placement:true}] run tellraw @s {"text":"You were temporarily set to adventure mode to prevent you from placing a block-based item. Take the item out of your hand to return to suvival mode!","color":"red"}""",
     """execute as @a[tag=preventPlacement] run gamemode adventure @s""",
     """execute as @a[tag=preventPlacement] unless items entity @s weapon.* *[custom_data={prevent_placement:true}] run gamemode survival""",
     """execute as @a[tag=preventPlacement] unless items entity @s weapon.* *[custom_data={prevent_placement:true}] run tag @s remove preventPlacement"""])
+
+dp.save(overwrite=True)
