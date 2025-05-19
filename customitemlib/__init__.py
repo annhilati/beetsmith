@@ -1,3 +1,4 @@
-from .customitem import CustomItem
+from .customitem import *
+from .items import *
 
-__all__ = ["CustomItem"]
+__all__ = ["Material"]

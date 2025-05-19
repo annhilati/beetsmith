@@ -1,87 +1,80 @@
 import json
 from pydantic import BaseModel
 
-TYPE_FOR_MATERIAL = "minecraft:music_disc_11"
-
 class ItemComponents(BaseModel):
     """
     Current version: 1.21.5
     """
-    item_name: str | dict = None
+    attribute_modifier: list[dict] = None
+    damage: int = None
     item_model: str = None
+    item_name: str | dict = None
     jukebox_playable: str = None
+    max_damage: int = None
     profile: dict = None
+    tool: dict = None
+    weapon: dict = None
 
 class CustomItem():
-    def __init__(self, name: str | dict, model: str, type: str = "material"):
+    "Data model representing a custom item"
+    def __init__(self, name: str | dict, model: str):
         """
-        Creates a data model of a custom item
+        Data model representing a custom item
 
-        #### Arguments
-            - name (str | dict): The items name
-            - model (str): The items model. Refers to a asseted model
-            - type (str): A predefined item type. One of `material`
-        
-        #### Settings
-            - headtexture (str): The items texture as encoded base64, if it has the player head model
+        #### Parameters
+            - name (str | dict): Name of the item as a plain string or text component as a dict
+            - model (str): Asset name of the items model
+
+        #### Modifier
+            Can be set by asigning a value to these properties
+            - headtexture (str): The items texture if it has a player head model as encoded base64
+            - weapon
         """
-        
-        #self.components_overwrite = {}
 
-        self.name = name
-        self.model = model
-        self.headtexture: str = None
+        self.item = "minecraft:music_disc_11"
+        self.removed_components = ["jukebox_playable"]
+        self.components = ItemComponents()
+        self.components.item_name = name
+        self.components.item_model = model
 
-        if type in ["material"]:
-            self.type = type
-        else:
-            raise ValueError
-    
     @property
-    def components(self) -> dict:
-
-        # ╭────────────────────────────────────────────────────────────╮
-        # │                      Set ItemComponents                    │ 
-        # ╰────────────────────────────────────────────────────────────╯
-        components = ItemComponents()
-        components.item_name = self.name
-        components.item_model = self.model
-
-        if self.headtexture:
-            components.profile = {"properties": [{"name": "texture", "value": self.headtexture}]}
-
-        # ╭────────────────────────────────────────────────────────────╮
-        # │               Build dict from ItemComponents               │ 
-        # ╰────────────────────────────────────────────────────────────╯
-        component_stack = components.model_dump()
-        
-        # Remove components unset in the ItemComponents abstraction
-        unset_components = [key for key, value in components.model_dump().items() if value is None]
-        for component in unset_components:
-            component_stack.pop(component)
-
-        # Remove components
-        removed_components = []
-
-        match self.type:
-            case "material":
-                removed_components.append("jukebox_playable")
-            case _:
-                raise ValueError
-        
-        for component in removed_components:
-            component_stack[f"!{component}"] = {}
-        
-        return component_stack
+    def headtexture(self):
+        if self.components.profile:
+            return self.components.profile["properties"][0]["value"]
+        return None
     
-    def componentsJSON(self, indent: int = 4) -> str:
-        return json.dumps(self.components, indent=indent, ensure_ascii=False)
+    @headtexture.setter
+    def headtexture(self, headtexture: str):
+        self.components.profile = {"properties": [{"name": "texture", "value": headtexture}]}
     
     @property
     def item(self) -> str:
+        return self._item
+    
+    @item.setter
+    def item(self, item: str):
+        self._item = item
+    
+    def set_weapon(self, max_damage: int, item_damage_per_attack: int = 1):
+        self.components.weapon = {"item_damage_per_attack": item_damage_per_attack}
+        self.components.max_damage = max_damage
+        self.components.damage = 0
+        self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
+    
+    
+    def __iter__(self) -> dict:
+        components = self.components.model_dump()
+
+        # Remove components unset in the ItemComponents abstraction
+        unset_components = [key for key, value in self.components.model_dump().items() if value is None]
+        for component in unset_components:
+            components.pop(component)
         
-        match self.type:
-            case "material":
-                self.item = TYPE_FOR_MATERIAL
-            case _:
-                raise ValueError
+        # Remove components
+        for component in self.removed_components:
+            components[f"!{component}"] = {}
+      
+        return iter(components.items())
+    
+    def componentsJSON(self, indent: int = 4) -> str:
+        return json.dumps(dict(self), indent=indent, ensure_ascii=False)
