@@ -11,7 +11,10 @@ class ItemComponents(BaseModel):
     item_name: str | dict = None
     jukebox_playable: str = None
     max_damage: int = None
+    max_stack_size: int = None
     profile: dict = None
+    rarity: str = None
+    repairable: dict = None
     tool: dict = None
     weapon: dict = None
 
@@ -36,7 +39,18 @@ class CustomItem():
         self.components = ItemComponents()
         self.components.item_name = name
         self.components.item_model = model
+        self.components.max_stack_size = 64
 
+    @property
+    def rarity(self):
+        if self.components.rarity:
+            return self.components.rarity
+        return "common"
+    
+    @rarity.setter
+    def rarity(self, rarity: str):
+        self.components.rarity = rarity
+    
     @property
     def headtexture(self):
         if self.components.profile:
@@ -55,13 +69,30 @@ class CustomItem():
     def item(self, item: str):
         self._item = item
     
-    def set_weapon(self, max_damage: int, item_damage_per_attack: int = 1):
+    def set_weapon(self, max_damage: int, attack_damage: float, attack_speed: float, repair_materials: list[str] = [], item_damage_per_attack: int = 1):
+        self.components.max_stack_size = 1
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack}
         self.components.max_damage = max_damage
         self.components.damage = 0
         self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
+        self.components.repairable = {"items": repair_materials}
+        self.components.attribute_modifier = [] if self.components.attribute_modifier is None else self.components.attribute_modifier
+        self.components.attribute_modifier.append({
+                                        "id": "base_attack_damage",
+                                        "amount": attack_damage - 1,
+                                        "type": "minecraft:attack_damage",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    })
+        self.components.attribute_modifier.append({
+                                        "id": "base_attack_speed",
+                                        "amount": attack_speed - 4,
+                                        "type": "minecraft:attack_speed",
+                                        "operation": "add_value",
+                                        "slot": "mainhand"
+                                    })
     
-    
+
     def __iter__(self) -> dict:
         components = self.components.model_dump()
 
