@@ -1,3 +1,7 @@
+# https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
+# https://minecraft.wiki/w/Data_component_format#List_of_components
+# TODO: Armor, Armorsets, Food, Abilities
+
 import json
 from pydantic import BaseModel
 
@@ -33,7 +37,10 @@ class CustomItem():
 
         #### Modifier
             Can be set by asigning a value to these properties
+            - damagable
+            - enchantable
             - headtexture (str): The items texture if it has a player head model as encoded base64
+            - rarity
             - weapon
         """
 
@@ -79,6 +86,17 @@ class CustomItem():
     @enchantable.setter
     def enchantable(self, enchantability: int):
         self.components.enchantable = {"value": enchantability}
+
+    @property
+    def rarity(self) -> int:
+        return self.components.rarity or None
+    
+    @rarity.setter
+    def rarity(self, rarity: str):
+        if rarity in ["common", "uncommon", "rare", "epic"]:
+            self.components.rarity = rarity
+        else:
+            raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
 
     def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "intentionally_empty", repair_materials: list[str] = 0):
         self.components.break_sound = break_sound
