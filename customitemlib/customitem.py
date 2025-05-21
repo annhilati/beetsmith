@@ -6,6 +6,7 @@ class ItemComponents(BaseModel):
     Current version: 1.21.5
     """
     attribute_modifier: list[dict] = None
+    break_sound: str = None
     damage: int = None
     item_model: str = None
     item_name: str | dict = None
@@ -68,15 +69,19 @@ class CustomItem():
     @item.setter
     def item(self, item: str):
         self._item = item
-    
-    def set_weapon(self, max_damage: int, attack_damage: float, attack_speed: float, repair_materials: list[str] = [], item_damage_per_attack: int = 1):
-        self.components.max_stack_size = 1
-        self.components.weapon = {"item_damage_per_attack": item_damage_per_attack}
-        self.components.max_damage = max_damage
+
+    def damagable(self, max_durability: int, break_sound: str = "intentionally_empty", repair_materials: list[str] = 0):
+        self.components.break_sound = break_sound
         self.components.damage = 0
-        self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
+        self.components.max_damage = max_durability
+        self.components.max_stack_size = 1
         self.components.repairable = {"items": repair_materials}
-        self.components.attribute_modifier = [] if self.components.attribute_modifier is None else self.components.attribute_modifier
+        self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
+
+    
+    def weapon(self, max_durability: int, attack_damage: float, attack_speed: float,  break_sound: str, repair_materials: list[str] = [], disable_blocking: int = 0, item_damage_per_attack: int = 1):
+        self.damagable(max_durability=max_durability, break_sound=break_sound, repair_materials=repair_materials)
+        self.components.attribute_modifier = self.components.attribute_modifier or [] # ersetzt alles was "falsy" ist (False, None, []).
         self.components.attribute_modifier.append({
                                         "id": "base_attack_damage",
                                         "amount": attack_damage - 1,
@@ -91,6 +96,8 @@ class CustomItem():
                                         "operation": "add_value",
                                         "slot": "mainhand"
                                     })
+        self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
+        self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
     
 
     def __iter__(self) -> dict:
