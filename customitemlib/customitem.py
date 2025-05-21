@@ -8,6 +8,7 @@ class ItemComponents(BaseModel):
     attribute_modifier: list[dict] = None
     break_sound: str = None
     damage: int = None
+    enchantable: dict = None
     item_model: str = None
     item_name: str | dict = None
     jukebox_playable: str = None
@@ -17,6 +18,7 @@ class ItemComponents(BaseModel):
     rarity: str = None
     repairable: dict = None
     tool: dict = None
+    unbreakable: dict = None
     weapon: dict = None
 
 class CustomItem():
@@ -35,7 +37,7 @@ class CustomItem():
             - weapon
         """
 
-        self.item = "minecraft:music_disc_11"
+        self._item = "minecraft:music_disc_11"
         self.removed_components = ["jukebox_playable"]
         self.components = ItemComponents()
         self.components.item_name = name
@@ -70,12 +72,22 @@ class CustomItem():
     def item(self, item: str):
         self._item = item
 
-    def damagable(self, max_durability: int, break_sound: str = "intentionally_empty", repair_materials: list[str] = 0):
+    @property
+    def enchantable(self) -> int:
+        return self.components.enchantable["value"] or None
+    
+    @enchantable.setter
+    def enchantable(self, enchantability: int):
+        self.components.enchantable = {"value": enchantability}
+
+    def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "intentionally_empty", repair_materials: list[str] = 0):
         self.components.break_sound = break_sound
         self.components.damage = 0
         self.components.max_damage = max_durability
         self.components.max_stack_size = 1
         self.components.repairable = {"items": repair_materials}
+        if unbreakable:
+            self.components.unbreakable = {}
         self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
 
     
