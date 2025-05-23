@@ -1,21 +1,22 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
-# TODO: Armor, Armorsets, Food, Abilities, Lore, load name and lore from stringified json or json files
+# TODO: Armor, Armorsets, Food, Abilities, Lore, load name and lore from stringified json or json files, to created files and rework environment_resistences()
 
 import json
 from .components import ItemComponents
 from .lib import *
-from beet import ItemTag, LootTable, DamageTypeTag
+from beet import *
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
     # Version: 1.21.5
-    def __init__(self, name: str | dict, model: str):
+    def __init__(self, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
 
         #### Parameters
             - name (str | dict): Name of the item as a plain string or text component as a dict
             - model (str): Asset name of the items model
+            - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
 
         #### Templates (as Methods)
             - damagable
@@ -36,9 +37,12 @@ class CustomItem():
         "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
         self.tags: list[str] = []
         "List of tags the custom items needs to have including namespace"
+        #self.additional_files = []
 
         self.components.item_name = name
         self.components.item_model = ensureResourceLocation(model)
+        if texture:
+            self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
         self.components.max_stack_size = 64
 
     def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
@@ -55,7 +59,7 @@ class CustomItem():
         if unbreakable: 
             self.components.unbreakable = {}
         else:
-            self.components.break_sound = break_sound
+            self.components.break_sound = ensureResourceLocation(break_sound)
             self.components.damage = 0
             self.components.max_damage = max_durability
             self.components.repairable = {"items": repair_materials}
@@ -95,28 +99,21 @@ class CustomItem():
         self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
         self.tags.append("minecraft:swords")
-    
-    @property
-    def headtexture(self):
-        if self.components.profile:
-            return self.components.profile["properties"][0]["value"]
-        return None
-    
-    @headtexture.setter
-    def headtexture(self, headtexture: str):
-        self.components.profile = {"properties": [{"name": "texture", "value": headtexture}]}
 
     def enchantable(self, enchantability: int, enchantable_tag: str):
-        self.components.enchantable = {"value": enchantability}
-        self.tags.append(enchantable_tag)
-        # Including enchantable/
+        """
+        Sets the custom item's enchantability properties
 
-    @property
-    def rarity(self) -> int:
-        return self.components.rarity or None
+        #### Parameters:
+            - enchantability (int): Metric for how high the quality of enchantments is when enchanting (diamond armor has 10, gold armor has 25)
+            - enchantable_tag (str): A [tag that specifies what enchantments the item can get](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable) led by `enchantable/`
+        """
+        self.components.enchantable = {"value": enchantability}
+        self.tags.append(ensureResourceLocation(enchantable_tag))
+        # Needs to include enchantable/
     
-    @rarity.setter
     def rarity(self, rarity: str):
+        "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
         else:
@@ -127,6 +124,7 @@ class CustomItem():
             damageTypeTag = DamageTypeTag({
                 "values": ["#minecraft:is_fire", "#minecraft:is_explosion"]
             })
+            return damageTypeTag
         if fire:
             self.components.damage_resistent = {"types": "#minecraft:is_fire"}
         if explosions:
