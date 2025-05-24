@@ -9,7 +9,7 @@ from .lib import *
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
     # Version: 1.21.5
-    def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
+    def __init__(self, id: ResourceLocation, name: str | dict, model: ResourceLocation[beet.ItemModel], texture: str = None):
         """
         Data model representing a custom item
 
@@ -28,19 +28,23 @@ class CustomItem():
             - weapon
         """
 
-        self.id: str = ensureResourceLocation(id)
+        self.id = ResourceLocation(id)
         "Namespaced id of the item for meta files"
+
         self.item: str = "minecraft:music_disc_11"
         "The custom items hardcoded item type"
+
         self.removed_components: list[str] = ["jukebox_playable"]
         "List of removed components"
+        
         self.components = ItemComponents()
         "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
-        self.tags: list[str] = []
-        "List of tags the custom items needs to have including namespace"
+        
+        self.tags: list[ResourceLocation[beet.ItemTag]] = []
+        "List of item tags the custom items needs to have"
 
         self.components.item_name = name
-        self.components.item_model = ensureResourceLocation(model)
+        self.components.item_model = ResourceLocation(model)
         self.components.max_stack_size = 64
         if texture:
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
@@ -49,7 +53,7 @@ class CustomItem():
     # │                          Templates                         │ 
     # ╰────────────────────────────────────────────────────────────╯
     
-    def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: ResourceLocation[SoundEvent] = "entity.item.break", repair_materials: list[ResourceLocation[Item]] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
 
@@ -63,37 +67,33 @@ class CustomItem():
         if unbreakable: 
             self.components.unbreakable = {}
         else:
-            self.components.break_sound = ensureResourceLocation(break_sound)
+            self.components.break_sound = ResourceLocation(break_sound)
             self.components.damage = 0
             self.components.max_damage = max_durability
-            self.components.repairable = {"items": repair_materials}
+            self.components.repairable = {"items": [ResourceLocation(item) for item in repair_materials]}
             self.components.repair_cost = additional_repair_cost
             self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
 
-    def weapon(self, max_durability: int, attack_damage: float, attack_speed: float, break_sound: str, repair_materials: list[str] = [], disable_blocking: float = 0, item_damage_per_attack: int = 1):
+    def weapon(self, attack_damage: float, attack_speed: float, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
         Set the custom items weapon properties
 
         #### Parameters:
-            - max_durability (int): The amount of actions the item can perform until it breaks
             - attack_damage (int): The amount of damage the item does including damage done by empty hand
             - attack_speed (int): The amount of fully charged attacks the item canperform per second
-            - break_sound (str): A [sound event](https://minecraft.wiki/w/Sounds.json#Sound_events) played when the item breaks
-            - repair_materials (list[str]): List of materials, stated by item ids, which the item can be repaired with in an anvil
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
         """
-        self.damagable(max_durability=max_durability, break_sound=break_sound, repair_materials=repair_materials)
-        self.components.attribute_modifier = self.components.attribute_modifier or [] # ersetzt alles was "falsy" ist (False, None, []).
-        self.components.attribute_modifier.append({
+        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
+        self.components.attribute_modifiers.append({
                                         "id": "base_attack_damage",
                                         "amount": attack_damage - 1,
                                         "type": "minecraft:attack_damage",
                                         "operation": "add_value",
                                         "slot": "mainhand"
                                     })
-        self.components.attribute_modifier.append({
+        self.components.attribute_modifiers.append({
                                         "id": "base_attack_speed",
                                         "amount": attack_speed - 4,
                                         "type": "minecraft:attack_speed",
@@ -104,7 +104,7 @@ class CustomItem():
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
         self.tags.append("minecraft:swords")
 
-    def enchantable(self, enchantability: int, enchantable_tag: str):
+    def enchantable(self, enchantability: int, enchantable_tag: ResourceLocation[beet.ItemTag]):
         """
         Sets the custom item's enchantability properties
 
@@ -114,7 +114,7 @@ class CustomItem():
                 - One of `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon` or another non-vanilla tag
         """
         self.components.enchantable = {"value": enchantability}
-        self.tags.append(ensureResourceLocation(enchantable_tag)) # Needs to include enchantable/
+        self.tags.append(ResourceLocation(enchantable_tag)) # Needs to include enchantable/
     
     def rarity(self, rarity: str):
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
@@ -198,7 +198,7 @@ class CustomItem():
                 "replace": False,
                 "values": [self.item]
             }
-            files.append(AdditionalFile(type=beet.ItemTag, name=ensureResourceLocation(tag), content=tagObj))
+            files.append(AdditionalFile(type=beet.ItemTag, name=str(tag), content=tagObj))
 
         return files
     
