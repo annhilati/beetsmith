@@ -22,7 +22,7 @@ class CustomItem():
         #### Templates (as Methods)
             - damagable
             - enchantable
-            - environment_resistence
+            - environment_resistance
             - headtexture (str)
             - rarity (str)
             - weapon
@@ -42,6 +42,8 @@ class CustomItem():
         
         self.tags: list[str] = []
         "List of item tags the custom items needs to have"
+
+        self._additional_files: list[AdditionalFile] = []
 
         self.components.item_name = name
         self.components.item_model = resourceLocation(model)
@@ -75,13 +77,14 @@ class CustomItem():
             self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
 
-    def weapon(self, attack_damage: float, attack_speed: float, disable_blocking: float = 0, item_damage_per_attack: int = 1):
+    def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
         Set the custom items weapon properties
 
         #### Parameters:
             - attack_damage (int): The amount of damage the item does including damage done by empty hand
             - attack_speed (int): The amount of fully charged attacks the item canperform per second
+            - can_sweep (bool): Whether the weapon can perform sweep attacks
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
         """
@@ -102,7 +105,8 @@ class CustomItem():
                                     })
         self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
-        self.tags.append("minecraft:swords")
+        if can_sweep:
+            self.tags.append("minecraft:swords")
 
     def enchantable(self, enchantability: int, enchantable_tag: str):
         """
@@ -124,22 +128,21 @@ class CustomItem():
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
         
-    # def environment_resistence(self, fire: bool, explosions: bool):
-    #     if fire and explosions:
-    #         damageTypeTag = DamageTypeTag({
-    #             "values": ["#minecraft:is_fire", "#minecraft:is_explosion"]
-    #         })
-    #         return damageTypeTag
-    #     if fire:
-    #         self.components.damage_resistent = {"types": "#minecraft:is_fire"}
-    #     if explosions:
-    #         self.components.damage_resistent = {"types": "#minecraft:is_explosion"}
+    def environment_resistance(self, fire: bool, explosions: bool) -> None:
+        if fire and explosions:
+            tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
+            self._additional_files.append(AdditionalFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
+            self.components.damage_resistant = {"types": f"#{self.id}"}
+        elif fire:
+            self.components.damage_resistant = {"types": "#minecraft:is_fire"}
+        elif explosions:
+            self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
     # ╭────────────────────────────────────────────────────────────╮
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<CustomItem '{self.id}' ({self.item} with {len(self.component_data())} components)>"
 
     def component_data(self) -> dict:
@@ -190,15 +193,17 @@ class CustomItem():
             tag_data = {"replace": False, "values": [self.item]}
             files.append(AdditionalFile(registry=beet.ItemTag, name=tag, content=tag_data))
 
+        files.extend(self._additional_files)
+
         return files
     
     def implement(self, datapack: beet.DataPack) -> None:
         """
-        Implement the custom item into a datapack
+        Implement the custom item into a beet datapack
         """
 
         # Loot Table
-        datapack[self.id] = self.lootTable()
+        datapack[self.id] = self.loot_table()
 
-        for file in self.generate_additional_files():
+        for file in self.additional_files():
             datapack[file.name] = file.registry(file.content)

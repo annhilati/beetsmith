@@ -9,7 +9,7 @@ class ItemComponents(BaseModel):
     attribute_modifiers: list[dict] = None
     break_sound: str = None
     damage: int = None
-    damage_resistent: dict = None
+    damage_resistant: dict = None
     enchantable: dict = None
     item_model: str = None
     item_name: str | dict = None
