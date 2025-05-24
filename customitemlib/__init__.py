@@ -36,6 +36,9 @@ def main(ctx: Context):
 ```
 """
 
-from .customitem import *
+__minecraft_game_version__ = "1.21.5"
+__minecraft_data_version__ = 71
 
-__all__ = ["Material"]
+from .customitem import *
+from .components import *
+from .lib import *

@@ -3,12 +3,12 @@
 import json
 import beet
 import uuid
+from typing import Literal
 from .components import *
 from .lib import *
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
-    # Version: 1.21.5
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
@@ -45,7 +45,7 @@ class CustomItem():
 
         self._additional_files: list[AdditionalFile] = []
 
-        self.components.item_name = name
+        self.components.item_name = textComponent(name)
         self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64
         if texture:
@@ -54,6 +54,10 @@ class CustomItem():
     # ╭────────────────────────────────────────────────────────────╮
     # │                          Templates                         │ 
     # ╰────────────────────────────────────────────────────────────╯
+    
+    def lore(self, textcomponent: str | dict | list) -> None:
+        """Sets the custom items lore. The text component can be a string, a dict, a list or stringified JSON"""
+        self.components.lore = textComponent(textcomponent)
     
     def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
@@ -121,7 +125,7 @@ class CustomItem():
         self.components.enchantable = {"value": enchantability}
         self.tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
-    def rarity(self, rarity: str):
+    def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity

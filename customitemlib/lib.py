@@ -1,7 +1,7 @@
 import re
-import beet
+import json
 from pydantic import BaseModel
-from typing import Type
+from typing import Any, Type
 
 class AdditionalFile(BaseModel):
     registry: Type # tag, recipe, etc.
@@ -22,3 +22,14 @@ def resourceLocation(str: str):
         raise ValueError(f"Invalid ResourceLocation: {str}")
     
     return str
+
+def textComponent(obj: str | dict | list[Any]) -> str | dict | list[Any]:
+    if isinstance(obj, str):
+        try:
+            work = json.loads(obj)
+        except Exception as e:
+            work = obj
+    else:
+        work = obj
+    
+    return work
