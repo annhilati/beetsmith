@@ -20,3 +20,4 @@ def ensureResourceLocation(str: str) -> str:
         return f"minecraft:{str}"
     else:
         raise ValueError(f"{str} is not a valid resource location")
+

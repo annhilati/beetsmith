@@ -1,10 +1,10 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
-# TODO: Armor, Armorsets, Food, Abilities, Lore, load name and lore from stringified json or json files, rework environment_resistences()
 
 import json
-from .components import ItemComponents
+import beet
+import uuid
+from .components import *
 from .lib import *
-from beet import *
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
@@ -14,23 +14,22 @@ class CustomItem():
         Data model representing a custom item
 
         #### Parameters
-            - id (str): Namespaced id of the item for defining filenames
+            - id (str): Namespaced id of the item for meta files
             - name (str | dict): Name of the item as a plain string or text component as a dict
             - model (str): Asset name of the items model
             - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
 
         #### Templates (as Methods)
             - damagable
-            - weapon
             - enchantable
             - environment_resistence
-
-        #### Modifiers (as Memebrs)
             - headtexture (str)
             - rarity (str)
+            - weapon
         """
 
         self.id: str = ensureResourceLocation(id)
+        "Namespaced id of the item for meta files"
         self.item: str = "minecraft:music_disc_11"
         "The custom items hardcoded item type"
         self.removed_components: list[str] = ["jukebox_playable"]
@@ -39,14 +38,17 @@ class CustomItem():
         "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
         self.tags: list[str] = []
         "List of tags the custom items needs to have including namespace"
-        #self.additional_files = []
 
         self.components.item_name = name
         self.components.item_model = ensureResourceLocation(model)
+        self.components.max_stack_size = 64
         if texture:
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
-        self.components.max_stack_size = 64
 
+    # ╭────────────────────────────────────────────────────────────╮
+    # │                          Templates                         │ 
+    # ╰────────────────────────────────────────────────────────────╯
+    
     def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
@@ -108,11 +110,11 @@ class CustomItem():
 
         #### Parameters:
             - enchantability (int): Metric for how high the quality of enchantments is when enchanting (diamond armor has 10, gold armor has 25)
-            - enchantable_tag (str): A [tag that specifies what enchantments the item can get](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable) led by `enchantable/`
+            - enchantable_tag (str): A [tag that specifies what enchantments the item can get](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable) led by `enchantable/`  
+                - One of `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon` or another non-vanilla tag
         """
         self.components.enchantable = {"value": enchantability}
-        self.tags.append(ensureResourceLocation(enchantable_tag))
-        # Needs to include enchantable/
+        self.tags.append(ensureResourceLocation(enchantable_tag)) # Needs to include enchantable/
     
     def rarity(self, rarity: str):
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
@@ -132,6 +134,9 @@ class CustomItem():
     #     if explosions:
     #         self.components.damage_resistent = {"types": "#minecraft:is_explosion"}
 
+    # ╭────────────────────────────────────────────────────────────╮
+    # │                        Implementation                      │ 
+    # ╰────────────────────────────────────────────────────────────╯
 
     def __iter__(self) -> dict:
         components = self.components.model_dump()
@@ -153,7 +158,7 @@ class CustomItem():
     def componentsJSON(self, indent: int = 4) -> str:
         return json.dumps(self.componentsDict(), indent=indent, ensure_ascii=False)
     
-    def generateLootTable(self) -> LootTable:
+    def generateLootTable(self) -> beet.LootTable:
         "Generates a beet LootTable object. The loot table only contains the data about the custom item"
         # Version: 1.21.5
         json = {
@@ -176,7 +181,7 @@ class CustomItem():
             ]
         }
         
-        lt = LootTable(json)
+        lt = beet.LootTable(json)
         return lt
 
     def generate_additional_files(self) -> list[AdditionalFile]:
@@ -193,11 +198,11 @@ class CustomItem():
                 "replace": False,
                 "values": [self.item]
             }
-            files.append(AdditionalFile(type=ItemTag, name=ensureResourceLocation(tag), content=tagObj))
+            files.append(AdditionalFile(type=beet.ItemTag, name=ensureResourceLocation(tag), content=tagObj))
 
         return files
     
-    def implement(self, datapack: DataPack) -> None:
+    def implement(self, datapack: beet.DataPack) -> None:
         """
         Implement the custom item into a datapack
         """
