@@ -9,7 +9,7 @@ from .lib import *
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
     # Version: 1.21.5
-    def __init__(self, id: ResourceLocation, name: str | dict, model: ResourceLocation[beet.ItemModel], texture: str = None):
+    def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
 
@@ -28,7 +28,7 @@ class CustomItem():
             - weapon
         """
 
-        self.id = ResourceLocation(id)
+        self.id = resourceLocation(id)
         "Namespaced id of the item for meta files"
 
         self.item: str = "minecraft:music_disc_11"
@@ -40,11 +40,11 @@ class CustomItem():
         self.components = ItemComponents()
         "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
         
-        self.tags: list[ResourceLocation[beet.ItemTag]] = []
+        self.tags: list[str] = []
         "List of item tags the custom items needs to have"
 
         self.components.item_name = name
-        self.components.item_model = ResourceLocation(model)
+        self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64
         if texture:
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
@@ -53,7 +53,7 @@ class CustomItem():
     # │                          Templates                         │ 
     # ╰────────────────────────────────────────────────────────────╯
     
-    def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: ResourceLocation[SoundEvent] = "entity.item.break", repair_materials: list[ResourceLocation[Item]] = [], additional_repair_cost: int = 0):
+    def damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
 
@@ -67,10 +67,10 @@ class CustomItem():
         if unbreakable: 
             self.components.unbreakable = {}
         else:
-            self.components.break_sound = ResourceLocation(break_sound)
+            self.components.break_sound = resourceLocation(break_sound)
             self.components.damage = 0
             self.components.max_damage = max_durability
-            self.components.repairable = {"items": [ResourceLocation(item) for item in repair_materials]}
+            self.components.repairable = {"items": [resourceLocation(item) for item in repair_materials]}
             self.components.repair_cost = additional_repair_cost
             self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
@@ -104,17 +104,18 @@ class CustomItem():
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
         self.tags.append("minecraft:swords")
 
-    def enchantable(self, enchantability: int, enchantable_tag: ResourceLocation[beet.ItemTag]):
+    def enchantable(self, enchantability: int, enchantable_tag: str):
         """
         Sets the custom item's enchantability properties
 
         #### Parameters:
             - enchantability (int): Metric for how high the quality of enchantments is when enchanting (diamond armor has 10, gold armor has 25)
-            - enchantable_tag (str): A [tag that specifies what enchantments the item can get](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable) led by `enchantable/`  
-                - One of `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon` or another non-vanilla tag
+            - enchantable_tag (str): A [tag that specifies what enchantments the item can get](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable)
+                - No leading `#` required since this is not a tag refference 
+                - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
         self.components.enchantable = {"value": enchantability}
-        self.tags.append(ResourceLocation(enchantable_tag)) # Needs to include enchantable/
+        self.tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
     def rarity(self, rarity: str):
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
@@ -138,7 +139,8 @@ class CustomItem():
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    def __iter__(self) -> dict:
+    def component_data(self) -> dict:
+        "Returns the custom items complete component data"
         components = self.components.model_dump()
 
         # Remove components unset in the ItemComponents abstraction
@@ -152,39 +154,27 @@ class CustomItem():
       
         return iter(components.items())
     
-    def componentsDict(self) -> dict:
-        return dict(self)
-    
     def componentsJSON(self, indent: int = 4) -> str:
-        return json.dumps(self.componentsDict(), indent=indent, ensure_ascii=False)
+        "Returns a formatted stringified JSON of the complete component data"
+        return json.dumps(self.component_data(), indent=indent, ensure_ascii=False)
     
-    def generateLootTable(self) -> beet.LootTable:
-        "Generates a beet LootTable object. The loot table only contains the data about the custom item"
+    def lootTable(self) -> beet.LootTable:
+        "Returns a minimal beet loot table object of the custom item with all component data"
         # Version: 1.21.5
         json = {
-            "pools": [
-                {
-                    "rolls": 1,
-                    "entries": [
-                        {
-                            "type": "minecraft:item",
-                            "name": self.item,
-                            "functions": [
-                                {
-                                "function": "minecraft:set_components",
-                                "components": dict(self)
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
+            "pools": [{
+                "rolls": 1,
+                "entries": [{
+                    "type": "minecraft:item",
+                    "name": self.item,
+                    "functions": [{
+                        "function": "minecraft:set_components",
+                        "components": self.component_data()
+        }]}]}]}
         
-        lt = beet.LootTable(json)
-        return lt
+        return beet.LootTable(json)
 
-    def generate_additional_files(self) -> list[AdditionalFile]:
+    def additional_files(self) -> list[AdditionalFile]:
         """
         Generates a list of AdditionalFile models, that have all neccesarry data as their members
 
@@ -194,11 +184,8 @@ class CustomItem():
         """
         files = []
         for tag in self.tags:
-            tagObj = {
-                "replace": False,
-                "values": [self.item]
-            }
-            files.append(AdditionalFile(type=beet.ItemTag, name=str(tag), content=tagObj))
+            tag_data = {"replace": False, "values": [self.item]}
+            files.append(AdditionalFile(registry=beet.ItemTag, name=tag, content=tag_data))
 
         return files
     
@@ -207,7 +194,8 @@ class CustomItem():
         Implement the custom item into a datapack
         """
 
-        datapack[self.id] = self.generateLootTable()
+        # Loot Table
+        datapack[self.id] = self.lootTable()
 
         for file in self.generate_additional_files():
-            datapack[file.name] = file.type(file.content)
+            datapack[file.name] = file.registry(file.content)
