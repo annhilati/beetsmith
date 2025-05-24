@@ -139,6 +139,9 @@ class CustomItem():
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
 
+    def __str__(self):
+        return f"<CustomItem '{self.id}' ({self.item} with {len(self.component_data())} components)>"
+
     def component_data(self) -> dict:
         "Returns the custom items complete component data"
         components = self.components.model_dump()
@@ -152,13 +155,13 @@ class CustomItem():
         for component in self.removed_components:
             components[f"!{component}"] = {}
       
-        return iter(components.items())
+        return components
     
-    def componentsJSON(self, indent: int = 4) -> str:
+    def components_json(self, indent: int = 4) -> str:
         "Returns a formatted stringified JSON of the complete component data"
         return json.dumps(self.component_data(), indent=indent, ensure_ascii=False)
     
-    def lootTable(self) -> beet.LootTable:
+    def loot_table(self) -> beet.LootTable:
         "Returns a minimal beet loot table object of the custom item with all component data"
         # Version: 1.21.5
         json = {

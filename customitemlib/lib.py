@@ -1,12 +1,15 @@
 import re
 import beet
 from pydantic import BaseModel
-from typing import Type, Generic, TypeVar
+from typing import Type
 
 class AdditionalFile(BaseModel):
     registry: Type # tag, recipe, etc.
     name: str # namespaced id
     content: dict
+
+    def __str__(self):
+        return f"<{self.registry.__name__} '{self.name}'>"
 
 # T = TypeVar("T")
 def resourceLocation(str: str):
