@@ -1,5 +1,5 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
-# TODO: Armor, Armorsets, Food, Abilities, Lore, load name and lore from stringified json or json files, to created files and rework environment_resistences()
+# TODO: Armor, Armorsets, Food, Abilities, Lore, load name and lore from stringified json or json files, rework environment_resistences()
 
 import json
 from .components import ItemComponents
@@ -9,11 +9,12 @@ from beet import *
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
     # Version: 1.21.5
-    def __init__(self, name: str | dict, model: str, texture: str = None):
+    def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
 
         #### Parameters
+            - id (str): Namespaced id of the item for defining filenames
             - name (str | dict): Name of the item as a plain string or text component as a dict
             - model (str): Asset name of the items model
             - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
@@ -29,6 +30,7 @@ class CustomItem():
             - rarity (str)
         """
 
+        self.id: str = ensureResourceLocation(id)
         self.item: str = "minecraft:music_disc_11"
         "The custom items hardcoded item type"
         self.removed_components: list[str] = ["jukebox_playable"]
@@ -119,16 +121,16 @@ class CustomItem():
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
         
-    def environment_resistence(self, fire: bool, explosions: bool):
-        if fire and explosions:
-            damageTypeTag = DamageTypeTag({
-                "values": ["#minecraft:is_fire", "#minecraft:is_explosion"]
-            })
-            return damageTypeTag
-        if fire:
-            self.components.damage_resistent = {"types": "#minecraft:is_fire"}
-        if explosions:
-            self.components.damage_resistent = {"types": "#minecraft:is_explosion"}
+    # def environment_resistence(self, fire: bool, explosions: bool):
+    #     if fire and explosions:
+    #         damageTypeTag = DamageTypeTag({
+    #             "values": ["#minecraft:is_fire", "#minecraft:is_explosion"]
+    #         })
+    #         return damageTypeTag
+    #     if fire:
+    #         self.components.damage_resistent = {"types": "#minecraft:is_fire"}
+    #     if explosions:
+    #         self.components.damage_resistent = {"types": "#minecraft:is_explosion"}
 
 
     def __iter__(self) -> dict:
@@ -177,12 +179,30 @@ class CustomItem():
         lt = LootTable(json)
         return lt
 
-    def generateTags(self) -> list[tuple]:
-        tags = []
+    def generate_additional_files(self) -> list[AdditionalFile]:
+        """
+        Generates a list of AdditionalFile models, that have all neccesarry data as their members
+
+            - type (class): A beet class for a file
+            - name (str): The namespaced id of the file
+            - content (dict): The files content
+        """
+        files = []
         for tag in self.tags:
-            tagObj = ItemTag({
+            tagObj = {
                 "replace": False,
                 "values": [self.item]
-            })
-            tags.append(tuple((tag, tagObj)))
-        return tags
+            }
+            files.append(AdditionalFile(type=ItemTag, name=ensureResourceLocation(tag), content=tagObj))
+
+        return files
+    
+    def implement(self, datapack: DataPack) -> None:
+        """
+        Implement the custom item into a datapack
+        """
+
+        datapack[id] = self.generateLootTable()
+
+        for file in self.generate_additional_files():
+            datapack[file.name] = file.type(file.content)

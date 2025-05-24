@@ -2,10 +2,9 @@ from pydantic import BaseModel
 from typing import Type
 
 class AdditionalFile(BaseModel):
-    type: Type = None # tag, recipe, etc.
-    name: str = None # namespaced id
-    
-    content: dict = None
+    type: Type # tag, recipe, etc.
+    name: str # namespaced id
+    content: dict
 
 def ensureResourceLocation(str: str) -> str:
     for char in str.lower():
