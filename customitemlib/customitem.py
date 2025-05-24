@@ -202,7 +202,7 @@ class CustomItem():
         Implement the custom item into a datapack
         """
 
-        datapack[id] = self.generateLootTable()
+        datapack[self.id] = self.generateLootTable()
 
         for file in self.generate_additional_files():
             datapack[file.name] = file.type(file.content)

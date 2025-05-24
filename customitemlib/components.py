@@ -6,7 +6,7 @@ class ItemComponents(BaseModel):
     """
     # https://minecraft.wiki/w/Data_component_format#List_of_components
     # https://misode.github.io/changelog?tags=component
-    attribute_modifier: list[dict] = None
+    attribute_modifiers: list[dict] = None
     break_sound: str = None
     damage: int = None
     damage_resistent: dict = None
