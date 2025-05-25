@@ -1,5 +1,4 @@
 from beet import Context
-
 from customitemlib import CustomItem
 
 def main(ctx: Context):
@@ -11,6 +10,6 @@ def main(ctx: Context):
     item.enchantable(20, "enchantable/sharp_weapon")
     item.rarity("uncommon")
     item.environment_resistance(True, True)
-    item.right_click_ability(description="", cooldown=8, function="test:test")
+    item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
     item.implement(ctx.data)

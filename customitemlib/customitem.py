@@ -7,6 +7,8 @@ from typing import Literal
 from .components import *
 from .lib import *
 
+
+
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
@@ -108,9 +110,9 @@ class CustomItem():
                                         "operation": "add_value",
                                         "slot": "mainhand"
                                     })
-        self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
         if can_sweep:
+            self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
             self.tags.append("minecraft:swords")
 
     def enchantable(self, enchantability: int, enchantable_tag: str):
@@ -143,7 +145,18 @@ class CustomItem():
         elif explosions:
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
-    def right_click_ability(self, description: str | dict, cooldown: int, function: str, cooldown_group: str = None):
+    def right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = None):
+        """
+        **This feature is still experimentall and cause problems in combination with other items**
+
+        Sets a right click ability for the custom item
+
+        #### Parameters:
+            - description (str | dict | list[dict | list]): A text component. Behaves exactly like lore but can't be empty
+            - cooldown (int): The number of seconds the item can't be used again after using
+            - function (str): A resource location of a function that is called when using the ability
+            - cooldown (str): A group of items that share cooldown. Leave empty for this item to be unique
+        """
         trigger_advancement = self.id.replace(":", ":ability/", 1)
         main_function = self.id.replace(":", ":ability/", 1)
         ability_function = resourceLocation(function)
@@ -158,28 +171,60 @@ class CustomItem():
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": resourceLocation(cooldown_group)}
     
         # Cooldown Checker Function
-        self._additional_files.append(AdditionalFile(registry=beet.Function, name="customitemlib:load", content=[f"scoreboard objectives add {cooldown_score} dummy"]))
-        self._additional_files.append(AdditionalFile(registry=beet.Function, name="customitemlib:cooldown", content=[f"execute as @a[scores={{{cooldown_score}=1..}}] run scoreboard players remove @s {cooldown_score} 1"]))
-        self._additional_files.append(AdditionalFile(registry=beet.FunctionTag, name="minecraft:tick", content={"replace": False, "values": ["customitemlib:cooldown"]}))
-        self._additional_files.append(AdditionalFile(registry=beet.FunctionTag, name="minecraft:load", content={"replace": False, "values": ["customitemlib:load"]}))
+        self._additional_files.append(AdditionalFile(
+            registry=beet.Function,
+            name="customitemlib:load",
+            content=[
+                f"scoreboard objectives add {cooldown_score} dummy"
+            ]
+        ))
+        self._additional_files.append(AdditionalFile(
+            registry=beet.Function,
+            name="customitemlib:cooldown",
+            content=[
+                f"execute as @a[scores={{{cooldown_score}=1..}}] run scoreboard players remove @s {cooldown_score} 1"
+            ]
+        ))
+        self._additional_files.append(AdditionalFile(
+            registry=beet.FunctionTag,
+            name="minecraft:tick",
+            content={
+                "replace": False, "values": ["customitemlib:cooldown"]
+            }
+        ))
+        self._additional_files.append(AdditionalFile(
+            registry=beet.FunctionTag,
+            name="minecraft:load",
+            content={
+                "replace": False, "values": ["customitemlib:load"]
+            }
+        ))
 
         # Ability Trigger Advancement
-        self._additional_files.append(AdditionalFile(registry=beet.Advancement, name=trigger_advancement, content={
-            "criteria": { "use_item": {
-                "trigger": "minecraft:using_item",
-                "conditions": { "item": { "predicates": {
-                    "minecraft:custom_data": {"id": self.id}
-                }}}
-            }},
-            "rewards": { "function": main_function }
-        }))
+        self._additional_files.append(AdditionalFile(
+            registry=beet.Advancement,
+            name=trigger_advancement,
+            content={
+                "criteria": { "use_item": {
+                    "trigger": "minecraft:using_item",
+                    "conditions": { "item": { "predicates": {
+                        "minecraft:custom_data": {"id": self.id}
+                    }}}
+                }},
+                "rewards": { "function": main_function }
+            }
+        ))
 
         # Ability Main Function
-        self._additional_files.append(AdditionalFile(registry=beet.Function, name=main_function, content=[
-            f"execute if score @s {cooldown_score} matches 0 run function {ability_function}",
-            f"advancement revoke @s only {trigger_advancement}",
-            f"scoreboard players set @s {cooldown_score} {cooldown * 20}"
-        ]))
+        self._additional_files.append(AdditionalFile(
+            registry=beet.Function,
+            name=main_function,
+            content=[
+                f"execute if score @s {cooldown_score} matches 0 run function {ability_function}",
+                f"advancement revoke @s only {trigger_advancement}",
+                f"scoreboard players set @s {cooldown_score} {cooldown * 20}"
+            ]
+        ))
 
     # ╭────────────────────────────────────────────────────────────╮
     # │                        Implementation                      │ 
@@ -249,4 +294,9 @@ class CustomItem():
         datapack[self.id] = self.loot_table()
 
         for file in self.additional_files():
-            datapack[file.name] = file.registry(file.content)
+            if file.registry == beet.FunctionTag:
+                datapack.function_tags.setdefault(file.name).merge(file.registry(file.content)) # Can either merge or create function tags
+            if file.registry == beet.Function:
+                datapack.functions.setdefault(file.name).append(file.registry(file.content)) # Can either merge or create functions
+            else:
+                datapack[file.name] = file.registry(file.content)
