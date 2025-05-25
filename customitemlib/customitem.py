@@ -1,5 +1,6 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
 
+import warnings
 import json
 import beet
 import uuid
@@ -7,7 +8,8 @@ from typing import Literal
 from .components import *
 from .lib import *
 
-
+__minecraft_game_version__ = "1.21.5"
+__minecraft_data_version__ = 71
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes cosntructor"
@@ -289,6 +291,11 @@ class CustomItem():
         """
         Implement the custom item into a beet datapack
         """
+
+        pack_format = datapack.pack_format
+        if pack_format != __minecraft_data_version__:
+            warnings.warn(f"The datapack does not have the main pack format {__minecraft_data_version__}! Some content may not be loaded by Minecraft!", category=UserWarning)
+
 
         # Loot Table
         datapack[self.id] = self.loot_table()
