@@ -3,5 +3,5 @@
         "load": []
     },
     "pipeline": ["plugin.main"],
-    "output": "Lategame Equipment"
+    "output": "."
 }

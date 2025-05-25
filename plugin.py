@@ -11,5 +11,6 @@ def main(ctx: Context):
     item.enchantable(20, "enchantable/sharp_weapon")
     item.rarity("uncommon")
     item.environment_resistance(True, True)
+    item.right_click_ability(description="", cooldown=8, function="test:test")
 
     item.implement(ctx.data)

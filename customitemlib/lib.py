@@ -6,12 +6,11 @@ from typing import Any, Type
 class AdditionalFile(BaseModel):
     registry: Type # tag, recipe, etc.
     name: str # namespaced id
-    content: dict
+    content: dict | list[str]
 
     def __str__(self):
         return f"<{self.registry.__name__} '{self.name}'>"
 
-# T = TypeVar("T")
 def resourceLocation(str: str):
     "Ensures that the argument is formatted like a valid resource location and passes it on"
 
