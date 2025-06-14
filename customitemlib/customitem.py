@@ -97,21 +97,17 @@ class CustomItem():
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
         """
-        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
-        self.components.attribute_modifiers.append({
-                                        "id": "base_attack_damage",
-                                        "amount": attack_damage - 1,
-                                        "type": "minecraft:attack_damage",
-                                        "operation": "add_value",
-                                        "slot": "mainhand"
-                                    })
-        self.components.attribute_modifiers.append({
-                                        "id": "base_attack_speed",
-                                        "amount": attack_speed - 4,
-                                        "type": "minecraft:attack_speed",
-                                        "operation": "add_value",
-                                        "slot": "mainhand"
-                                    })
+        self.attribute_modifier(attribute="minecraft:attack_damage",
+                                value=attack_damage - 1,
+                                slot="mainhand",
+                                operation="add_value",
+                                id="base_attack_damage"
+                                )
+        self.attribute_modifier(attribute="minecraft:attack_speed",
+                                value=attack_speed - 4,
+                                slot="mainhand",
+                                operation="add_value",
+                                id="base_attack_speed")
         self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
         if can_sweep:
             self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
@@ -147,7 +143,7 @@ class CustomItem():
         elif explosions:
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
-    def right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = None):
+    def right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = str(uuid.uuid4()).replace("-", "")):
         """
         **This feature is still experimentall and cause problems in combination with other items**
 
@@ -157,7 +153,10 @@ class CustomItem():
             - description (str | dict | list[dict | list]): A text component. Behaves exactly like lore but can't be empty
             - cooldown (int): The number of seconds the item can't be used again after using
             - function (str): A resource location of a function that is called when using the ability
-            - cooldown (str): A group of items that share cooldown. Leave empty for this item to be unique
+            - cooldown_group (str): A group of items that share cooldown.
+                1. default: The item will share cooldown time with all items of the same type
+                2. (str): The item will share cooldown time with all items of this cooldown group
+                3. (None): Each instance of the item will have it's own unique cooldown
         """
         trigger_advancement = self.id.replace(":", ":ability/", 1)
         main_function = self.id.replace(":", ":ability/", 1)
@@ -227,6 +226,26 @@ class CustomItem():
                 f"scoreboard players set @s {cooldown_score} {cooldown * 20}"
             ]
         ))
+
+    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = str(uuid.uuid4())) -> None:
+        """
+        Adds a attribute modifier to the custom item
+
+        #### Parameters:
+            - attribute (str): The [name of the attribute](https://minecraft.wiki/w/Attribute#Attributes) to be modified
+            - slot (str): The slot where the modifier takes action (`any`, `hand`, `armor`, `mainhand`, `offhand`, `head`, `chest`, `legs`, `feet` or `body`)
+            - value (float): The amount or factor to modify the attribute with
+            - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
+            - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Should be a base stats id or unique 
+        """
+        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
+        self.components.attribute_modifiers.append({
+                                        "id": id,
+                                        "amount": value,
+                                        "type": attribute,
+                                        "operation": operation,
+                                        "slot": slot
+                                    })
 
     # ╭────────────────────────────────────────────────────────────╮
     # │                        Implementation                      │ 
@@ -298,12 +317,15 @@ class CustomItem():
 
 
         # Loot Table
-        datapack[self.id] = self.loot_table()
+        datapack[self.id.replace(":", ":item/", 1)] = self.loot_table()
 
         for file in self.additional_files():
+
             if file.registry == beet.FunctionTag:
                 datapack.function_tags.setdefault(file.name).merge(file.registry(file.content)) # Can either merge or create function tags
+            
             if file.registry == beet.Function:
                 datapack.functions.setdefault(file.name).append(file.registry(file.content)) # Can either merge or create functions
+            
             else:
                 datapack[file.name] = file.registry(file.content)
