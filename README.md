@@ -28,8 +28,3 @@ with a `beet.json`:
     "output": "Example output dir"
 }
 ```
-
-### Build
-```bat
-beet build
-```
