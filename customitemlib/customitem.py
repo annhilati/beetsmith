@@ -1,10 +1,11 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
 
-import warnings
 import json
 import yaml
 import beet
 import uuid
+import warnings
+import pathlib
 from typing import Literal
 from .components import *
 from .lib import *
@@ -331,11 +332,10 @@ class CustomItem():
             else:
                 datapack[file.name] = file.registry(file.content)
 
-    import yaml
-
     def load_item_from_yaml(file_path: str):
-        
-        globals_dict = globals()
+        """
+        Creates a CustomItem object from a file in a certain yaml based definition format
+        """
 
         with open(file_path, 'r') as f:
             data: dict = yaml.safe_load(f)
@@ -344,12 +344,22 @@ class CustomItem():
 
         for method_name, args in data["templates"].items():
             method = getattr(item, method_name, None)
-            if method is None:
-                raise AttributeError(f"'{item.__name__}' hat keine Methode '{method_name}'")
-            if not callable(method):
-                raise TypeError(f"'{method_name}' ist keine Methode")
+            if method is None or not callable(method):
+                raise ValueError(f"'{method_name}' is not a valid template")
             if not isinstance(args, dict):
-                raise ValueError(f"Argumente für '{method_name}' müssen ein Dict sein")
+                raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
             method(**args)
 
         return item
+    
+def load_dir_and_implement(dir_path: str, datapack: beet.DataPack) -> None:
+    directory = pathlib.Path(dir_path)
+    files = [str(p) for p in directory.glob("*.yml")] + [str(p) for p in directory.glob("*.yaml")]
+
+    for file in files:
+        try: 
+            item: CustomItem = CustomItem.load_item_from_yaml(file)
+            item.implement(datapack)
+
+        except Exception as e:
+            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)

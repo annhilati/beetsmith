@@ -5,4 +5,4 @@ templates:
   weapon:
     attack_damage: 10
     attack_speed: 2
-    can_sweep: false
+    #can_sweep: false
