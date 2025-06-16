@@ -2,6 +2,7 @@
 
 import warnings
 import json
+import yaml
 import beet
 import uuid
 from typing import Literal
@@ -329,3 +330,26 @@ class CustomItem():
             
             else:
                 datapack[file.name] = file.registry(file.content)
+
+    import yaml
+
+    def load_item_from_yaml(file_path: str):
+        
+        globals_dict = globals()
+
+        with open(file_path, 'r') as f:
+            data: dict = yaml.safe_load(f)
+
+        item = CustomItem(id=data["id"], name=data["name"], model=data["model"], texture=data.get("texture"))
+
+        for method_name, args in data["templates"].items():
+            method = getattr(item, method_name, None)
+            if method is None:
+                raise AttributeError(f"'{item.__name__}' hat keine Methode '{method_name}'")
+            if not callable(method):
+                raise TypeError(f"'{method_name}' ist keine Methode")
+            if not isinstance(args, dict):
+                raise ValueError(f"Argumente für '{method_name}' müssen ein Dict sein")
+            method(**args)
+
+        return item
