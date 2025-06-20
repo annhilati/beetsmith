@@ -12,5 +12,10 @@ def main(ctx: Context):
     # item.environment_resistance(True, True)
     # item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
-    # item.implement(ctx.data)
-    load_dir_and_implement(".", ctx.data)
+    item: CustomItem = CustomItem.create_from_yaml("test.yaml")
+
+    print(item)
+
+    for file in item.required_files:
+        print(file)
+

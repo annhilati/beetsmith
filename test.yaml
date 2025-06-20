@@ -2,7 +2,11 @@ id: custom:test
 name: "Test Item"
 model: "minecraft:diamond"
 templates:
-  weapon:
+  set_weapon:
     attack_damage: 10
     attack_speed: 2
-    #can_sweep: false
+    can_sweep: true
+  set_right_click_ability:
+    description: "Test"
+    cooldown: 8
+    function: "doesnt:exist"
