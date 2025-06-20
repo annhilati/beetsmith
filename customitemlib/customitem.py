@@ -49,7 +49,7 @@ class CustomItem():
         self.required_tags: list[str] = []
         "List of item tags the custom items hardcoded item needs to have"
 
-        self._required_files: list[RegistryEntry] = []
+        self._additional_required_files: list[RegistryEntry] = []
 
         self.components.item_name = textComponent(name)
         self.components.custom_data = {"id": self.id}
@@ -103,7 +103,7 @@ class CustomItem():
     def set_environment_resistance(self, fire: bool, explosions: bool) -> None:
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
-            self._required_files.append(RegistryEntry(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
+            self._additional_required_files.append(RegistryEntry(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         elif fire:
             self.components.damage_resistant = {"types": "#minecraft:is_fire"}
@@ -150,28 +150,28 @@ class CustomItem():
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": resourceLocation(cooldown_group)}
     
         # Cooldown Checker Function
-        self._required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryEntry(
             registry=beet.Function,
             name="customitemlib:load",
             content=[
                 f"scoreboard objectives add {cooldown_score} dummy"
             ]
         ))
-        self._required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryEntry(
             registry=beet.Function,
             name="customitemlib:cooldown",
             content=[
                 f"execute as @a[scores={{{cooldown_score}=1..}}] run scoreboard players remove @s {cooldown_score} 1"
             ]
         ))
-        self._required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryEntry(
             registry=beet.FunctionTag,
             name="minecraft:tick",
             content={
                 "replace": False, "values": ["customitemlib:cooldown"]
             }
         ))
-        self._required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryEntry(
             registry=beet.FunctionTag,
             name="minecraft:load",
             content={
@@ -180,7 +180,7 @@ class CustomItem():
         ))
 
         # Ability Trigger Advancement
-        self._required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryEntry(
             registry=beet.Advancement,
             name=trigger_advancement,
             content={
@@ -195,7 +195,7 @@ class CustomItem():
         ))
 
         # Ability Main Function
-        self._required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryEntry(
             registry=beet.Function,
             name=main_function,
             content=[
@@ -311,7 +311,7 @@ class CustomItem():
             files.append(RegistryEntry(registry=beet.ItemTag, name=tag, content=tag_data))
 
         # Explicitely needed files
-        files.extend(self._required_files)
+        files.extend(self._additional_required_files)
 
         return files
     

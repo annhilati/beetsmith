@@ -13,6 +13,7 @@ def main(ctx: Context):
     # item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
     item: CustomItem = CustomItem.create_from_yaml("test.yaml")
+    item.required_tags.append()
 
     print(item)
 
