@@ -140,7 +140,7 @@ class CustomItem():
         main_function = self.id.replace(":", ":ability/", 1)
         ability_function = resourceLocation(function)
 
-        # A UUID is used here because self.id can't be passed and stated in the methods's typing
+        # A UUID is used here because self.id can't be passed and stated in the methods's typing. Also notice #21
         if not cooldown_group:
             cooldown_group = self.id
         cooldown_score = cooldown_group.replace(":", ".")
