@@ -3,7 +3,7 @@ import json
 from pydantic import BaseModel
 from typing import Any, Type
 
-class RegistryEntry(BaseModel):
+class RegistryFile(BaseModel):
     registry: Type # tag, recipe, etc.
     name: str # namespaced id
     content: dict | list[str]

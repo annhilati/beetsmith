@@ -49,7 +49,7 @@ class CustomItem():
         self.required_tags: list[str] = []
         "List of item tags the custom items hardcoded item needs to have"
 
-        self._additional_required_files: list[RegistryEntry] = []
+        self._additional_required_files: list[RegistryFile] = []
 
         self.components.item_name = textComponent(name)
         self.components.custom_data = {"id": self.id}
@@ -103,7 +103,7 @@ class CustomItem():
     def set_environment_resistance(self, fire: bool, explosions: bool) -> None:
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
-            self._additional_required_files.append(RegistryEntry(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
+            self._additional_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         elif fire:
             self.components.damage_resistant = {"types": "#minecraft:is_fire"}
@@ -123,7 +123,7 @@ class CustomItem():
         
     def set_right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = str(uuid.uuid4()).replace("-", "")):
         """
-        **This feature is still experimentall and cause problems in combination with other items**
+        **This feature is still experimentall and may cause problems in combination with other items**
 
         Sets a right click ability for the custom item
 
@@ -139,6 +139,8 @@ class CustomItem():
         trigger_advancement = self.id.replace(":", ":ability/", 1)
         main_function = self.id.replace(":", ":ability/", 1)
         ability_function = resourceLocation(function)
+
+        # A UUID is used here because self.id can't be passed and stated in the methods's typing
         if not cooldown_group:
             cooldown_group = self.id
         cooldown_score = cooldown_group.replace(":", ".")
@@ -147,31 +149,31 @@ class CustomItem():
 
         self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
         
-        self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": resourceLocation(cooldown_group)}
+        self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
     
         # Cooldown Checker Function
-        self._additional_required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
             name="customitemlib:load",
             content=[
                 f"scoreboard objectives add {cooldown_score} dummy"
             ]
         ))
-        self._additional_required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
             name="customitemlib:cooldown",
             content=[
                 f"execute as @a[scores={{{cooldown_score}=1..}}] run scoreboard players remove @s {cooldown_score} 1"
             ]
         ))
-        self._additional_required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryFile(
             registry=beet.FunctionTag,
             name="minecraft:tick",
             content={
                 "replace": False, "values": ["customitemlib:cooldown"]
             }
         ))
-        self._additional_required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryFile(
             registry=beet.FunctionTag,
             name="minecraft:load",
             content={
@@ -180,7 +182,7 @@ class CustomItem():
         ))
 
         # Ability Trigger Advancement
-        self._additional_required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryFile(
             registry=beet.Advancement,
             name=trigger_advancement,
             content={
@@ -195,7 +197,7 @@ class CustomItem():
         ))
 
         # Ability Main Function
-        self._additional_required_files.append(RegistryEntry(
+        self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
             name=main_function,
             content=[
@@ -256,7 +258,6 @@ class CustomItem():
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-
     @property
     def components_data(self) -> dict:
         "Returns the custom items complete component data"
@@ -295,7 +296,7 @@ class CustomItem():
         return beet.LootTable(json)
 
     @property
-    def required_files(self) -> list[RegistryEntry]:
+    def required_files(self) -> list[RegistryFile]:
         """
         Generates a list of RegistryEntry objects, that have all neccesarry data for a file
 
@@ -308,7 +309,7 @@ class CustomItem():
         # Tags
         for tag in self.required_tags:
             tag_data = {"replace": False, "values": [self.item]}
-            files.append(RegistryEntry(registry=beet.ItemTag, name=tag, content=tag_data))
+            files.append(RegistryFile(registry=beet.ItemTag, name=tag, content=tag_data))
 
         # Explicitely needed files
         files.extend(self._additional_required_files)
@@ -325,10 +326,10 @@ class CustomItem():
             warnings.warn(f"The datapack does not have the main pack format {__minecraft_data_version__}! Some content may not be loaded by Minecraft!", category=UserWarning)
 
         # Loottable
-        datapack[self.id.replace(":", ":item/", 1)] = self.loot_table()
+        datapack[self.id.replace(":", ":item/", 1)] = self.loot_table
 
         # Required Files
-        for file in self.required_files():
+        for file in self.required_files:
 
             if file.registry == beet.FunctionTag:
                 datapack.function_tags.setdefault(file.name).merge(file.registry(file.content)) # Can either merge or create function tags
@@ -358,8 +359,8 @@ class CustomItem():
             method(**args)
 
         return item
-    
-def load_dir_and_implement(ctx: beet.Context, directory: str = "data/customitem") -> None:
+
+def load_dir_and_implement(directory: str, datapack: beet.DataPack) -> None:
     """
     Looks for yaml files in a directory and implements all of them into a contexts datapack
 
@@ -367,13 +368,13 @@ def load_dir_and_implement(ctx: beet.Context, directory: str = "data/customitem"
         - ctx (Context): A beet pipeline context
         - directory (str): Directory path in the contexts directory
     """
-    directory = ctx.directory / pathlib.Path(directory)
+    directory = pathlib.Path(directory)
     files = [str(p) for p in directory.glob("*.yml")] + [str(p) for p in directory.glob("*.yaml")]
 
     for file in files:
         try: 
             item: CustomItem = CustomItem.create_from_yaml(file)
-            item.implement(ctx.data)
+            item.implement(datapack)
 
         except Exception as e:
             warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)

@@ -3,9 +3,7 @@ test.py
 # Environment
 .vscode/
 
-
 # Build
 build_data_pack/
 .beet_cache/
 __pycache__/
-Lategame Equipment/
