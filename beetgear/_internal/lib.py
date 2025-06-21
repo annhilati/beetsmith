@@ -4,24 +4,16 @@ import string
 from pydantic import BaseModel
 from typing import Any, Type
 
-resourceLocationPattern = r"^#?([a-z0-9_\-.]+):([a-z0-9_\-\/\.]+)$"
-
-class RegistryFile(BaseModel):
-    registry: Type # tag, recipe, etc.
-    name: str # namespaced id
-    content: dict | list[str]
-
-    def __str__(self):
-        return f"<{self.registry.__name__} '{self.name}'>"
+resourceLocationPattern = r"^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?(?:\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?)*$" # currently: never leading special symbols
 
 def resourceLocation(str: str):
     "Ensures that the argument is formatted like a valid resource location and passes it on"
 
     if ":" not in str:
-        return f"minecraft:{str}"
+        str = "minecraft:" + str
     
     if not re.match(resourceLocationPattern, str):
-        raise ValueError(f"Invalid ResourceLocation: {str}")
+        raise ValueError(f"{str} does not match the pattern of resource loactions")
     
     return str
 

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Type
 
 class ItemComponents(BaseModel):
     # https://minecraft.wiki/w/Data_component_format#List_of_components
@@ -35,3 +36,11 @@ class ItemComponents(BaseModel):
     use_cooldown: dict = None
     use_remainder: dict = None
     weapon: dict = None
+
+class RegistryFile(BaseModel):
+    registry: Type # tag, recipe, etc.
+    name: str # namespaced id
+    content: dict | list[str]
+
+    def __str__(self):
+        return f"<{self.registry.__name__} '{self.name}'>"
