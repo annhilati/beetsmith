@@ -12,9 +12,11 @@ from .lib import *
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
+technical_namespace = "customitemlib"
+ability_name = "{technical_namespace}:{namespace}/ability/{loose_id}"
 
 class CustomItem():
-    "Data model representing a custom item. For details see the classes cosntructor"
+    "Data model representing a custom item. For details see the classes constructor"
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
@@ -36,6 +38,9 @@ class CustomItem():
 
         self.id = resourceLocation(id)
         "Namespaced id of the item for meta files"
+
+        self._namespace = self.id.split(":")[0]
+        self._loose_id = self.id.split(":")[1]
 
         self.item: str = "minecraft:music_disc_11"
         "The custom items hardcoded item type"
@@ -70,7 +75,7 @@ class CustomItem():
         Set the custom items damagability properties
 
         #### Parameters:
-            - max_durability (int): The amount of actions the item can perform until it breaks
+            - durability (int): The amount of actions the item can perform until it breaks
             - unbreakable (bool): Whether the item cannot take damage from using it
             - break_sound (str): A [sound event](https://minecraft.wiki/w/Sounds.json#Sound_events) played when the item breaks
             - repair_materials (list[str]): List of materials, stated by item ids, which the item can be repaired with in an anvil
@@ -136,33 +141,30 @@ class CustomItem():
                 2. (str): The item will share cooldown time with all items of this cooldown group
                 3. (None): Each instance of the item will have it's own unique cooldown
         """
-
-        if cooldown_group == uuid.UUID:
-            cooldown_group = self.id
-
-        trigger_advancement = self.id.replace(":", ":ability/", 1)
-        main_function = self.id.replace(":", ":ability/", 1)
-        ability_function = resourceLocation(function)
-
-        cooldown_score = cooldown_group.replace(":", ".cooldown.")
         
         self.item = "minecraft:goat_horn"
 
-        self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
-        
+        if cooldown_group == uuid.UUID:
+            cooldown_group = f"{technical_namespace}:{self._namespace}/cooldown/{self._loose_id}"
+        cooldown_score = cooldown_group.replace(":", ".").replace("/", ".")
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
+        
+        self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
+        ability_location = ability_name.format(technical_namespace=technical_namespace, namespace=self._namespace, id=self._loose_id) # e.g. 'customitemlib:lategame/ability/hunter_sword'
+        ability_function = resourceLocation(function)
+
         # Cooldown Checker Function
         self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
-            name="customitemlib:load",
+            name=f"{technical_namespace}:load",
             content=[
                 f"scoreboard objectives add {cooldown_score} dummy"
             ]
         ))
         self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
-            name="customitemlib:cooldown",
+            name=f"{technical_namespace}:cooldown",
             content=[
                 f"execute as @a[scores={{{cooldown_score}=1..}}] run scoreboard players remove @s {cooldown_score} 1"
             ]
@@ -171,21 +173,21 @@ class CustomItem():
             registry=beet.FunctionTag,
             name="minecraft:tick",
             content={
-                "replace": False, "values": ["customitemlib:cooldown"]
+                "replace": False, "values": [f"{technical_namespace}:cooldown"]
             }
         ))
         self._additional_required_files.append(RegistryFile(
             registry=beet.FunctionTag,
             name="minecraft:load",
             content={
-                "replace": False, "values": ["customitemlib:load"]
+                "replace": False, "values": [f"{technical_namespace}:load"]
             }
         ))
 
         # Ability Trigger Advancement
         self._additional_required_files.append(RegistryFile(
             registry=beet.Advancement,
-            name=trigger_advancement,
+            name=ability_location,
             content={
                 "criteria": { "use_item": {
                     "trigger": "minecraft:using_item",
@@ -193,17 +195,17 @@ class CustomItem():
                         "minecraft:custom_data": {"id": self.id}
                     }}}
                 }},
-                "rewards": { "function": main_function }
+                "rewards": { "function": ability_location }
             }
         ))
 
         # Ability Main Function
         self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
-            name=main_function,
+            name=ability_location,
             content=[
                 f"execute if score @s {cooldown_score} matches 0 run function {ability_function}",
-                f"advancement revoke @s only {trigger_advancement}",
+                f"advancement revoke @s only {ability_location}",
                 f"scoreboard players set @s {cooldown_score} {cooldown * 20}"
             ]
         ))
@@ -344,12 +346,12 @@ class CustomItem():
                 datapack[file.name] = file.registry(file.content)
 
     @classmethod
-    def create_from_yaml(cls, path: str):
+    def create_from_yaml(cls, file: str):
         """
         Creates a CustomItem object from a file in a certain yaml based definition format
         """
 
-        with open(path, 'r') as f:
+        with open(file, 'r') as f:
             data: dict = yaml.safe_load(f)
 
         item = CustomItem(id=data["id"], name=data["name"], model=data["model"], texture=data.get("texture"))
@@ -369,16 +371,16 @@ def load_dir_and_implement(directory: str, datapack: beet.DataPack) -> None:
     Looks for yaml files in a directory and implements all of them into a contexts datapack
 
     #### Parameters:
-        - ctx (Context): A beet pipeline context
-        - directory (str): Directory path in the contexts directory
+        - datapack (DataPack): A beet datapack object
+        - directory (str): Directory path with desired files
     """
     directory = pathlib.Path(directory)
     files = [str(p) for p in directory.glob("*.yml")] + [str(p) for p in directory.glob("*.yaml")]
 
     for file in files:
-        try: 
+        # try: 
             item: CustomItem = CustomItem.create_from_yaml(file)
             item.implement(datapack)
 
-        except Exception as e:
-            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+        # except Exception as e:
+        #     warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
