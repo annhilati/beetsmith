@@ -65,7 +65,7 @@ class CustomItem():
     # │                          Templates                         │ 
     # ╰────────────────────────────────────────────────────────────╯
     
-    def set_damagable(self, max_durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def set_damagable(self, durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
 
@@ -81,7 +81,7 @@ class CustomItem():
         else:
             self.components.break_sound = resourceLocation(break_sound)
             self.components.damage = 0
-            self.components.max_damage = max_durability
+            self.components.max_damage = durability
             self.components.repairable = {"items": [resourceLocation(item) for item in repair_materials]}
             self.components.repair_cost = additional_repair_cost
             self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
@@ -99,7 +99,7 @@ class CustomItem():
         """
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
-        
+    
     def set_environment_resistance(self, fire: bool, explosions: bool) -> None:
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
@@ -144,9 +144,6 @@ class CustomItem():
         main_function = self.id.replace(":", ":ability/", 1)
         ability_function = resourceLocation(function)
 
-        # A UUID is used here because self.id can't be passed and stated in the methods's typing. Also notice #21
-        if not cooldown_group:
-            cooldown_group = self.id
         cooldown_score = cooldown_group.replace(":", ".cooldown.")
         
         self.item = "minecraft:goat_horn"

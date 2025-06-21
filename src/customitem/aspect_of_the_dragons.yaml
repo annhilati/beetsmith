@@ -6,7 +6,7 @@ name:
 model: "minecraft:diamond_sword"
 templates:
   set_damagable:
-    max_durability: 2155
+   durability: 2155
   set_weapon:
     attack_damage: 10
     attack_speed: 2

@@ -4,6 +4,8 @@ import string
 from pydantic import BaseModel
 from typing import Any, Type
 
+resourceLocationPattern = r"^#?([a-z0-9_\-.]+):([a-z0-9_\-\/\.]+)$"
+
 class RegistryFile(BaseModel):
     registry: Type # tag, recipe, etc.
     name: str # namespaced id
@@ -18,7 +20,7 @@ def resourceLocation(str: str):
     if ":" not in str:
         return f"minecraft:{str}"
     
-    if not re.match(r"^#?([a-z0-9_\-.]+):([a-z0-9_\-\/\.]+)$", str):
+    if not re.match(resourceLocationPattern, str):
         raise ValueError(f"Invalid ResourceLocation: {str}")
     
     return str
