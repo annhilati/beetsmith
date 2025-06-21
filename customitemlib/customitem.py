@@ -13,7 +13,7 @@ from .lib import *
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
 technical_namespace = "customitemlib"
-ability_name = "{technical_namespace}:{namespace}/ability/{loose_id}"
+generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes constructor"
@@ -145,13 +145,13 @@ class CustomItem():
         self.item = "minecraft:goat_horn"
 
         if cooldown_group == uuid.UUID:
-            cooldown_group = f"{technical_namespace}:{self._namespace}/cooldown/{self._loose_id}"
-        cooldown_score = cooldown_group.replace(":", ".").replace("/", ".")
+            cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="cooldown", id=self._loose_id)
+        cooldown_name = cooldown_group.replace(":", ".").replace("/", ".")
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         
         self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
-        ability_location = ability_name.format(technical_namespace=technical_namespace, namespace=self._namespace, id=self._loose_id) # e.g. 'customitemlib:lategame/ability/hunter_sword'
+        ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="ability", id=self._loose_id) # e.g. 'customitemlib:lategame/ability/hunter_sword'
         ability_function = resourceLocation(function)
 
         # Cooldown Checker Function
@@ -159,14 +159,14 @@ class CustomItem():
             registry=beet.Function,
             name=f"{technical_namespace}:load",
             content=[
-                f"scoreboard objectives add {cooldown_score} dummy"
+                f"scoreboard objectives add {cooldown_name} dummy"
             ]
         ))
         self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
             name=f"{technical_namespace}:cooldown",
             content=[
-                f"execute as @a[scores={{{cooldown_score}=1..}}] run scoreboard players remove @s {cooldown_score} 1"
+                f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
             ]
         ))
         self._additional_required_files.append(RegistryFile(
@@ -187,7 +187,7 @@ class CustomItem():
         # Ability Trigger Advancement
         self._additional_required_files.append(RegistryFile(
             registry=beet.Advancement,
-            name=ability_location,
+            name=ability_name,
             content={
                 "criteria": { "use_item": {
                     "trigger": "minecraft:using_item",
@@ -195,18 +195,18 @@ class CustomItem():
                         "minecraft:custom_data": {"id": self.id}
                     }}}
                 }},
-                "rewards": { "function": ability_location }
+                "rewards": { "function": ability_name }
             }
         ))
 
         # Ability Main Function
         self._additional_required_files.append(RegistryFile(
             registry=beet.Function,
-            name=ability_location,
+            name=ability_name,
             content=[
-                f"execute if score @s {cooldown_score} matches 0 run function {ability_function}",
-                f"advancement revoke @s only {ability_location}",
-                f"scoreboard players set @s {cooldown_score} {cooldown * 20}"
+                f"execute if score @s {cooldown_name} matches 0 run function {ability_function}",
+                f"advancement revoke @s only {ability_name}",
+                f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
             ]
         ))
 
