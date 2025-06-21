@@ -12,5 +12,4 @@ def main(ctx: Context):
     # item.environment_resistance(True, True)
     # item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
-    print(ctx.directory)
     load_dir_and_implement("./src/customitem", ctx.data)

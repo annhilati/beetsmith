@@ -121,7 +121,7 @@ class CustomItem():
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
         
-    def set_right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = str(uuid.uuid4()).replace("-", "")):
+    def set_right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """
         **This feature is still experimentall and may cause problems in combination with other items**
 
@@ -136,6 +136,10 @@ class CustomItem():
                 2. (str): The item will share cooldown time with all items of this cooldown group
                 3. (None): Each instance of the item will have it's own unique cooldown
         """
+
+        if cooldown_group == uuid.UUID:
+            cooldown_group = self.id
+
         trigger_advancement = self.id.replace(":", ":ability/", 1)
         main_function = self.id.replace(":", ":ability/", 1)
         ability_function = resourceLocation(function)
@@ -143,7 +147,7 @@ class CustomItem():
         # A UUID is used here because self.id can't be passed and stated in the methods's typing. Also notice #21
         if not cooldown_group:
             cooldown_group = self.id
-        cooldown_score = cooldown_group.replace(":", ".")
+        cooldown_score = cooldown_group.replace(":", ".cooldown.")
         
         self.item = "minecraft:goat_horn"
 
@@ -207,7 +211,7 @@ class CustomItem():
             ]
         ))
 
-    def set_attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = str(uuid.uuid4())) -> None:
+    def set_attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = None) -> None:
         """
         Adds a attribute modifier to the custom item
 
@@ -216,8 +220,10 @@ class CustomItem():
             - slot (str): The slot where the modifier takes action (`any`, `hand`, `armor`, `mainhand`, `offhand`, `head`, `chest`, `legs`, `feet` or `body`)
             - value (float): The amount or factor to modify the attribute with
             - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
-            - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Should be a base stats id or unique 
+            - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Leave empty for it to be unique
         """
+        if id is None:
+            id = str(uuid.uuid4())
         self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
         self.components.attribute_modifiers.append({
                                         "id": id,
