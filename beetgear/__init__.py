@@ -1,5 +1,5 @@
 """
-## CustomItemLib
+## BeetGear
 A python library for defining strong abstracted custom Minecraft items that can be implemented via Datapacks.
 
 The library provides methods for setting an item's properties and then makes use of Minecraft's item components for implementation.
@@ -36,6 +36,12 @@ def main(ctx: Context):
 ```
 """
 
-from .customitem import *
-from .components import *
-from .lib import *
+# Only import here what shall be seen when importing from beetgear
+from .customitem import CustomItem
+from .components import ItemComponents
+from .lib import RegistryFile
+
+def _export(*objs):
+    return [obj.__name__ for obj in objs]
+
+__all__ = _export(CustomItem, ItemComponents, RegistryFile)

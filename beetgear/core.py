@@ -7,12 +7,12 @@ import uuid
 import warnings
 import pathlib
 from typing import Literal
-from .components import *
-from .lib import *
+from .models import *
+from ._internal.lib import *
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
-technical_namespace = "customitemlib"
+technical_namespace = "beetgear"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
 class CustomItem():

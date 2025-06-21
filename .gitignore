@@ -1,8 +1,5 @@
 test.py
 
-# Environment
-.vscode/
-
 # Build
 build_data_pack/
 .beet_cache/
