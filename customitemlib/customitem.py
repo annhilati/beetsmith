@@ -59,13 +59,13 @@ class CustomItem():
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
 
     def __str__(self) -> str:
-        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self.components_data)} components and {len(self.required_files)} additional files needed)>"
+        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self._required_files)} additional files needed)>"
     
     # ╭────────────────────────────────────────────────────────────╮
     # │                          Templates                         │ 
     # ╰────────────────────────────────────────────────────────────╯
     
-    def set_damagable(self, durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def damagable(self, durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
 
@@ -87,7 +87,7 @@ class CustomItem():
             self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
 
-    def set_enchantable(self, enchantability: int, enchantable_tag: str):
+    def enchantable(self, enchantability: int, enchantable_tag: str):
         """
         Sets the custom item's enchantability properties
 
@@ -100,7 +100,7 @@ class CustomItem():
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
-    def set_environment_resistance(self, fire: bool, explosions: bool) -> None:
+    def environment_resistance(self, fire: bool, explosions: bool) -> None:
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
             self._additional_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
@@ -110,18 +110,18 @@ class CustomItem():
         elif explosions:
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
-    def set_lore(self, textcomponent: str | dict | list) -> None:
+    def lore(self, textcomponent: str | dict | list) -> None:
         """Sets the custom items lore. The text component can be a string, a dict, a list or stringified JSON"""
         self.components.lore = textComponent(textcomponent)
 
-    def set_rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
+    def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
         
-    def set_right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = uuid.UUID):
+    def right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """
         **This feature is still experimentall and may cause problems in combination with other items**
 
@@ -208,7 +208,7 @@ class CustomItem():
             ]
         ))
 
-    def set_attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = None) -> None:
+    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = None) -> None:
         """
         Adds a attribute modifier to the custom item
 
@@ -230,7 +230,7 @@ class CustomItem():
                                         "slot": slot
                                     })
         
-    def set_weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
+    def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
         Set the custom items weapon properties
 
@@ -241,13 +241,13 @@ class CustomItem():
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
         """
-        self.set_attribute_modifier(attribute="minecraft:attack_damage",
+        self.attribute_modifier(attribute="minecraft:attack_damage",
                                 value=attack_damage - 1,
                                 slot="mainhand",
                                 operation="add_value",
                                 id="base_attack_damage"
                                 )
-        self.set_attribute_modifier(attribute="minecraft:attack_speed",
+        self.attribute_modifier(attribute="minecraft:attack_speed",
                                 value=attack_speed - 4,
                                 slot="mainhand",
                                 operation="add_value",
@@ -262,7 +262,7 @@ class CustomItem():
     # ╰────────────────────────────────────────────────────────────╯
 
     @property
-    def components_data(self) -> dict:
+    def _components_data(self) -> dict:
         "Returns the custom items complete component data"
         components = self.components.model_dump()
 
@@ -279,7 +279,7 @@ class CustomItem():
     
     def components_json(self, indent: int = 4) -> str:
         "Returns a formatted stringified JSON of the complete component data"
-        return json.dumps(self.components_data, indent=indent, ensure_ascii=False)
+        return json.dumps(self._components_data, indent=indent, ensure_ascii=False)
     
     @property
     def loot_table(self) -> beet.LootTable:
@@ -293,13 +293,13 @@ class CustomItem():
                     "name": self.item,
                     "functions": [{
                         "function": "minecraft:set_components",
-                        "components": self.components_data
+                        "components": self._components_data
         }]}]}]}
         
         return beet.LootTable(json)
 
     @property
-    def required_files(self) -> list[RegistryFile]:
+    def _required_files(self) -> list[RegistryFile]:
         """
         Generates a list of RegistryEntry objects, that have all neccesarry data for a file
 
@@ -332,7 +332,7 @@ class CustomItem():
         datapack[self.id.replace(":", ":item/", 1)] = self.loot_table
 
         # Required Files
-        for file in self.required_files:
+        for file in self._required_files:
 
             if file.registry == beet.FunctionTag:
                 datapack.function_tags.setdefault(file.name).merge(file.registry(file.content)) # Can either merge or create function tags
@@ -343,7 +343,8 @@ class CustomItem():
             else:
                 datapack[file.name] = file.registry(file.content)
 
-    def create_from_yaml(path: str):
+    @classmethod
+    def create_from_yaml(cls, path: str):
         """
         Creates a CustomItem object from a file in a certain yaml based definition format
         """
@@ -353,7 +354,7 @@ class CustomItem():
 
         item = CustomItem(id=data["id"], name=data["name"], model=data["model"], texture=data.get("texture"))
 
-        for method_name, args in data["templates"].items():
+        for method_name, args in {k: v for k, v in data.items() if k not in ["id", "name", "model", "texture"]}.items():
             method = getattr(item, method_name, None)
             if method is None or not callable(method):
                 raise ValueError(f"'{method_name}' is not a valid template")
