@@ -7,4 +7,4 @@
 
 max_damage.py linguist-detectable=false
 
-test/ linguist-detectable=false
+example/ linguist-detectable=false
