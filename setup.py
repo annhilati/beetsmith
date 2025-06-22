@@ -4,7 +4,7 @@ with open('README.md', encoding='utf-8') as readme:
     description = readme.read() 
    
 setup(
-    name="beetgear",
+    name="beetsmith",
     version="0.0.0",
     packages=find_packages(),
     install_requires=[
@@ -14,5 +14,5 @@ setup(
     description="",
     long_description=description,
     long_description_content_type="text/markdown",
-    url="https://github.com/annhilati/beetgear"
+    url="https://github.com/annhilati/beetsmith"
 )

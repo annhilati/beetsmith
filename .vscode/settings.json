@@ -8,12 +8,18 @@
         "__pycache__": true,
         ".vscode": true,
         "beetgear.egg-info": true,
-        "build": true
+        "build": true,
+        "test/__pycache__": true,
+        "test/.beet_cache": true,
+        "beetgear/__pycache__": true
     },
     "hide-files.files": [
         "__pycache__",
         ".vscode",
         "beetgear.egg-info",
-        "build"
+        "build",
+        "test/__pycache__",
+        "test/.beet_cache",
+        "beetgear/__pycache__"
     ]
 }

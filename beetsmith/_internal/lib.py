@@ -1,8 +1,5 @@
 import re
-import json
-import string
-from pydantic import BaseModel
-from typing import Any, Type, Union, List, Dict
+from typing import Any
 
 resourceLocationPattern = r"^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?(?:\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?)*$" # currently: never leading special symbols
 
