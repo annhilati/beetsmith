@@ -384,3 +384,18 @@ def load_dir_and_implement(directory: str, datapack: beet.DataPack) -> None:
 
         # except Exception as e:
         #     warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+
+class ArmorSet():
+    def __init__(self, ids: str, names: str = None, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):
+        """
+        Data model representing an armor set
+
+        #### Parameters
+            -
+        """
+        self.items = [
+            CustomItem(ids.format(noun=nouns[0].lower()), names.format(noun=nouns[0]), "minecraft:diamond_helmet"),
+            CustomItem(ids.format(noun=nouns[1].lower()), names.format(noun=nouns[1]), "minecraft:diamond_chestplate"),
+            CustomItem(ids.format(noun=nouns[2].lower()), names.format(noun=nouns[2]), "minecraft:diamond_leggings"),
+            CustomItem(ids.format(noun=nouns[3].lower()), names.format(noun=nouns[3]), "minecraft:diamond_boots"),
+        ]
