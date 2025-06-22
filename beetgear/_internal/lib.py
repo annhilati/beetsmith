@@ -44,7 +44,7 @@ def textComponent(obj: Any) -> list[list[dict]]:
                     newLines.append(newLine)
                 else:                                   # line ist nicht str, dict oder list
                     raise ValueError("Every line in the object has to be a list, a dictionary or a string")
-        else:                                   # obj ist Line
+        else:                                   # obj ist line mit parts
             newLine = []
             for part in obj:
                 if type(part) == str:                   # part ist str

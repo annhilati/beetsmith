@@ -1,4 +1,6 @@
 # Build
 build_data_pack/
 .beet_cache/
+**.egg-info/
+build/
 __pycache__/

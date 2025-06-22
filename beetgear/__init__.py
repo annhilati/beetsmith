@@ -37,11 +37,10 @@ def main(ctx: Context):
 """
 
 # Only import here what shall be seen when importing from beetgear
-from .core import CustomItem
-from .models import ItemComponents
-from ._internal.lib import RegistryFile
+from .core import CustomItem, load_dir_and_implement
+from .models import ItemComponents, RegistryFile
 
 def _export(*objs):
     return [obj.__name__ for obj in objs]
 
-__all__ = _export(CustomItem, ItemComponents, RegistryFile)
+__all__ = _export(CustomItem, ItemComponents, RegistryFile, load_dir_and_implement)
