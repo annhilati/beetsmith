@@ -11,7 +11,9 @@
         "build": true,
         "test/__pycache__": true,
         "test/.beet_cache": true,
-        "beetgear/__pycache__": true
+        "beetgear/__pycache__": true,
+        "beetsmith.egg-info": true,
+        "beetsmith/__pycache__": true
     },
     "hide-files.files": [
         "__pycache__",
@@ -20,6 +22,8 @@
         "build",
         "test/__pycache__",
         "test/.beet_cache",
-        "beetgear/__pycache__"
+        "beetgear/__pycache__",
+        "beetsmith.egg-info",
+        "beetsmith/__pycache__"
     ]
 }

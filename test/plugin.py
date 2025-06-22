@@ -1,5 +1,5 @@
 from beet import Context
-from beetgear import CustomItem, load_dir_and_implement
+from beetsmith import CustomItem, load_dir_and_implement
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")

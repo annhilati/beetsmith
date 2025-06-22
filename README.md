@@ -1,4 +1,4 @@
-# lategame-equipment
+# BeetSmith
 ### Usage
 In a beet plugin `plugin.py` do:
 ```py
