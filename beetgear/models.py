@@ -20,7 +20,7 @@ class ItemComponents(BaseModel):
     glider: dict = None
     instrument: dict = None
     item_model: str = None
-    item_name: str | dict = None
+    item_name: str | dict | list = None
     jukebox_playable: str = None
     lore: str | dict | list = None
     max_damage: int = None

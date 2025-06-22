@@ -56,7 +56,7 @@ class CustomItem():
 
         self._additional_required_files: list[RegistryFile] = []
 
-        self.components.item_name = textComponent(name)
+        self.components.item_name = textComponent(name)[0]
         self.components.custom_data = {"id": self.id}
         self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64

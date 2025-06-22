@@ -5,16 +5,12 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        ".beet_cache": true,
-        "beetgear/__pycache__": true,
         "__pycache__": true,
         ".vscode": true,
         "beetgear.egg-info": true,
         "build": true
     },
     "hide-files.files": [
-        ".beet_cache",
-        "beetgear/__pycache__",
         "__pycache__",
         ".vscode",
         "beetgear.egg-info",
