@@ -378,12 +378,12 @@ def load_dir_and_implement(directory: str, datapack: beet.DataPack) -> None:
     files = [str(p) for p in directory.glob("*.yml")] + [str(p) for p in directory.glob("*.yaml")]
 
     for file in files:
-        # try: 
+        try: 
             item: CustomItem = CustomItem.create_from_yaml(file)
             item.implement(datapack)
 
-        # except Exception as e:
-        #     warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+        except Exception as e:
+            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
 
 class ArmorSet():
     def __init__(self, ids: str, names: str = None, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):
