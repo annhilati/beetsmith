@@ -44,3 +44,17 @@ class RegistryFile(BaseModel):
 
     def __str__(self):
         return f"<{self.registry.__name__} '{self.name}'>"
+    
+# class YAMLItemDefinition(BaseModel):
+#     id: str
+#     name: str
+#     model: str
+#     texture: str = None
+#     damagable: dict = None
+#     enchantable: dict = None
+#     environment_resistance: dict = None
+#     lore: str | dict | list = None
+#     rarity: dict = None
+#     right_click_ability: dict = None
+#     attribute_modifier: dict = None
+#     weapon: dict = None

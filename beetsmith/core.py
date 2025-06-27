@@ -5,13 +5,13 @@ import beet
 import uuid
 import warnings
 from typing import Literal
-from .io import *
+from .parsing import *
 from .models import *
 from ._internal.lib import *
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
-technical_namespace = "beetgear"
+technical_namespace = "beetsmith"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
 class CustomItem():
@@ -67,7 +67,7 @@ class CustomItem():
         return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self._required_files)} additional files needed)>"
     
     # ╭────────────────────────────────────────────────────────────╮
-    # │                          Templates                         │ 
+    # │                           Methods                          │ 
     # ╰────────────────────────────────────────────────────────────╯
     
     def damagable(self, durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
@@ -346,12 +346,31 @@ class CustomItem():
                 datapack[file.name] = file.registry(file.content)
 
     @classmethod
-    @refer(function=create_from_yaml)
+    @refer(load_item_from_yaml)
     def create_from_yaml(cls, file: str | pathlib.Path):
         """
         Creates a CustomItem object from a file in a certain yaml based definition format
         """
         ...
+
+def load_dir_and_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> None:
+    """
+    Looks for yaml files in a directory and implements all of them into a contexts datapack
+
+    #### Parameters:
+        - datapack (DataPack): A beet datapack object
+        - directory (str): Directory path with desired files
+    """
+    directory = pathlib.Path(directory) if not isinstance(directory, pathlib.Path) else directory
+    files = [filepath for filepath in directory.glob("*.yml")] + [filepath for filepath in directory.glob("*.yaml")]
+
+    for file in files:
+        try: 
+            item: CustomItem = CustomItem.create_from_yaml(file)
+            item.implement(datapack)
+
+        except Exception as e:
+            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
 
 class ArmorSet():
     def __init__(self, ids: str, names: str = None, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):

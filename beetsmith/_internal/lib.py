@@ -91,7 +91,7 @@ def armor_durability(*, helmet: int = None, chestplate: int = None, leggings: in
     
     return durabilities
 
-def refer(function):
+def refer(function: function, /):
     """
     Calls another function with the arguments passed into the decorated function
     #### Usage
