@@ -39,9 +39,9 @@ from .core import (
     CustomItem,
     load_dir_and_implement
     )
-from .parsing import (
-    load_item_from_yaml
-    )
+# from .parsing import (
+    
+#     )
 from .models import (
     ItemComponents,
     RegistryFile
@@ -50,4 +50,4 @@ from .models import (
 def _export(*objs):
     return [obj.__name__ for obj in objs]
 
-__all__ = _export(CustomItem, ItemComponents, RegistryFile, load_dir_and_implement, load_item_from_yaml)
+__all__ = _export(CustomItem, ItemComponents, RegistryFile, load_dir_and_implement)

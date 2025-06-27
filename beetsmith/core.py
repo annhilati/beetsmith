@@ -1,9 +1,11 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
 
 import json
+import yaml
 import beet
 import uuid
 import warnings
+import pathlib
 from typing import Literal
 from .parsing import *
 from .models import *
@@ -346,12 +348,34 @@ class CustomItem():
                 datapack[file.name] = file.registry(file.content)
 
     @classmethod
-    @refer(load_item_from_yaml)
+    #@refer(load_item_from_yaml)
     def create_from_yaml(cls, file: str | pathlib.Path):
         """
         Creates a CustomItem object from a file in a certain yaml based definition format
         """
-        ...
+        with open(file, 'r') as f:
+            data: dict = yaml.safe_load(f)
+
+        item = CustomItem(id=data["id"], name=data["name"], model=data["model"], texture=data.get("texture"))
+
+        for template in data["templates"]:
+            method_name, args = template.items()
+            method = getattr(item, method_name, None)
+            if method is None or not callable(method):
+                raise ValueError(f"'{method_name}' is not a valid template")
+            if not isinstance(args, dict):
+                raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
+            method(**args)
+
+        # for method_name, args in {k: v for k, v in data[].items() if k not in ["id", "name", "model", "texture"]}.items():
+        #     method = getattr(item, method_name, None)
+        #     if method is None or not callable(method):
+        #         raise ValueError(f"'{method_name}' is not a valid template")
+        #     if not isinstance(args, dict):
+        #         raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
+        #     method(**args)
+
+        return item
 
 def load_dir_and_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> None:
     """
