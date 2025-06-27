@@ -1,3 +1,5 @@
+<img align="right" src="https://github.com/annhilati/beetsmith/blob/main/icon.png" alt="logo" width="74">
+
 # BeetSmith
 ### Usage
 In a beet plugin `plugin.py` do:
