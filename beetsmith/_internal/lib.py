@@ -90,3 +90,22 @@ def armor_durability(*, helmet: int = None, chestplate: int = None, leggings: in
                     durabilities[slot] = round(durabilities[other_slot] * factors[slot][other_slot])
     
     return durabilities
+
+def refer(function):
+    """
+    Calls another function with the arguments passed into the decorated function
+    #### Usage
+    ```
+    @refer(lib.this_function)
+    def new_function():
+        ...
+    ```
+    """
+    if isinstance(function, classmethod) or isinstance(function, staticmethod):
+        function = function.__func__
+
+    def decorator(method):
+        def wrapper(*args, **kwargs):
+            return function(*args, **kwargs)
+        return wrapper
+    return decorator

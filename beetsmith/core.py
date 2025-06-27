@@ -1,12 +1,11 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
 
 import json
-import yaml
 import beet
 import uuid
 import warnings
-import pathlib
 from typing import Literal
+from .io import *
 from .models import *
 from ._internal.lib import *
 
@@ -55,6 +54,7 @@ class CustomItem():
         "List of item tags the custom items hardcoded item needs to have"
 
         self._additional_required_files: list[RegistryFile] = []
+        "Info: These are not all files! Use self._required_files"
 
         self.components.item_name = textComponent(name)[0]
         self.components.custom_data = {"id": self.id}
@@ -346,44 +346,12 @@ class CustomItem():
                 datapack[file.name] = file.registry(file.content)
 
     @classmethod
-    def create_from_yaml(cls, file: str):
+    @refer(function=create_from_yaml)
+    def create_from_yaml(cls, file: str | pathlib.Path):
         """
         Creates a CustomItem object from a file in a certain yaml based definition format
         """
-
-        with open(file, 'r') as f:
-            data: dict = yaml.safe_load(f)
-
-        item = CustomItem(id=data["id"], name=data["name"], model=data["model"], texture=data.get("texture"))
-
-        for method_name, args in {k: v for k, v in data.items() if k not in ["id", "name", "model", "texture"]}.items():
-            method = getattr(item, method_name, None)
-            if method is None or not callable(method):
-                raise ValueError(f"'{method_name}' is not a valid template")
-            if not isinstance(args, dict):
-                raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
-            method(**args)
-
-        return item
-
-def load_dir_and_implement(directory: str, datapack: beet.DataPack) -> None:
-    """
-    Looks for yaml files in a directory and implements all of them into a contexts datapack
-
-    #### Parameters:
-        - datapack (DataPack): A beet datapack object
-        - directory (str): Directory path with desired files
-    """
-    directory = pathlib.Path(directory)
-    files = [str(p) for p in directory.glob("*.yml")] + [str(p) for p in directory.glob("*.yaml")]
-
-    for file in files:
-        try: 
-            item: CustomItem = CustomItem.create_from_yaml(file)
-            item.implement(datapack)
-
-        except Exception as e:
-            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+        ...
 
 class ArmorSet():
     def __init__(self, ids: str, names: str = None, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):

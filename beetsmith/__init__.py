@@ -37,7 +37,8 @@ def main(ctx: Context):
 """
 
 # Only import here what shall be seen when importing from beetgear
-from .core import CustomItem, load_dir_and_implement
+from .core import CustomItem
+from .io import load_dir_and_implement
 from .models import ItemComponents, RegistryFile
 
 def _export(*objs):
