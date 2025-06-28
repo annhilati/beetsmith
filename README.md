@@ -8,6 +8,9 @@
 - ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
 ### Usage
+> [!IMPORTANT]
+> BeetSmith is still heavily under development, not feature-complete and unstable. 
+
 In a beet plugin `plugin.py` do:
 ```py
 from beet import Context
