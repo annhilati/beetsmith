@@ -1,5 +1,3 @@
-import re
-
 def armor_durability(*, helmet: int = None, chestplate: int = None, leggings: int = None, boots: int = None) -> tuple[int, int, int, int]:
     
     if len([arg for arg in [helmet, chestplate, leggings, boots] if type(arg) != None]) in [0, 2, 3]:

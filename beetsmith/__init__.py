@@ -61,7 +61,6 @@ def main(ctx: Context):
 ```
 """
 
-# Only import here what shall be seen when importing from beetgear
 from .core import (
     CustomItem
     )
@@ -87,3 +86,9 @@ __all__ = _export(CustomItem, ItemComponents, RegistryFile,
                   bulk_implement, create_from_yaml,
                   resourceLocation, textComponent,
                   beet)
+
+import warnings as _warnings
+def warning(message, category, filename, lineno, file=None, line=None):
+    print(f"{filename}\n  BeetSmith: {message}")
+
+_warnings.showwarning = warning

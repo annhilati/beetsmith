@@ -7,11 +7,6 @@ from .core import CustomItem, ArmorSet
 
 allowed_types = [CustomItem, ArmorSet]
 
-def warning(message, category, filename, lineno, file=None, line=None):
-    print(f"{filename}\n  BeetSmith: {message}")
-
-warnings.showwarning = warning
-
 # Developer Note:
 #   create_from_yaml shall be raising exceptions on problems,
 #   but load_dir_and_implement shall only warn the user.

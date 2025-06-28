@@ -1,8 +1,11 @@
-from beetgear import CustomItem
+from beetsmith import CustomItem
 
-item = CustomItem(name="Test", model="minecraft:diamond")
-item.headtexture = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTgyMjhjMjM0YzM5MDNjNTEyYTVhMGFhNDUyNjBlN2I1NjdlMGUyMGVlZmM3ZDU2MWNjZWM5N2IyOTU4NzFhZiJ9fX0="
+item = CustomItem(id="test", name="Test", model="minecraft:diamond")
 item.weapon(attack_damage=10,
-            attack_speed=10)
+            attack_speed=10,
+            can_sweep=False)
 
-print(item.com())
+print(item)
+print(item._applied_behaviours)
+
+item = CustomItem(id="test", name="Test", model="minecraft:diamond")

@@ -4,6 +4,8 @@ import json
 import beet
 import uuid
 import warnings
+import inspect
+import functools
 from typing import Literal
 from .models import *
 from .validation import *
@@ -16,8 +18,27 @@ generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
 armor_slots = ["head", "chest", "legs", "feet"]
 
+registered_ids: set[str] = set()
+
+def check_duplicate(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        sig = inspect.signature(func)
+        bound = sig.bind(*args, **kwargs)
+        bound.apply_defaults()
+        id = bound.arguments.get("id")
+
+        if id in registered_ids:
+            warnings.warn(f"Multiple CustomItems with id '{id}' were instantiated")
+        else:
+            registered_ids.add(id)
+
+        return func(*args, **kwargs)
+    return wrapper
+
 class CustomItem():
     "Data model representing a custom item. For details see the classes constructor"
+    @check_duplicate
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
@@ -69,11 +90,19 @@ class CustomItem():
     def __str__(self) -> str:
         return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self._required_files)} additional files needed)>"
     
+    @staticmethod
+    def behaviour(function):
+        def wrapper(self, *args, **kwargs):
+            self._applied_behaviours.append(function.__name__)
+            return function(self, *args, **kwargs)
+        return wrapper
+
     # ╭────────────────────────────────────────────────────────────╮
     # │                         Behaviours                         │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
+    @behaviour
+    def add_attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
         """
         Adds a attribute modifier to the custom item
 
@@ -84,8 +113,6 @@ class CustomItem():
             - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
             - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Leave empty for it to be unique
         """
-        self._applied_behaviours.append("attribute_modifier")
-
         if id is uuid.UUID:
             id = str(uuid.uuid4())
         self.components.attribute_modifiers = self.components.attribute_modifiers or [] # Can this be replaced by setting the default in models to []?
@@ -96,7 +123,8 @@ class CustomItem():
                                         "operation": operation,
                                         "slot": slot
                                     })
-        
+
+    @behaviour 
     def consumable(self,
                    time: float,
                    animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn" "brush"],
@@ -104,7 +132,7 @@ class CustomItem():
                    saturation: float,
                    consume_always: bool,
                    particles: bool,
-                   effects: list[dict],
+                   effects: list[dict] = [],
                    sound: str = "entity.generic.eat"):
         """
         Adds consumption behaviour to the custom item
@@ -119,7 +147,6 @@ class CustomItem():
             - effects (list[dict]): List of [effects](https://minecraft.wiki/w/Data_component_format/consumable) taking place on consumption
             - sound (str): Resource location of a sound event which shall be played while consuming the item
         """
-        self._applied_behaviours.append("consumable")
         self.components.consumable = {
             "consume_seconds": time,
             "animation": animation,
@@ -133,6 +160,7 @@ class CustomItem():
             "can_always_eat": consume_always
         }
     
+    @behaviour
     def damagable(self, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
@@ -143,9 +171,7 @@ class CustomItem():
             - break_sound (str): A [sound event](https://minecraft.wiki/w/Sounds.json#Sound_events) played when the item breaks
             - repair_materials (list[str]): List of materials, stated by item ids, which the item can be repaired with in an anvil
             - additional_repair_cost (int): Amount of experience levels additionally raised when repairing the item in an anvil 
-        """
-        self._applied_behaviours.append("damagable")
-        
+        """        
         self.components.unbreakable = None
         self.components.break_sound = resourceLocation(break_sound)
         self.components.damage = 0
@@ -155,6 +181,7 @@ class CustomItem():
         self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
 
+    @behaviour
     def enchantable(self, enchantability: int, enchantable_tag: str):
         """
         Sets the custom item's enchantability properties
@@ -165,14 +192,11 @@ class CustomItem():
                 - No leading `#` required since this is not a tag refference 
                 - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
-        self._applied_behaviours.append("enchantable")
-
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
+    @behaviour
     def environment_resistance(self, fire: bool, explosions: bool) -> None:
-        self._applied_behaviours.append("environment_resistance")
-
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
             self._additional_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
@@ -182,21 +206,20 @@ class CustomItem():
         elif explosions:
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
+    @behaviour
     def lore(self, textcomponent: str | dict | list) -> None:
         """Sets the custom items lore. The text component can be a string, a dict, a list or stringified JSON"""
-        self._applied_behaviours.append("lore")
-
         self.components.lore = textComponent(textcomponent)
 
+    @behaviour
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
-        self._applied_behaviours.append("rarity")
-
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
-        
+    
+    @behaviour
     def right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """
         **This feature is still experimentall and may cause problems in combination with other items**
@@ -212,8 +235,6 @@ class CustomItem():
                 2. (str): The item will share cooldown time with all items of this cooldown group
                 3. (None): Each instance of the item will have it's own unique cooldown
         """
-        self._applied_behaviours.append("right_click_ability")
-
         self.item = "minecraft:goat_horn"
 
         if cooldown_group == uuid.UUID:
@@ -282,6 +303,7 @@ class CustomItem():
             ]
         ))
 
+    @behaviour
     def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
         Set the custom items weapon properties
@@ -292,16 +314,14 @@ class CustomItem():
             - can_sweep (bool): Whether the weapon can perform sweep attacks
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
-        """
-        self._applied_behaviours.append("weapon")
-        
-        self.attribute_modifier(attribute="minecraft:attack_damage",
+        """        
+        self.add_attribute_modifier(attribute="minecraft:attack_damage",
                                 value=attack_damage - 1,
                                 slot="mainhand",
                                 operation="add_value",
                                 id="base_attack_damage"
                                 )
-        self.attribute_modifier(attribute="minecraft:attack_speed",
+        self.add_attribute_modifier(attribute="minecraft:attack_speed",
                                 value=attack_speed - 4,
                                 slot="mainhand",
                                 operation="add_value",
@@ -465,5 +485,5 @@ class ArmorSet():
     def protection(self, armor: tuple, toughness: tuple):
         ...
         for i, item in enumerate(self.items):
-            item.attribute_modifier("minecraft:armor", armor_slots[i], armor[i], "add_value")
-            item.attribute_modifier("minecraft:armor_toughness", armor_slots[i], toughness[i], "add_value")
+            item.add_attribute_modifier("minecraft:armor", armor_slots[i], armor[i], "add_value")
+            item.add_attribute_modifier("minecraft:armor_toughness", armor_slots[i], toughness[i], "add_value")
