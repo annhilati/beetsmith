@@ -8,6 +8,11 @@ from ._internal.lib import extract_key
 
 allowed_types = [CustomItem, ArmorSet]
 
+def warning(message, category, filename, lineno, file=None, line=None):
+    print(f"{filename}\n  BeetSmith: {message}")
+
+warnings.showwarning = warning
+
 # Developer Note:
 #   create_from_yaml shall be raising exceptions on problems,
 #   but load_dir_and_implement shall only warn the user.
@@ -30,19 +35,19 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
                 match = re.search(r"got an unexpected keyword argument '(\w+)'", msg)
                 if match:
                     invalid_kwarg = match.group(1)
-                info = f"Parameter {invalid_kwarg} was unexpected"
+                info = f"Parameter '{invalid_kwarg}' was unexpected"
 
             elif "missing 1 required positional argument" in msg:
                 match = re.search(r"missing 1 required positional argument: '(\w+)'", msg)
                 if match:
                     invalid_kwarg = match.group(1)
-                info = f"Parameter {invalid_kwarg} is missing"
+                info = f"Parameter '{invalid_kwarg}' is missing"
 
             elif isinstance(e, KeyError):
                 match = re.search(r"'(\w+)'", msg)
                 if match:
                     invalid_kwarg = match.group(1)
-                info = f"Parameter {invalid_kwarg} is missing"
+                info = f"Parameter '{invalid_kwarg}' is missing"
 
             else:
                 raise e
@@ -50,13 +55,36 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
             raise SyntaxError(info)
 
         for template in data["behaviour"]:
-            method_name, args = list(template.items())[0]
-            method = getattr(obj, method_name, None)
-            if method is None or not callable(method):
-                raise ValueError(f"'{method_name}' is not a valid behaviour for a {type(obj).__name__}")
-            if not isinstance(args, dict):
-                raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
-            method(**args)
+            try:
+                method_name, args = list(template.items())[0]
+                method = getattr(obj, method_name, None)
+                if method is None or not callable(method):
+                    raise ValueError(f"'{method_name}' is not a valid behaviour for a {type(obj).__name__}")
+                if not isinstance(args, dict):
+                    raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
+                method(**args)
+
+            except Exception as e:
+                msg = str(e)
+                
+                if "got an unexpected keyword argument" in msg:
+                    match = re.search(r"(\w+)\(\) got an unexpected keyword argument '(\w+)'", msg)
+                    if match:
+                        method = match.group(1)
+                        invalid_kwarg = match.group(2)
+                    info = f"Parameter '{invalid_kwarg}' for '{method}' was unexpected"
+
+                elif "missing 1 required positional argument" in msg:
+                    match = re.search(r"(\w+)\(\) missing 1 required positional argument: '(\w+)'", msg)
+                    if match:
+                        method = match.group(1)
+                        invalid_kwarg = match.group(2)
+                    info = f"'{method}' is missing '{invalid_kwarg}' parameter"
+
+                else:
+                    raise e
+
+                raise SyntaxError(info)
 
         return obj
 
