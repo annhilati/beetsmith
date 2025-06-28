@@ -4,7 +4,6 @@ import beet
 import pathlib
 import warnings
 from .core import CustomItem, ArmorSet
-from ._internal.lib import extract_key
 
 allowed_types = [CustomItem, ArmorSet]
 

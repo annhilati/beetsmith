@@ -57,7 +57,7 @@ behaviour:
 ```py
 # another unspectecular beet plugin
 from beet import Context
-from beetsmith import load_dir_and_implement
+from beetsmith import bulk_implement
 
 def main(ctx: Context):
     bulk_implement("./src/customitems", ctx.data)
