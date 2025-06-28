@@ -7,7 +7,6 @@ import uuid
 import warnings
 import pathlib
 from typing import Literal
-from .parsing import *
 from .models import *
 from ._internal.lib import *
 
@@ -43,27 +42,28 @@ class CustomItem():
         self._namespace = self.id.split(":")[0]
         self._loose_id = self.id.split(":")[1]
 
-        self.item: str = "minecraft:music_disc_11"
-        "The custom items hardcoded item type"
 
-        self.removed_components: list[str] = ["jukebox_playable"]
-        "List of removed components"
-        
-        self.components = ItemComponents()
-        "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
+        self._applied_methods: list[str] = []
         
         self.required_tags: list[str] = []
         "List of item tags the custom items hardcoded item needs to have"
 
         self._additional_required_files: list[RegistryFile] = []
         "Info: These are not all files! Use self._required_files"
+        
+        self.item: str = "minecraft:music_disc_11"
+        "The custom items hardcoded item type"
 
+        self.components = ItemComponents()
+        "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
         self.components.item_name = textComponent(name)[0]
         self.components.custom_data = {"id": self.id}
         self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64
         if texture:
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
+        self.removed_components: list[str] = ["jukebox_playable"]
+        "List of removed components"
 
     def __str__(self) -> str:
         return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self._required_files)} additional files needed)>"
@@ -71,6 +71,66 @@ class CustomItem():
     # ╭────────────────────────────────────────────────────────────╮
     # │                           Methods                          │ 
     # ╰────────────────────────────────────────────────────────────╯
+
+    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = None) -> None:
+        """
+        Adds a attribute modifier to the custom item
+
+        #### Parameters:
+            - attribute (str): The [name of the attribute](https://minecraft.wiki/w/Attribute#Attributes) to be modified
+            - slot (str): The slot where the modifier takes action (`any`, `hand`, `armor`, `mainhand`, `offhand`, `head`, `chest`, `legs`, `feet` or `body`)
+            - value (float): The amount or factor to modify the attribute with
+            - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
+            - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Leave empty for it to be unique
+        """
+        self._applied_methods.append("attribute_modifier")
+
+        if id is None:
+            id = str(uuid.uuid4())
+        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
+        self.components.attribute_modifiers.append({
+                                        "id": id,
+                                        "amount": value,
+                                        "type": attribute,
+                                        "operation": operation,
+                                        "slot": slot
+                                    })
+        
+    def consumable(self,
+                   time: float,
+                   animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn" "brush"],
+                   nutrition: int,
+                   saturation: float,
+                   consume_always: bool,
+                   particles: bool,
+                   effects: list[dict],
+                   sound: str = "entity.generic.eat"):
+        """
+        Adds consumption behaviour to the custom item
+
+        #### Parameters:
+            - time (float): Number of seconds the consumption takes
+            - animation (str): Animation to play while consuming the item
+            - nutrition (int): Amount of hunger to regenerate on consumption
+            - saturation (float): Amount of saturation to add on consumption
+            - consume_always (bool): Whether the item can be consumed even if nutrition is full
+            - particles (bool): Whether to create particles on consumption
+            - effects (list[dict]): List of [effects](https://minecraft.wiki/w/Data_component_format/consumable) taking place on consumption
+            - sound (str): Resource location of a sound event which shall be played while consuming the item
+        """
+        self._applied_methods.append("consumable")
+        self.components.consumable = {
+            "consume_seconds": time,
+            "animation": animation,
+            "sound": resourceLocation(sound),
+            "has_consume_particles": particles,
+            "on_consume_effects": effects
+        }
+        self.components.food = {
+            "nutrition": nutrition,
+            "saturation": saturation,
+            "can_always_eat": consume_always
+        }
     
     def damagable(self, durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
@@ -83,6 +143,7 @@ class CustomItem():
             - repair_materials (list[str]): List of materials, stated by item ids, which the item can be repaired with in an anvil
             - additional_repair_cost (int): Amount of experience levels additionally raised when repairing the item in an anvil 
         """
+        self._applied_methods.append("damagable")
         if unbreakable: 
             self.components.unbreakable = {}
         else:
@@ -104,10 +165,12 @@ class CustomItem():
                 - No leading `#` required since this is not a tag refference 
                 - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
+        self._applied_methods.append("enchantable")
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
     def environment_resistance(self, fire: bool, explosions: bool) -> None:
+        self._applied_methods.append("environment_resistance")
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
             self._additional_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
@@ -118,10 +181,12 @@ class CustomItem():
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
     def lore(self, textcomponent: str | dict | list) -> None:
+        self._applied_methods.append("lore")
         """Sets the custom items lore. The text component can be a string, a dict, a list or stringified JSON"""
         self.components.lore = textComponent(textcomponent)
 
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
+        self._applied_methods.append("rarity")
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
@@ -143,7 +208,8 @@ class CustomItem():
                 2. (str): The item will share cooldown time with all items of this cooldown group
                 3. (None): Each instance of the item will have it's own unique cooldown
         """
-        
+        self._applied_methods.append("right_click_ability")
+
         self.item = "minecraft:goat_horn"
 
         if cooldown_group == uuid.UUID:
@@ -212,28 +278,6 @@ class CustomItem():
             ]
         ))
 
-    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = None) -> None:
-        """
-        Adds a attribute modifier to the custom item
-
-        #### Parameters:
-            - attribute (str): The [name of the attribute](https://minecraft.wiki/w/Attribute#Attributes) to be modified
-            - slot (str): The slot where the modifier takes action (`any`, `hand`, `armor`, `mainhand`, `offhand`, `head`, `chest`, `legs`, `feet` or `body`)
-            - value (float): The amount or factor to modify the attribute with
-            - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
-            - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Leave empty for it to be unique
-        """
-        if id is None:
-            id = str(uuid.uuid4())
-        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
-        self.components.attribute_modifiers.append({
-                                        "id": id,
-                                        "amount": value,
-                                        "type": attribute,
-                                        "operation": operation,
-                                        "slot": slot
-                                    })
-        
     def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
         Set the custom items weapon properties
@@ -245,6 +289,7 @@ class CustomItem():
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
         """
+        self._applied_methods.append("weapon")
         self.attribute_modifier(attribute="minecraft:attack_damage",
                                 value=attack_damage - 1,
                                 slot="mainhand",
@@ -327,6 +372,8 @@ class CustomItem():
         """
         Implement the custom item into a beet datapack
         """
+        if "right_click_ability" and "consumable" in self._applied_methods:
+            warnings.warn(f"The custom item has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
 
         pack_format = datapack.pack_format
         if pack_format != __minecraft_data_version__:
@@ -346,55 +393,6 @@ class CustomItem():
             
             else:
                 datapack[file.name] = file.registry(file.content)
-
-    @classmethod
-    #@refer(load_item_from_yaml)
-    def create_from_yaml(cls, file: str | pathlib.Path):
-        """
-        Creates a CustomItem object from a file in a certain yaml based definition format
-        """
-        with open(file, 'r') as f:
-            data: dict = yaml.safe_load(f)
-
-        item = CustomItem(id=data["id"], name=data["name"], model=data["model"], texture=data.get("texture"))
-
-        for template in data["templates"]:
-            method_name, args = template.items()
-            method = getattr(item, method_name, None)
-            if method is None or not callable(method):
-                raise ValueError(f"'{method_name}' is not a valid template")
-            if not isinstance(args, dict):
-                raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
-            method(**args)
-
-        # for method_name, args in {k: v for k, v in data[].items() if k not in ["id", "name", "model", "texture"]}.items():
-        #     method = getattr(item, method_name, None)
-        #     if method is None or not callable(method):
-        #         raise ValueError(f"'{method_name}' is not a valid template")
-        #     if not isinstance(args, dict):
-        #         raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
-        #     method(**args)
-
-        return item
-
-def load_dir_and_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> None:
-    """
-    Looks for yaml files in a directory and implements all of them into a contexts datapack
-
-    #### Parameters:
-        - datapack (DataPack): A beet datapack object
-        - directory (str): Directory path with desired files
-    """
-    directory = pathlib.Path(directory) if not isinstance(directory, pathlib.Path) else directory
-    files = [filepath for filepath in directory.glob("*.yml")] + [filepath for filepath in directory.glob("*.yaml")]
-
-    for file in files:
-        try: 
-            item: CustomItem = CustomItem.create_from_yaml(file)
-            item.implement(datapack)
-
-        except Exception as e:
-            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
 
 class ArmorSet():
     def __init__(self, ids: str, names: str = None, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):

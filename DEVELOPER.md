@@ -1,0 +1,1 @@
+cd .. & pip install . & cd example & beet

@@ -1,10 +1,11 @@
+type: CustomItem
 id: lategame:aspect_of_the_dragons
 name:
   color: "gold"
   italic: false
   text: "Aspect of the Dragons "
 model: "minecraft:diamond_sword"
-templates:
+behaviour:
   - damagable:
       durability: 2155
   - weapon:
