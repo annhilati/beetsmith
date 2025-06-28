@@ -1,5 +1,5 @@
 from beet import Context
-from beetsmith import CustomItem, load_dir_and_implement
+from beetsmith import CustomItem, bulk_implement
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")
@@ -12,4 +12,4 @@ def main(ctx: Context):
     # item.environment_resistance(True, True)
     # item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
-    load_dir_and_implement("./src/customitem", ctx.data)
+    bulk_implement("./src/customitem", ctx.data)

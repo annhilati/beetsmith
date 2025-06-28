@@ -88,9 +88,9 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
 
         return obj
 
-def load_dir_and_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> None:
+def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> None:
     """
-    Looks for yaml files in a directory and implements all of them into a contexts datapack
+    Looks for yaml files in a directory and implements all of them into a datapack
 
     #### Parameters:
         - datapack (DataPack): A beet datapack object

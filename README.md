@@ -13,7 +13,7 @@
 
 #### 1. Defining an Item
 ```py
-from customitemlib import CustomItem
+from beetsmith import CustomItem
 
 item = CustomItem(id="custom:test", name="Test", model="nether_star")
 
@@ -28,7 +28,7 @@ item.rarity("uncommon")
 ```py
 # This is a normal beet plugin
 from beet import Context
-from customitemlib import CustomItem
+from beetsmith import CustomItem
 
 def main(ctx: Context):
     item = CustomItem(...)
@@ -57,8 +57,8 @@ behaviour:
 ```py
 # another unspectecular beet plugin
 from beet import Context
-from customitemlib import load_dir_and_implement
+from beetsmith import load_dir_and_implement
 
 def main(ctx: Context):
-    load_dir_and_implement("./src/customitems", ctx.data)
+    bulk_implement("./src/customitems", ctx.data)
 ```

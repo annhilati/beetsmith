@@ -40,7 +40,7 @@ from .core import (
     )
 from .parsing import (
     create_from_yaml,
-    load_dir_and_implement
+    bulk_implement
     )
 from .models import (
     ItemComponents,
@@ -55,5 +55,5 @@ def _export(*objs):
     return [obj.__name__ for obj in objs]
 
 __all__ = _export(CustomItem, ItemComponents, RegistryFile,
-                  load_dir_and_implement, create_from_yaml,
+                  bulk_implement, create_from_yaml,
                   resourceLocation, textComponent)
