@@ -2,9 +2,12 @@
 
 # BeetSmith
 ### Features
+- 📚 Item behaviour definition through rigid abstractions
+- 📑 YAML-file definition format
+- 📂 Automatic implementation of files required for a desired behavior
+- ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
-
-
+### Usage
 In a beet plugin `plugin.py` do:
 ```py
 from beet import Context
