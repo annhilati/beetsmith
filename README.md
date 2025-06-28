@@ -3,7 +3,7 @@
 # BeetSmith
 ### Features
 - 📚 Item behaviour definition through rigid abstractions
-- 📑 YAML-file definition format
+- 📑 YAML-file definition format with mild syntax warnings
 - 📂 Automatic implementation of files required for a desired behavior
 - ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
@@ -38,6 +38,7 @@ def main(ctx: Context):
 
 #### 3. Defining an Item in another way
 ```yaml
+# this is ./src/customitems/testitem.yml
 type: CustomItem
 name: Test
 model: nether_star
@@ -51,4 +52,13 @@ behaviour:
         enchantable_tag: enchantable/sharp_weapon
     - rarity:
         rarity: uncommon
+```
+... and loading a lot of such files with beet ...
+```py
+# another unspectecular beet plugin
+from beet import Context
+from customitemlib import load_dir_and_implement
+
+def main(ctx: Context):
+    load_dir_and_implement("./src/customitems", ctx.data)
 ```
