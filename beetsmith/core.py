@@ -36,6 +36,10 @@ def check_duplicate(func):
         return func(*args, **kwargs)
     return wrapper
 
+# ╭───────────────────────────────────────────────────────────────────────────────╮
+# │                                  CustomItem                                   │ 
+# ╰───────────────────────────────────────────────────────────────────────────────╯
+
 class CustomItem():
     "Data model representing a custom item. For details see the classes constructor"
     @check_duplicate
@@ -419,6 +423,10 @@ class CustomItem():
             else:
                 datapack[file.name] = file.registry(file.content)
 
+# ╭───────────────────────────────────────────────────────────────────────────────╮
+# │                                   ArmorSet                                    │ 
+# ╰───────────────────────────────────────────────────────────────────────────────╯
+
 class ArmorSet():
     def __init__(self, id_format: str, name_format: str, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):
         """
@@ -462,6 +470,10 @@ class ArmorSet():
     @property
     def boots(self) -> CustomItem:
         return self.items[3]
+    
+    # ╭────────────────────────────────────────────────────────────╮
+    # │                          Behaviour                         │ 
+    # ╰────────────────────────────────────────────────────────────╯
 
     def damagable(self, durability: int | tuple, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         ...
@@ -487,3 +499,10 @@ class ArmorSet():
         for i, item in enumerate(self.items):
             item.add_attribute_modifier("minecraft:armor", armor_slots[i], armor[i], "add_value")
             item.add_attribute_modifier("minecraft:armor_toughness", armor_slots[i], toughness[i], "add_value")
+
+    # ╭────────────────────────────────────────────────────────────╮
+    # │                        Implementation                      │ 
+    # ╰────────────────────────────────────────────────────────────╯
+
+    def implement(self, datapack):
+        ...

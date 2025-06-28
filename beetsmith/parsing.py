@@ -95,8 +95,8 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> No
 
     for file in files:
         try: 
-            item: CustomItem = create_from_yaml(file)
-            item.implement(datapack)
+            obj = create_from_yaml(file)
+            obj.implement(datapack)
 
         except Exception as e:
             warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
