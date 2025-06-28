@@ -1,13 +1,12 @@
 # https://minecraft.wiki/w/Java_Edition_hardcoded_item_properties#
 
 import json
-import yaml
 import beet
 import uuid
 import warnings
-import pathlib
 from typing import Literal
 from .models import *
+from .validation import *
 from ._internal.lib import *
 
 __minecraft_game_version__ = "1.21.5"

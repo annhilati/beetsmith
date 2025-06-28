@@ -1,8 +1,16 @@
+import re
 import yaml
 import beet
 import pathlib
 import warnings
 from .core import CustomItem, ArmorSet
+from ._internal.lib import extract_key
+
+allowed_types = [CustomItem, ArmorSet]
+
+# Developer Note:
+#   create_from_yaml shall be raising exceptions on problems,
+#   but load_dir_and_implement shall only warn the user.
 
 def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
         """
@@ -11,10 +19,35 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
         with open(file, 'r') as f:
             data: dict = yaml.safe_load(f)
 
-        type = [type for type in [CustomItem, ArmorSet] if type.__name__ == data["type"]][0]
+        try:
+            type = [type for type in allowed_types if type.__name__ == data["type"]][0]
+            obj = type(**{param: value for param, value in data.items() if param not in ["type", "behaviour"]})
+        
+        except Exception as e:
+            msg = str(e)
+            
+            if "got an unexpected keyword argument" in msg:
+                match = re.search(r"got an unexpected keyword argument '(\w+)'", msg)
+                if match:
+                    invalid_kwarg = match.group(1)
+                info = f"Parameter {invalid_kwarg} was unexpected"
 
-        obj = type(**{arg: value for arg, value in data.items() if arg not in ["type", "behaviour"]})
+            elif "missing 1 required positional argument" in msg:
+                match = re.search(r"missing 1 required positional argument: '(\w+)'", msg)
+                if match:
+                    invalid_kwarg = match.group(1)
+                info = f"Parameter {invalid_kwarg} is missing"
 
+            elif isinstance(e, KeyError):
+                match = re.search(r"'(\w+)'", msg)
+                if match:
+                    invalid_kwarg = match.group(1)
+                info = f"Parameter {invalid_kwarg} is missing"
+
+            else:
+                raise e
+
+            raise SyntaxError(info)
 
         for template in data["behaviour"]:
             method_name, args = list(template.items())[0]

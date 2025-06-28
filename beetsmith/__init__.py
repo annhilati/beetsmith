@@ -46,8 +46,14 @@ from .models import (
     ItemComponents,
     RegistryFile
     )
+from .validation import (
+    resourceLocation,
+    textComponent
+)
 
 def _export(*objs):
     return [obj.__name__ for obj in objs]
 
-__all__ = _export(CustomItem, ItemComponents, RegistryFile, load_dir_and_implement, create_from_yaml)
+__all__ = _export(CustomItem, ItemComponents, RegistryFile,
+                  load_dir_and_implement, create_from_yaml,
+                  resourceLocation, textComponent)
