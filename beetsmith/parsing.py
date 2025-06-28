@@ -25,8 +25,8 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
             data: dict = yaml.safe_load(f)
 
         try:
-            type = [type for type in allowed_types if type.__name__ == data["type"]][0]
-            obj = type(**{param: value for param, value in data.items() if param not in ["type", "behaviour"]})
+            obj_type = [type for type in allowed_types if type.__name__ == data["type"]][0]
+            obj = obj_type(**{param: value for param, value in data.items() if param not in ["type", "behaviour"]})
         
         except Exception as e:
             msg = str(e)
@@ -54,14 +54,14 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
 
             raise SyntaxError(info)
 
-        for template in data["behaviour"]:
+        for behaviour in data["behaviour"]:
             try:
-                method_name, args = list(template.items())[0]
+                method_name, args = list(behaviour.items())[0]
                 method = getattr(obj, method_name, None)
                 if method is None or not callable(method):
                     raise ValueError(f"'{method_name}' is not a valid behaviour for a {type(obj).__name__}")
                 if not isinstance(args, dict):
-                    raise ValueError(f"Arguments for '{method_name}' have to be in a key-value format")
+                    raise ValueError(f"Parameters for '{method_name}' have to be in a key-value format")
                 method(**args)
 
             except Exception as e:

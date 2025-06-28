@@ -39,10 +39,9 @@ class CustomItem():
         "Namespaced id of the item for meta files"
 
         self._namespace = self.id.split(":")[0]
-        self._loose_id = self.id.split(":")[1]
+        self._short_id = self.id.split(":")[1]
 
-
-        self._applied_methods: list[str] = []
+        self._applied_behaviours: list[str] = []
         
         self.required_tags: list[str] = []
         "List of item tags the custom items hardcoded item needs to have"
@@ -68,10 +67,10 @@ class CustomItem():
         return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self._required_files)} additional files needed)>"
     
     # ╭────────────────────────────────────────────────────────────╮
-    # │                           Methods                          │ 
+    # │                         Behaviours                         │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = None) -> None:
+    def attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
         """
         Adds a attribute modifier to the custom item
 
@@ -82,11 +81,11 @@ class CustomItem():
             - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
             - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Leave empty for it to be unique
         """
-        self._applied_methods.append("attribute_modifier")
+        self._applied_behaviours.append("attribute_modifier")
 
-        if id is None:
+        if id is uuid.UUID:
             id = str(uuid.uuid4())
-        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # ersetzt alles was "falsy" ist (False, None, []).
+        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # Can this be replaced by setting the default in models to []?
         self.components.attribute_modifiers.append({
                                         "id": id,
                                         "amount": value,
@@ -117,7 +116,7 @@ class CustomItem():
             - effects (list[dict]): List of [effects](https://minecraft.wiki/w/Data_component_format/consumable) taking place on consumption
             - sound (str): Resource location of a sound event which shall be played while consuming the item
         """
-        self._applied_methods.append("consumable")
+        self._applied_behaviours.append("consumable")
         self.components.consumable = {
             "consume_seconds": time,
             "animation": animation,
@@ -142,7 +141,8 @@ class CustomItem():
             - repair_materials (list[str]): List of materials, stated by item ids, which the item can be repaired with in an anvil
             - additional_repair_cost (int): Amount of experience levels additionally raised when repairing the item in an anvil 
         """
-        self._applied_methods.append("damagable")
+        self._applied_behaviours.append("damagable")
+        
         if unbreakable: 
             self.components.unbreakable = {}
         else:
@@ -164,12 +164,14 @@ class CustomItem():
                 - No leading `#` required since this is not a tag refference 
                 - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
-        self._applied_methods.append("enchantable")
+        self._applied_behaviours.append("enchantable")
+
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
     def environment_resistance(self, fire: bool, explosions: bool) -> None:
-        self._applied_methods.append("environment_resistance")
+        self._applied_behaviours.append("environment_resistance")
+
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
             self._additional_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
@@ -180,12 +182,14 @@ class CustomItem():
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
     def lore(self, textcomponent: str | dict | list) -> None:
-        self._applied_methods.append("lore")
         """Sets the custom items lore. The text component can be a string, a dict, a list or stringified JSON"""
+        self._applied_behaviours.append("lore")
+
         self.components.lore = textComponent(textcomponent)
 
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
-        self._applied_methods.append("rarity")
+        self._applied_behaviours.append("rarity")
+
         "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
@@ -207,18 +211,18 @@ class CustomItem():
                 2. (str): The item will share cooldown time with all items of this cooldown group
                 3. (None): Each instance of the item will have it's own unique cooldown
         """
-        self._applied_methods.append("right_click_ability")
+        self._applied_behaviours.append("right_click_ability")
 
         self.item = "minecraft:goat_horn"
 
         if cooldown_group == uuid.UUID:
-            cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="cooldown", id=self._loose_id)
+            cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="cooldown", id=self._short_id)
         cooldown_name = cooldown_group.replace(":", ".").replace("/", ".")
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         
         self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
-        ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="ability", id=self._loose_id) # e.g. 'customitemlib:lategame/ability/hunter_sword'
+        ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="ability", id=self._short_id) # e.g. 'customitemlib:lategame/ability/hunter_sword'
         ability_function = resourceLocation(function)
 
         # Cooldown Checker Function
@@ -288,7 +292,8 @@ class CustomItem():
             - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
             - item_damage_per_attack (int): The amount of durability removed when performing an attack
         """
-        self._applied_methods.append("weapon")
+        self._applied_behaviours.append("weapon")
+        
         self.attribute_modifier(attribute="minecraft:attack_damage",
                                 value=attack_damage - 1,
                                 slot="mainhand",
@@ -371,7 +376,7 @@ class CustomItem():
         """
         Implement the custom item into a beet datapack
         """
-        if "right_click_ability" and "consumable" in self._applied_methods:
+        if "right_click_ability" and "consumable" in self._applied_behaviours:
             warnings.warn(f"The custom item has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
 
         pack_format = datapack.pack_format
