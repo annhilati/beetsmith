@@ -61,6 +61,7 @@ def main(ctx: Context):
 ```
 """
 
+import beet
 from .core import (
     CustomItem
     )
@@ -76,8 +77,6 @@ from .validation import (
     resourceLocation,
     textComponent
 )
-
-import beet
 
 def _export(*objs):
     return [obj.__name__ for obj in objs]

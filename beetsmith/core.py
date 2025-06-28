@@ -3,13 +3,13 @@
 import json
 import beet
 import uuid
-import warnings
 import inspect
+import warnings
 import functools
 from typing import Literal
 from .models import *
 from .validation import *
-from ._internal.lib import *
+from .calc import *
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
