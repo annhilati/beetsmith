@@ -14,6 +14,8 @@ __minecraft_data_version__ = 71
 technical_namespace = "beetsmith"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
+armor_slots = ["head", "chest", "legs", "feet"]
+
 class CustomItem():
     "Data model representing a custom item. For details see the classes constructor"
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
@@ -58,6 +60,7 @@ class CustomItem():
         self.components.custom_data = {"id": self.id}
         self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64
+        self.components.unbreakable = {}
         if texture:
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
         self.removed_components: list[str] = ["jukebox_playable"]
@@ -130,7 +133,7 @@ class CustomItem():
             "can_always_eat": consume_always
         }
     
-    def damagable(self, durability: int, unbreakable: bool = False, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def damagable(self, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Set the custom items damagability properties
 
@@ -143,15 +146,13 @@ class CustomItem():
         """
         self._applied_behaviours.append("damagable")
         
-        if unbreakable: 
-            self.components.unbreakable = {}
-        else:
-            self.components.break_sound = resourceLocation(break_sound)
-            self.components.damage = 0
-            self.components.max_damage = durability
-            self.components.repairable = {"items": [resourceLocation(item) for item in repair_materials]}
-            self.components.repair_cost = additional_repair_cost
-            self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
+        self.components.unbreakable = None
+        self.components.break_sound = resourceLocation(break_sound)
+        self.components.damage = 0
+        self.components.max_damage = durability
+        self.components.repairable = {"items": [resourceLocation(item) for item in repair_materials]}
+        self.components.repair_cost = additional_repair_cost
+        self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
 
     def enchantable(self, enchantability: int, enchantable_tag: str):
@@ -399,7 +400,7 @@ class CustomItem():
                 datapack[file.name] = file.registry(file.content)
 
 class ArmorSet():
-    def __init__(self, ids: str, names: str = None, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):
+    def __init__(self, id_format: str, name_format: str, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):
         """
         Data model representing an armor set
 
@@ -407,8 +408,62 @@ class ArmorSet():
             -
         """
         self.items = [
-            CustomItem(ids.format(noun=nouns[0].lower()), names.format(noun=nouns[0]), "minecraft:diamond_helmet"),
-            CustomItem(ids.format(noun=nouns[1].lower()), names.format(noun=nouns[1]), "minecraft:diamond_chestplate"),
-            CustomItem(ids.format(noun=nouns[2].lower()), names.format(noun=nouns[2]), "minecraft:diamond_leggings"),
-            CustomItem(ids.format(noun=nouns[3].lower()), names.format(noun=nouns[3]), "minecraft:diamond_boots"),
+            CustomItem(id_format.format(noun=nouns[0].lower()), name_format.format(noun=nouns[0]), "minecraft:iron_helmet"),
+            CustomItem(id_format.format(noun=nouns[1].lower()), name_format.format(noun=nouns[1]), "minecraft:iron_chestplate"),
+            CustomItem(id_format.format(noun=nouns[2].lower()), name_format.format(noun=nouns[2]), "minecraft:iron_leggings"),
+            CustomItem(id_format.format(noun=nouns[3].lower()), name_format.format(noun=nouns[3]), "minecraft:iron_boots"),
         ]
+
+        for i, item in enumerate(self.items):
+            item.components.equippable = {
+                "slot": armor_slots[i],
+                "equip_sound": "item.armor.equip_generic",
+                "asset_id": "minecraft:iron",
+                "allowed_entities": [],
+                "dispensable": True,
+                "swappable": True,
+                "damage_on_hurt": True,
+                "equip_on_interact": False
+            }
+            item.components.attribute_modifiers = []
+
+    @property
+    def helmet(self) -> CustomItem:
+        return self.items[0]
+
+    @property
+    def chestplate(self) -> CustomItem:
+        return self.items[1]
+
+    @property
+    def leggings(self) -> CustomItem:
+        return self.items[2]
+
+    @property
+    def boots(self) -> CustomItem:
+        return self.items[3]
+
+    def damagable(self, durability: int | tuple, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+        ...
+        for i, item in enumerate(self.items):
+            if isinstance(durability, int):
+                durability = armor_durability(chestplate=durability)
+            else:
+                durability = durability
+
+            item.damagable(durability=durability[i], break_sound=break_sound, repair_materials=repair_materials, additional_repair_cost=additional_repair_cost)
+    
+    def enchantability(self):
+        ...
+
+    def full_set_ability(self, function: str):
+        ...
+
+    def material(self, material: str, trim_pattern: str = None, trim_material: str = None, color: str = None, helmet_texture: str = None, equip_sound: str = "item.armor.equip_generic"):
+        ...
+
+    def protection(self, armor: tuple, toughness: tuple):
+        ...
+        for i, item in enumerate(self.items):
+            item.attribute_modifier("minecraft:armor", armor_slots[i], armor[i], "add_value")
+            item.attribute_modifier("minecraft:armor_toughness", armor_slots[i], toughness[i], "add_value")
