@@ -19,20 +19,23 @@ generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 armor_slots = ("head", "chest", "legs", "feet")
 chainmail_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplate", "minecraft:chainmail_leggings", "minecraft:chainmail_boots")
 
-registered_ids: set[str] = set()
+registered_implementations: set[tuple] = set()
 
 def log_duplicates(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        self = args[0]
+        id = getattr(self, "id", None)
+
         sig = inspect.signature(func)
         bound = sig.bind(*args, **kwargs)
         bound.apply_defaults()
-        id = bound.arguments.get("id")
+        datapack = bound.arguments.get("datapack")
 
-        if id in registered_ids:
-            warnings.warn(f"Multiple CustomItems with id '{id}' were instantiated")
+        if (id, datapack) in registered_implementations:
+            warnings.warn(f"Multiple custom items with the id '{id}' were implemented")
         else:
-            registered_ids.add(id)
+            registered_implementations.add((id, datapack))
 
         return func(*args, **kwargs)
     return wrapper
@@ -50,7 +53,6 @@ def behaviour(function):
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes constructor"
-    @log_duplicates
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
@@ -432,6 +434,7 @@ class CustomItem():
 
         return files
     
+    @log_duplicates
     def implement(self, datapack: beet.DataPack) -> None:
         """
         Implement the custom item into a beet datapack

@@ -15,4 +15,4 @@ def main(ctx: Context):
     bulk_implement("./src/beetsmith/customitem", ctx.data, allow_raises=True)
 
     item = create_from_yaml("./src/beetsmith/customitem/aspect_of_the_dragons.yaml")
-    print(item._applied_behaviours)
+    item.implement(ctx.data)
