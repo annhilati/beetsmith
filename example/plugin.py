@@ -1,5 +1,5 @@
 from beet import Context
-from beetsmith import bulk_implement
+from beetsmith import bulk_implement, CustomItem, create_from_yaml
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")
@@ -12,4 +12,7 @@ def main(ctx: Context):
     # item.environment_resistance(True, True)
     # item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
-    bulk_implement("./src/smithbeet/customitem", ctx.data)
+    bulk_implement("./src/beetsmith/customitem", ctx.data, allow_raises=True)
+
+    item = create_from_yaml("./src/beetsmith/customitem/aspect_of_the_dragons.yaml")
+    print(item._applied_behaviours)

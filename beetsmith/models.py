@@ -4,7 +4,7 @@ from typing import Type
 class ItemComponents(BaseModel):
     # https://minecraft.wiki/w/Data_component_format#List_of_components
     # https://misode.github.io/changelog?tags=component
-    attribute_modifiers: list[dict] = None
+    attribute_modifiers: list[dict] = []
     block_attacks: dict = None
     break_sound: str = None
     consumable: dict = None

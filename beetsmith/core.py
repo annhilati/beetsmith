@@ -16,11 +16,12 @@ __minecraft_data_version__ = 71
 technical_namespace = "beetsmith"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
-armor_slots = ["head", "chest", "legs", "feet"]
+armor_slots = ("head", "chest", "legs", "feet")
+chainmail_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplate", "minecraft:chainmail_leggings", "minecraft:chainmail_boots")
 
 registered_ids: set[str] = set()
 
-def check_duplicate(func):
+def log_duplicates(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         sig = inspect.signature(func)
@@ -36,13 +37,20 @@ def check_duplicate(func):
         return func(*args, **kwargs)
     return wrapper
 
+def behaviour(function):
+    def wrapper(self, *args, **kwargs):
+        if not self._applied_behaviours.append: self._applied_behaviours = []
+        self._applied_behaviours.append(function.__name__)
+        return function(self, *args, **kwargs)
+    return wrapper
+
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                  CustomItem                                   │ 
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 class CustomItem():
     "Data model representing a custom item. For details see the classes constructor"
-    @check_duplicate
+    @log_duplicates
     def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
         """
         Data model representing a custom item
@@ -53,7 +61,7 @@ class CustomItem():
             - model (str): Asset name of the items model
             - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
 
-        #### Templates (as Methods)
+        #### Behaviours (as Methods)
             - damagable
             - enchantable
             - environment_resistance
@@ -64,23 +72,19 @@ class CustomItem():
 
         self.id = resourceLocation(id)
         "Namespaced id of the item for meta files"
-
-        self._namespace = self.id.split(":")[0]
-        self._short_id = self.id.split(":")[1]
-
-        self._applied_behaviours: list[str] = []
+        
+        self.item: str = "minecraft:music_disc_11"
+        "The custom items hardcoded item type"
         
         self.required_tags: list[str] = []
         "List of item tags the custom items hardcoded item needs to have"
 
-        self._additional_required_files: list[RegistryFile] = []
-        "Info: These are not all files! Use self._required_files"
-        
-        self.item: str = "minecraft:music_disc_11"
-        "The custom items hardcoded item type"
+        self.removed_components: list[str] = ["jukebox_playable"]
+        "List of removed components"
 
         self.components = ItemComponents()
         "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
+
         self.components.item_name = textComponent(name)[0]
         self.components.custom_data = {"id": self.id}
         self.components.item_model = resourceLocation(model)
@@ -88,18 +92,15 @@ class CustomItem():
         self.components.unbreakable = {}
         if texture:
             self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
-        self.removed_components: list[str] = ["jukebox_playable"]
-        "List of removed components"
 
+        self._id_namespace = self.id.split(":")[0]
+        self._id_short = self.id.split(":")[1]
+        self._special_required_files: list[RegistryFile] = []
+        #Info: These are not all files! Use self.required_files
+        self._applied_behaviours = []
+        
     def __str__(self) -> str:
-        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self._required_files)} additional files needed)>"
-    
-    @staticmethod
-    def behaviour(function):
-        def wrapper(self, *args, **kwargs):
-            self._applied_behaviours.append(function.__name__)
-            return function(self, *args, **kwargs)
-        return wrapper
+        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self.required_files)} additional files needed)>"
 
     # ╭────────────────────────────────────────────────────────────╮
     # │                         Behaviours                         │ 
@@ -119,14 +120,13 @@ class CustomItem():
         """
         if id is uuid.UUID:
             id = str(uuid.uuid4())
-        self.components.attribute_modifiers = self.components.attribute_modifiers or [] # Can this be replaced by setting the default in models to []?
         self.components.attribute_modifiers.append({
-                                        "id": id,
-                                        "amount": value,
-                                        "type": attribute,
-                                        "operation": operation,
-                                        "slot": slot
-                                    })
+            "id": id,
+            "amount": value,
+            "type": attribute,
+            "operation": operation,
+            "slot": slot
+        })
 
     @behaviour 
     def consumable(self,
@@ -203,12 +203,39 @@ class CustomItem():
     def environment_resistance(self, fire: bool, explosions: bool) -> None:
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
-            self._additional_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
+            self._special_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         elif fire:
             self.components.damage_resistant = {"types": "#minecraft:is_fire"}
         elif explosions:
             self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
+
+    @behaviour
+    def equippable(self,
+                   slot: Literal["head", "chest", "legs", "feet", "body"],
+                   asset: str,
+                   equip_sound: str = "minecraft:item.armor.equip_generic",
+                   glider: bool = False,
+                   dispensable: bool = True,
+                   swappable: bool = True,
+                   damage_on_hurt: bool = True,
+                   equip_on_interaction: bool = False,
+                   color: int = None):
+        ...
+        self.components.equippable = {
+                "slot": slot,
+                "equip_sound": equip_sound,
+                "asset_id": resourceLocation(asset),
+                "allowed_entities": [],
+                "dispensable": dispensable,
+                "swappable": swappable,
+                "damage_on_hurt": damage_on_hurt,
+                "equip_on_interact": equip_on_interaction
+            }
+        if glider:
+            self.components.glider = {}
+        if color:
+            self.components.dyed_color = color
 
     @behaviour
     def lore(self, textcomponent: str | dict | list) -> None:
@@ -242,38 +269,38 @@ class CustomItem():
         self.item = "minecraft:goat_horn"
 
         if cooldown_group == uuid.UUID:
-            cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="cooldown", id=self._short_id)
+            cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="cooldown", id=self._id_short)
         cooldown_name = cooldown_group.replace(":", ".").replace("/", ".")
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         
         self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
-        ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._namespace, thing="ability", id=self._short_id) # e.g. 'customitemlib:lategame/ability/hunter_sword'
+        ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short) # e.g. 'customitemlib:lategame/ability/hunter_sword'
         ability_function = resourceLocation(function)
 
         # Cooldown Checker Function
-        self._additional_required_files.append(RegistryFile(
+        self._special_required_files.append(RegistryFile(
             registry=beet.Function,
             name=f"{technical_namespace}:load",
             content=[
                 f"scoreboard objectives add {cooldown_name} dummy"
             ]
         ))
-        self._additional_required_files.append(RegistryFile(
+        self._special_required_files.append(RegistryFile(
             registry=beet.Function,
             name=f"{technical_namespace}:cooldown",
             content=[
                 f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
             ]
         ))
-        self._additional_required_files.append(RegistryFile(
+        self._special_required_files.append(RegistryFile(
             registry=beet.FunctionTag,
             name="minecraft:tick",
             content={
                 "replace": False, "values": [f"{technical_namespace}:cooldown"]
             }
         ))
-        self._additional_required_files.append(RegistryFile(
+        self._special_required_files.append(RegistryFile(
             registry=beet.FunctionTag,
             name="minecraft:load",
             content={
@@ -282,7 +309,7 @@ class CustomItem():
         ))
 
         # Ability Trigger Advancement
-        self._additional_required_files.append(RegistryFile(
+        self._special_required_files.append(RegistryFile(
             registry=beet.Advancement,
             name=ability_name,
             content={
@@ -297,7 +324,7 @@ class CustomItem():
         ))
 
         # Ability Main Function
-        self._additional_required_files.append(RegistryFile(
+        self._special_required_files.append(RegistryFile(
             registry=beet.Function,
             name=ability_name,
             content=[
@@ -306,6 +333,14 @@ class CustomItem():
                 f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
             ]
         ))
+
+    @behaviour
+    def trim(self, pattern: str, material: str):
+        ...
+        self.components.trim = {
+            "pattern": resourceLocation(pattern),
+            "material": resourceLocation(material)
+        }
 
     @behaviour
     def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
@@ -377,7 +412,7 @@ class CustomItem():
         return beet.LootTable(json)
 
     @property
-    def _required_files(self) -> list[RegistryFile]:
+    def required_files(self) -> list[RegistryFile]:
         """
         Generates a list of RegistryEntry objects, that have all neccesarry data for a file
 
@@ -393,7 +428,7 @@ class CustomItem():
             files.append(RegistryFile(registry=beet.ItemTag, name=tag, content=tag_data))
 
         # Explicitely needed files
-        files.extend(self._additional_required_files)
+        files.extend(self._special_required_files)
 
         return files
     
@@ -412,7 +447,7 @@ class CustomItem():
         datapack[self.id.replace(":", ":item/", 1)] = self.loot_table
 
         # Required Files
-        for file in self._required_files:
+        for file in self.required_files:
 
             if file.registry == beet.FunctionTag:
                 datapack.function_tags.setdefault(file.name).merge(file.registry(file.content)) # Can either merge or create function tags
@@ -428,7 +463,7 @@ class CustomItem():
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 class ArmorSet():
-    def __init__(self, id_format: str, name_format: str, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"]):
+    def __init__(self, id_format: str, name_format: str, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"], trimable: bool = False):
         """
         Data model representing an armor set
 
@@ -436,24 +471,21 @@ class ArmorSet():
             -
         """
         self.items = [
-            CustomItem(id_format.format(noun=nouns[0].lower()), name_format.format(noun=nouns[0]), "minecraft:iron_helmet"),
-            CustomItem(id_format.format(noun=nouns[1].lower()), name_format.format(noun=nouns[1]), "minecraft:iron_chestplate"),
-            CustomItem(id_format.format(noun=nouns[2].lower()), name_format.format(noun=nouns[2]), "minecraft:iron_leggings"),
-            CustomItem(id_format.format(noun=nouns[3].lower()), name_format.format(noun=nouns[3]), "minecraft:iron_boots"),
+            CustomItem(id_format.format(noun=nouns[0].lower()), name_format.format(noun=nouns[0]), "minecraft:chainmail_helmet"),
+            CustomItem(id_format.format(noun=nouns[1].lower()), name_format.format(noun=nouns[1]), "minecraft:chainmail_chestplate"),
+            CustomItem(id_format.format(noun=nouns[2].lower()), name_format.format(noun=nouns[2]), "minecraft:chainmail_leggings"),
+            CustomItem(id_format.format(noun=nouns[3].lower()), name_format.format(noun=nouns[3]), "minecraft:chainmail_boots"),
         ]
 
         for i, item in enumerate(self.items):
-            item.components.equippable = {
-                "slot": armor_slots[i],
-                "equip_sound": "item.armor.equip_generic",
-                "asset_id": "minecraft:iron",
-                "allowed_entities": [],
-                "dispensable": True,
-                "swappable": True,
-                "damage_on_hurt": True,
-                "equip_on_interact": False
-            }
-            item.components.attribute_modifiers = []
+            item.equippable(
+                slot=armor_slots[i],
+                asset="minecraft:chainmail"
+            )
+            if trimable:
+                item.item = chainmail_ids[i]
+
+        self._applied_behaviours = []
 
     @property
     def helmet(self) -> CustomItem:
@@ -475,6 +507,7 @@ class ArmorSet():
     # │                          Behaviour                         │ 
     # ╰────────────────────────────────────────────────────────────╯
 
+    @behaviour
     def damagable(self, durability: int | tuple, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         ...
         for i, item in enumerate(self.items):
@@ -485,15 +518,30 @@ class ArmorSet():
 
             item.damagable(durability=durability[i], break_sound=break_sound, repair_materials=repair_materials, additional_repair_cost=additional_repair_cost)
     
-    def enchantability(self):
+    @behaviour
+    def enchantable(self, enchantability: int, enchantable_tag: str):
         ...
+        for item in self.items:
+            item.enchantable(enchantability, enchantable_tag)
 
+    @behaviour
     def full_set_ability(self, function: str):
         ...
 
-    def material(self, material: str, trim_pattern: str = None, trim_material: str = None, color: str = None, helmet_texture: str = None, equip_sound: str = "item.armor.equip_generic"):
+    @behaviour
+    def material(self, model_asset: str, trim_pattern: str = None, trim_material: str = None, color: int = None, helmet_texture: str = None, equip_sound: str = "item.armor.equip_generic"):
         ...
+        for i, item in enumerate(self.items):
+            item.components.equippable["asset_id"] = resourceLocation(model_asset)
+            item.components.equippable["equip_sound"] = resourceLocation(equip_sound)
+            item.trim(trim_pattern, trim_material)
+            item.components.dyed_color = color
+        
+        if helmet_texture:
+            self.helmet.components.profile = {"properties": [{"name": "texture", "value": helmet_texture}]}
+            self.helmet.components.item_model = "minecraft:player_head"
 
+    @behaviour
     def protection(self, armor: tuple, toughness: tuple):
         ...
         for i, item in enumerate(self.items):
@@ -504,5 +552,7 @@ class ArmorSet():
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    def implement(self, datapack):
+    def implement(self, datapack: beet.DataPack):
         ...
+        for item in self.items:
+            item.implement(datapack=datapack)

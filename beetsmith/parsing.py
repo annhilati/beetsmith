@@ -21,6 +21,7 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
         try:
             obj_type = [type for type in allowed_types if type.__name__ == data["type"]][0]
             obj = obj_type(**{param: value for param, value in data.items() if param not in ["type", "behaviour"]})
+            test = data["behaviour"] # this is for checking if the parameter behaviour exists
         
         except Exception as e:
             msg = str(e)
@@ -47,6 +48,7 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
                 raise e
 
             raise SyntaxError(info)
+
 
         for behaviour in data["behaviour"]:
             try:
@@ -75,6 +77,9 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
                         invalid_kwarg = match.group(2)
                     info = f"'{method}' is missing '{invalid_kwarg}' parameter"
 
+                elif "'str' object has no attribute 'items'" in msg:
+                    info = f"'behaviour' parameter has to be a list"
+
                 else:
                     raise e
 
@@ -82,7 +87,7 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
 
         return obj
 
-def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> None:
+def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow_raises: bool = False) -> None:
     """
     Looks for yaml files in a directory and implements all of them into a datapack
 
@@ -93,10 +98,16 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack) -> No
     directory = pathlib.Path(directory) if not isinstance(directory, pathlib.Path) else directory
     files = [filepath for filepath in directory.glob("*.yml")] + [filepath for filepath in directory.glob("*.yaml")]
 
-    for file in files:
-        try: 
+    if allow_raises:
+        for file in files:
             obj = create_from_yaml(file)
             obj.implement(datapack)
 
-        except Exception as e:
-            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+    else:
+        for file in files:
+            try: 
+                obj = create_from_yaml(file)
+                obj.implement(datapack)
+
+            except Exception as e:
+                warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
