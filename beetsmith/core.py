@@ -202,7 +202,7 @@ class CustomItem():
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
     @behaviour
-    def environment_resistance(self, fire: bool, explosions: bool) -> None:
+    def damage_resistance(self, fire: bool, explosions: bool) -> None:
         if fire and explosions:
             tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
             self._special_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
@@ -280,61 +280,65 @@ class CustomItem():
         ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short) # e.g. 'customitemlib:lategame/ability/hunter_sword'
         ability_function = resourceLocation(function)
 
-        # Cooldown Checker Function
-        self._special_required_files.append(RegistryFile(
-            registry=beet.Function,
-            name=f"{technical_namespace}:load",
-            content=[
-                f"scoreboard objectives add {cooldown_name} dummy"
-            ]
-        ))
-        self._special_required_files.append(RegistryFile(
-            registry=beet.Function,
-            name=f"{technical_namespace}:cooldown",
-            content=[
-                f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
-            ]
-        ))
-        self._special_required_files.append(RegistryFile(
-            registry=beet.FunctionTag,
-            name="minecraft:tick",
-            content={
-                "replace": False, "values": [f"{technical_namespace}:cooldown"]
-            }
-        ))
-        self._special_required_files.append(RegistryFile(
-            registry=beet.FunctionTag,
-            name="minecraft:load",
-            content={
-                "replace": False, "values": [f"{technical_namespace}:load"]
-            }
-        ))
-
-        # Ability Trigger Advancement
-        self._special_required_files.append(RegistryFile(
-            registry=beet.Advancement,
-            name=ability_name,
-            content={
-                "criteria": { "use_item": {
-                    "trigger": "minecraft:using_item",
-                    "conditions": { "item": { "predicates": {
-                        "minecraft:custom_data": {"id": self.id}
-                    }}}
-                }},
-                "rewards": { "function": ability_name }
-            }
-        ))
-
-        # Ability Main Function
-        self._special_required_files.append(RegistryFile(
-            registry=beet.Function,
-            name=ability_name,
-            content=[
-                f"execute if score @s {cooldown_name} matches 0 run function {ability_function}",
-                f"advancement revoke @s only {ability_name}",
-                f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
-            ]
-        ))
+        files = [
+            # load Function
+            RegistryFile(
+                registry=beet.Function,
+                name=f"{technical_namespace}:load",
+                content=[
+                    f"scoreboard objectives add {cooldown_name} dummy"
+                ]
+            ),
+            # tick function
+            RegistryFile(
+                registry=beet.Function,
+                name=f"{technical_namespace}:cooldown",
+                content=[
+                    f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
+                ]
+            ),
+            # tick function tag
+            RegistryFile(
+                registry=beet.FunctionTag,
+                name="minecraft:tick",
+                content={
+                    "replace": False, "values": [f"{technical_namespace}:cooldown"]
+                }
+            ),
+            # load function tag
+            RegistryFile(
+                registry=beet.FunctionTag,
+                name="minecraft:load",
+                content={
+                    "replace": False, "values": [f"{technical_namespace}:load"]
+                }
+            ),
+            # trigger advancement
+            RegistryFile(
+                registry=beet.Advancement,
+                name=ability_name,
+                content={
+                    "criteria": { "use_item": {
+                        "trigger": "minecraft:using_item",
+                        "conditions": { "item": { "predicates": {
+                            "minecraft:custom_data": {"id": self.id}
+                        }}}
+                    }},
+                    "rewards": { "function": ability_name }
+                }
+            ),
+            # ability function
+            RegistryFile(
+                registry=beet.Function,
+                name=ability_name,
+                content=[
+                    f"execute if score @s {cooldown_name} matches 0 run function {ability_function}",
+                    f"advancement revoke @s only {ability_name}",
+                    f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
+                ]
+            )
+        ]
+        self._special_required_files.extend(files)
 
     @behaviour
     def trim(self, pattern: str, material: str):
