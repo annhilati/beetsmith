@@ -7,6 +7,10 @@
 - 📂 Automatic implementation of files required for a desired behavior
 - ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
+### RoadMap
+- [] Custom Items ~ 70%
+- [] Custom Armor Sets ~ 40%
+
 ### Usage
 > [!IMPORTANT]
 > BeetSmith is still heavily under development, not feature-complete and unstable. 
