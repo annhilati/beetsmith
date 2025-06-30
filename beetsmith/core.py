@@ -400,7 +400,10 @@ class CustomItem():
                                 slot="mainhand",
                                 operation="add_value",
                                 id="base_attack_speed")
-        self.components.weapon = {"item_damage_per_attack": item_damage_per_attack, "disable_blocking_for_seconds": disable_blocking}
+        self.components.weapon = {
+            "item_damage_per_attack": item_damage_per_attack,
+            "disable_blocking_for_seconds": disable_blocking
+            }
         if can_sweep:
             self.components.tool = {"rules": [], "can_destroy_blocks_in_creative": False}
             self.required_tags.append("minecraft:swords")
