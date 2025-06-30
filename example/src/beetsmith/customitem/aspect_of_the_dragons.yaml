@@ -1,12 +1,9 @@
-type: ArmorSet
-id_format: lategame:test_{noun}
-name_format: "Test {noun}"
+type: CustomItem
+id: lategame:test
+name: "Test"
+model: "diamond"
 behaviour:
-  - material:
-      model_asset: "minecraft:diamond"
-      trim_pattern: "bust"
-      trim_material: "minecraft:netherite"
-      helmet_texture: "thisobviouslyisntabase64"
-  - enchantable:
-      enchantability: 10
-      enchantable_tag: "enchantable/armor"
+    - right_click_ability:
+        description: "hm"
+        cooldown: 8
+        function: "doesnt:exist"

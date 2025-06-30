@@ -7,8 +7,8 @@ import inspect
 import warnings
 import functools
 from typing import Literal
-from .models import *
 from .validation import *
+from .models import *
 from .calc import *
 
 __minecraft_game_version__ = "1.21.5"
@@ -52,40 +52,46 @@ def behaviour(function):
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 class CustomItem():
-    "Data model representing a custom item. For details see the classes constructor"
-    def __init__(self, id: str, name: str | dict, model: str, texture: str = None):
-        """
-        Data model representing a custom item
-
-        #### Parameters
-            - id (str): Namespaced id of the item for meta files
-            - name (str | dict): Name of the item as a plain string or text component as a dict
-            - model (str): Asset name of the items model
-            - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
-
-        #### Behaviours (as Methods)
+    """Class modeling a custom item.
+    
+    #### Behaviour
+            A custom item's behaviour can be defined through the CustomItem object's methods.
+            - add_attribute_modifier
+            - consumable
             - damagable
             - enchantable
-            - environment_resistance
-            - headtexture (str)
-            - rarity (str)
+            - damage_resistance
+            - equippable
+            - lore
+            - rarity
+            - right_click_ability
             - weapon
+    """
+    def __init__(self, id: str, name: str | dict | list, model: str, texture: str = None):
+        """
+        Class modeling a custom item
+
+        #### Parameters
+            - id (str): Self chosen id that will be used for naming files the custom item depends on
+            - name (str | dict | list): Name of the item as a text component
+            - model (str): Asset name of the items model
+            - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
         """
 
         self.id = resourceLocation(id)
-        "Namespaced id of the item for meta files"
+        "Namespaced vanilla like id used for naming files"
         
         self.item: str = "minecraft:music_disc_11"
-        "The custom items hardcoded item type"
+        "The custom item's hardcoded item type"
         
         self.required_tags: list[str] = []
-        "List of item tags the custom items hardcoded item needs to have"
+        "List of item tags the item the custom item is built on needs to have"
 
         self.removed_components: list[str] = ["jukebox_playable"]
         "List of removed components"
 
         self.components = ItemComponents()
-        "ItemComponent object of the custom item's components. They can be accessed and overwritten by setting `.components` members"
+        "Modelation of the custom item's components. Components can be accessed and overwritten by setting this value's members"
 
         self.components.item_name = textComponent(name)[0]
         self.components.custom_data = {"id": self.id}
@@ -109,16 +115,18 @@ class CustomItem():
     # ╰────────────────────────────────────────────────────────────╯
 
     @behaviour
-    def add_attribute_modifier(self, attribute: str, slot: str, value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
+    def add_attribute_modifier(self, attribute: str, slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"], value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
         """
         Adds a attribute modifier to the custom item
 
         #### Parameters:
-            - attribute (str): The [name of the attribute](https://minecraft.wiki/w/Attribute#Attributes) to be modified
-            - slot (str): The slot where the modifier takes action (`any`, `hand`, `armor`, `mainhand`, `offhand`, `head`, `chest`, `legs`, `feet` or `body`)
-            - value (float): The amount or factor to modify the attribute with
-            - operation (str): How the value is to be [applied mathmatically](https://minecraft.wiki/w/Attribute#Modifiers)
-            - id (str): [Identifier](https://minecraft.wiki/w/Attribute#Vanilla_modifiers) of the modifier. Leave empty for it to be unique
+            - attribute (str): Name of the modified attribute [[Wiki](https://minecraft.wiki/w/Attribute#Attributes)]
+            - slot (str): Slot where the modifier takes action
+            - value (float): Amount or factor the attribute is modified with
+            - operation (str): How the value is to be applied [[Wiki](https://minecraft.wiki/w/Attribute#Modifiers)]
+            - id (str): Identifier of the modifier
+                - Modifiers with the same identifier will overwrite each other
+                - Some behaviours require specific identifiers [[Wiki](https://minecraft.wiki/w/Attribute#Vanilla_modifiers)]
         """
         if id is uuid.UUID:
             id = str(uuid.uuid4())
@@ -133,7 +141,7 @@ class CustomItem():
     @behaviour 
     def consumable(self,
                    time: float,
-                   animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn" "brush"],
+                   animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn", "brush"],
                    nutrition: int,
                    saturation: float,
                    consume_always: bool,
@@ -141,17 +149,17 @@ class CustomItem():
                    effects: list[dict] = [],
                    sound: str = "entity.generic.eat"):
         """
-        Adds consumption behaviour to the custom item
+        Sets consumption behaviour of the custom item
 
         #### Parameters:
             - time (float): Number of seconds the consumption takes
-            - animation (str): Animation to play while consuming the item
-            - nutrition (int): Amount of hunger to regenerate on consumption
-            - saturation (float): Amount of saturation to add on consumption
+            - animation (str): Animation played while consuming the item
+            - nutrition (int): Amount of hunger regenerated after consumption
+            - saturation (float): Amount of saturation added after consumption
             - consume_always (bool): Whether the item can be consumed even if nutrition is full
-            - particles (bool): Whether to create particles on consumption
-            - effects (list[dict]): List of [effects](https://minecraft.wiki/w/Data_component_format/consumable) taking place on consumption
-            - sound (str): Resource location of a sound event which shall be played while consuming the item
+            - particles (bool): Whether to create particles while consuming
+            - effects (list[dict]): List of effects taking place after consumption [[Wiki](https://minecraft.wiki/w/Data_component_format/consumable)]
+            - sound (str): Sound event played while consuming
         """
         self.components.consumable = {
             "consume_seconds": time,
@@ -169,13 +177,12 @@ class CustomItem():
     @behaviour
     def damagable(self, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
-        Set the custom items damagability properties
+        Sets damagability behaviour
 
         #### Parameters:
-            - durability (int): The amount of actions the item can perform until it breaks
-            - unbreakable (bool): Whether the item cannot take damage from using it
-            - break_sound (str): A [sound event](https://minecraft.wiki/w/Sounds.json#Sound_events) played when the item breaks
-            - repair_materials (list[str]): List of materials, stated by item ids, which the item can be repaired with in an anvil
+            - durability (int): Amount of actions the item can perform until it breaks
+            - break_sound (str): Sound event played when the item breaks
+            - repair_materials (list[str]): List of items which can be used in an anvil to restore durability
             - additional_repair_cost (int): Amount of experience levels additionally raised when repairing the item in an anvil 
         """        
         self.components.unbreakable = None
@@ -193,24 +200,24 @@ class CustomItem():
         Sets the custom item's enchantability properties
 
         #### Parameters:
-            - enchantability (int): Metric for how high the quality of enchantments is when enchanting (diamond armor has 10, gold armor has 25)
-            - enchantable_tag (str): A [tag that specifies what enchantments the item can get](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable)
+            - enchantability (int): How high the quality of enchantments is when enchanting (diamond armor has 10, gold armor has 25)
+            - enchantable_tag (str): Tag that specifies what enchantments the item can get [[Examples](https://mcasset.cloud/1.21.5/data/minecraft/tags/item/enchantable)]
                 - No leading `#` required since this is not a tag refference 
                 - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
-    @behaviour
-    def damage_resistance(self, fire: bool, explosions: bool) -> None:
-        if fire and explosions:
-            tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
-            self._special_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
-            self.components.damage_resistant = {"types": f"#{self.id}"}
-        elif fire:
-            self.components.damage_resistant = {"types": "#minecraft:is_fire"}
-        elif explosions:
-            self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
+    # @behaviour
+    # def damage_resistance(self, fire: bool, explosions: bool) -> None:
+    #     if fire and explosions:
+    #         tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
+    #         self._special_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
+    #         self.components.damage_resistant = {"types": f"#{self.id}"}
+    #     elif fire:
+    #         self.components.damage_resistant = {"types": "#minecraft:is_fire"}
+    #     elif explosions:
+    #         self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
     @behaviour
     def equippable(self,
@@ -223,7 +230,20 @@ class CustomItem():
                    damage_on_hurt: bool = True,
                    equip_on_interaction: bool = False,
                    color: int = None):
-        ...
+        """
+        Sets equippability behaviour
+
+        #### Parameters
+            - slot (str): Slot the item can be equipped in
+            - asset (str): Equipment asset [[Wiki](https://minecraft.wiki/w/Equipment)] [[Examples](https://mcasset.cloud/1.21.5/assets/minecraft/equipment)]
+            - equip_sound (str): Sound event played when equipping the item
+            - glider (bool): Whether the item makes the player fly like with an elytra when equipped
+            - dispensable (bool): Whether the item can be equipped on entities by a dispenser
+            - swappable (bool): Whether the item can be swapped with the item in the slot in can be equpped in by right clicking
+            - damage_on_hurt (bool): Whether the item looses durability when the wearing entity is hurt
+            - equip_on_interaction (bool): Whether the item can be equipped on an entity by right clicking it
+            - color (int): Color value of the equippable if the equipment asset can be dyed
+        """
         self.components.equippable = {
                 "slot": slot,
                 "equip_sound": equip_sound,
@@ -241,29 +261,27 @@ class CustomItem():
 
     @behaviour
     def lore(self, textcomponent: str | dict | list) -> None:
-        """Sets the custom items lore. The text component can be a string, a dict, a list or stringified JSON"""
+        "Sets the custom items lore"
         self.components.lore = textComponent(textcomponent)
 
     @behaviour
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
-        "Sets the custom items rarity. One of `common`, `uncommon`, `rare` and `epic`"
+        "Sets the custom items rarity"
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
     
     @behaviour
-    def right_click_ability(self, description: str | dict | list[dict | list], cooldown: int, function: str, cooldown_group: str = uuid.UUID):
+    def right_click_ability(self, description: str | dict | list, cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """
-        **This feature is still experimentall and may cause problems in combination with other items**
-
-        Sets a right click ability for the custom item
+        Sets right click behaviour
 
         #### Parameters:
-            - description (str | dict | list[dict | list]): A text component. Behaves exactly like lore but can't be empty
-            - cooldown (int): The number of seconds the item can't be used again after using
-            - function (str): A resource location of a function that is called when using the ability
-            - cooldown_group (str): A group of items that share cooldown.
+            - description (str | dict | list): Text component displayed under the item's name
+            - cooldown (int): Number of seconds the item can't be used again after using
+            - function (str): Function that is called when using the ability
+            - cooldown_group (str): Group of items that share the cooldown with this item
                 1. default: The item will share cooldown time with all items of the same type
                 2. (str): The item will share cooldown time with all items of this cooldown group
                 3. (None): Each instance of the item will have it's own unique cooldown
@@ -281,38 +299,38 @@ class CustomItem():
         ability_function = resourceLocation(function)
 
         files = [
-            # load Function
-            RegistryFile(
-                registry=beet.Function,
-                name=f"{technical_namespace}:load",
-                content=[
-                    f"scoreboard objectives add {cooldown_name} dummy"
-                ]
-            ),
-            # tick function
-            RegistryFile(
-                registry=beet.Function,
-                name=f"{technical_namespace}:cooldown",
-                content=[
-                    f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
-                ]
-            ),
-            # tick function tag
-            RegistryFile(
-                registry=beet.FunctionTag,
-                name="minecraft:tick",
-                content={
-                    "replace": False, "values": [f"{technical_namespace}:cooldown"]
-                }
-            ),
-            # load function tag
-            RegistryFile(
-                registry=beet.FunctionTag,
-                name="minecraft:load",
-                content={
-                    "replace": False, "values": [f"{technical_namespace}:load"]
-                }
-            ),
+            # # load Function
+            # RegistryFile(
+            #     registry=beet.Function,
+            #     name=f"{technical_namespace}:load",
+            #     content=[
+            #         f"scoreboard objectives add {cooldown_name} dummy"
+            #     ]
+            # ),
+            # # tick function
+            # RegistryFile(
+            #     registry=beet.Function,
+            #     name=f"{technical_namespace}:cooldown",
+            #     content=[
+            #         f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
+            #     ]
+            # ),
+            # # tick function tag
+            # RegistryFile(
+            #     registry=beet.FunctionTag,
+            #     name="minecraft:tick",
+            #     content={
+            #         "replace": False, "values": [f"{technical_namespace}:cooldown"]
+            #     }
+            # ),
+            # # load function tag
+            # RegistryFile(
+            #     registry=beet.FunctionTag,
+            #     name="minecraft:load",
+            #     content={
+            #         "replace": False, "values": [f"{technical_namespace}:load"]
+            #     }
+            # ),
             # trigger advancement
             RegistryFile(
                 registry=beet.Advancement,
@@ -328,13 +346,24 @@ class CustomItem():
                 }
             ),
             # ability function
+            # RegistryFile(
+            #     registry=beet.Function,
+            #     name=ability_name,
+            #     content=[
+            #         f"execute if score @s {cooldown_name} matches 0 run function {ability_function}",
+            #         f"advancement revoke @s only {ability_name}",
+            #         f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
+            #     ]
+            # ),
             RegistryFile(
                 registry=beet.Function,
                 name=ability_name,
                 content=[
-                    f"execute if score @s {cooldown_name} matches 0 run function {ability_function}",
+                    "data modify storage beetsmith:temp HandItem set from entity @s Inventory[{Slot:0b}]",
+                    "item replace entity @s weapon.mainhand with air",
+                    f"function {ability_function}",
                     f"advancement revoke @s only {ability_name}",
-                    f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
+                    "data modify entity @s Inventory[{Slot:0b}] set from storage beetsmith:temp HandItem",
                 ]
             )
         ]
@@ -351,14 +380,14 @@ class CustomItem():
     @behaviour
     def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
-        Set the custom items weapon properties
+        Sets weapon behaviour
 
         #### Parameters:
-            - attack_damage (int): The amount of damage the item does including damage done by empty hand
-            - attack_speed (int): The amount of fully charged attacks the item canperform per second
+            - attack_damage (int): Amount of damage dealt to entities on attack
+            - attack_speed (int): Amount of fully charged attacks the item can perform per second
             - can_sweep (bool): Whether the weapon can perform sweep attacks
-            - disable_blocking (float): The number of seconds the item disables blocking for the enemy when hitting while the enemy is blocking
-            - item_damage_per_attack (int): The amount of durability removed when performing an attack
+            - disable_blocking (float): Number of seconds hit entity's blocking ability's are disabled when hitting while it was blocking
+            - item_damage_per_attack (int): Amount of durability removed when performing an attack
         """        
         self.add_attribute_modifier(attribute="minecraft:attack_damage",
                                 value=attack_damage - 1,

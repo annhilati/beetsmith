@@ -12,7 +12,7 @@ def main(ctx: Context):
     # item.environment_resistance(True, True)
     # item.right_click_ability(description="", cooldown=8, function="this_function:does_not_exist")
 
-    bulk_implement("./src/beetsmith/customitem", ctx.data, allow_raises=True)
+    bulk_implement("./src/beetsmith/customitem", ctx.data, allow_raises=False)
 
-    item = create_from_yaml("./src/beetsmith/customitem/aspect_of_the_dragons.yaml")
-    item.implement(ctx.data)
+    #item = create_from_yaml("./src/beetsmith/customitem/aspect_of_the_dragons.yaml")
+    #item.implement(ctx.data)
