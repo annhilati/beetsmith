@@ -3,7 +3,14 @@ id: lategame:test
 name: "Test"
 model: "diamond"
 behaviour:
-    - right_click_ability:
-        description: "hm"
-        cooldown: 8
-        #function: "doesnt:exist"
+    - consumable:
+        time: 7
+        animation: animation
+        nutrition: 7
+        saturation: 7
+        consume_always: true
+        particles: true
+components:
+    food:
+        nutrition: 
+            test: 7

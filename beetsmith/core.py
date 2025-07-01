@@ -475,8 +475,8 @@ class CustomItem():
         """
         Implement the custom item into a beet datapack
         """
-        if "right_click_ability" and "consumable" in self._applied_behaviours:
-            warnings.warn(f"The custom item has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
+        if "right_click_ability" in self._applied_behaviours and "consumable" in self._applied_behaviours:
+            warnings.warn(f"The custom item {self.id} has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
 
         pack_format = datapack.pack_format
         if pack_format != __minecraft_data_version__:
