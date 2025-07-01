@@ -1,5 +1,5 @@
 from beet import Context
-from beetsmith import bulk_implement, CustomItem, create_from_yaml, create_from_yaml
+from beetsmith import bulk_implement, CustomItem, create_from_yaml, create_from_yaml, get_clear_text
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")
@@ -15,4 +15,5 @@ def main(ctx: Context):
     #bulk_implement("./src/beetsmith/customitem", ctx.data, allow_raises=False)
 
     item = create_from_yaml("./src/beetsmith/customitem/aspect_of_the_dragons.yaml")
+    print(get_clear_text(item.components.lore))
     item.implement(ctx.data)

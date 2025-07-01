@@ -299,39 +299,6 @@ class CustomItem():
         ability_function = resourceLocation(function)
 
         files = [
-            # # load Function
-            # RegistryFile(
-            #     registry=beet.Function,
-            #     name=f"{technical_namespace}:load",
-            #     content=[
-            #         f"scoreboard objectives add {cooldown_name} dummy"
-            #     ]
-            # ),
-            # # tick function
-            # RegistryFile(
-            #     registry=beet.Function,
-            #     name=f"{technical_namespace}:cooldown",
-            #     content=[
-            #         f"execute as @a[scores={{{cooldown_name}=1..}}] run scoreboard players remove @s {cooldown_name} 1"
-            #     ]
-            # ),
-            # # tick function tag
-            # RegistryFile(
-            #     registry=beet.FunctionTag,
-            #     name="minecraft:tick",
-            #     content={
-            #         "replace": False, "values": [f"{technical_namespace}:cooldown"]
-            #     }
-            # ),
-            # # load function tag
-            # RegistryFile(
-            #     registry=beet.FunctionTag,
-            #     name="minecraft:load",
-            #     content={
-            #         "replace": False, "values": [f"{technical_namespace}:load"]
-            #     }
-            # ),
-            # trigger advancement
             RegistryFile(
                 registry=beet.Advancement,
                 name=ability_name,
@@ -345,25 +312,15 @@ class CustomItem():
                     "rewards": { "function": ability_name }
                 }
             ),
-            # ability function
-            # RegistryFile(
-            #     registry=beet.Function,
-            #     name=ability_name,
-            #     content=[
-            #         f"execute if score @s {cooldown_name} matches 0 run function {ability_function}",
-            #         f"advancement revoke @s only {ability_name}",
-            #         f"scoreboard players set @s {cooldown_name} {cooldown * 20}"
-            #     ]
-            # ),
             RegistryFile(
                 registry=beet.Function,
                 name=ability_name,
                 content=[
-                    "data modify storage beetsmith:temp HandItem set from entity @s Inventory[{Slot:0b}]",
-                    "item replace entity @s weapon.mainhand with air",
+                    f"data modify storage beetsmith:temp HandItem set from entity @s Inventory[{{Slot:0b}}]",
+                    f"item replace entity @s weapon.mainhand with air",
                     f"function {ability_function}",
                     f"advancement revoke @s only {ability_name}",
-                    "data modify entity @s Inventory[{Slot:0b}] set from storage beetsmith:temp HandItem",
+                    f"data modify entity @s Inventory[{{Slot:0b}}] set from storage beetsmith:temp HandItem",
                 ]
             )
         ]
@@ -448,6 +405,36 @@ class CustomItem():
         }]}]}]}
         
         return beet.LootTable(json)
+    
+    def recipe(self, items: tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]], category: str = "misc") -> beet.Recipe:
+        "This function is only temporary"
+        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i"]
+        pattern = []
+        register = {}
+        for row in items:
+            pattern_row = ""
+            for item in row:
+                if item is None:
+                    pattern_row += " "
+                elif item in register:
+                    pattern_row += register[item]
+                else:
+                    pattern_row += alphabet[len(register)]
+                    register[item] = alphabet[len(register)]
+            pattern.append(pattern_row)
+
+        json = {
+            "type": "minecraft:crafting_shaped",
+            "category": category,
+            "pattern": pattern,
+            "key": {key: item for item, key in register.items()},
+            "result": {
+                "id": self.item,
+                "components": self._components_data
+            }
+        }
+
+        return beet.Recipe(json)
 
     @property
     def required_files(self) -> list[RegistryFile]:
@@ -476,7 +463,7 @@ class CustomItem():
         Implement the custom item into a beet datapack
         """
         if "right_click_ability" in self._applied_behaviours and "consumable" in self._applied_behaviours:
-            warnings.warn(f"The custom item {self.id} has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
+            warnings.warn(f"The custom item '{self.id}' has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
 
         pack_format = datapack.pack_format
         if pack_format != __minecraft_data_version__:

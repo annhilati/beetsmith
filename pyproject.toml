@@ -1,0 +1,20 @@
+[project]
+name = "beetsmith"
+version = "0.0.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }  # Oder passe das an, wenn du eine andere Lizenz nutzt
+authors = [
+  { name = "Annhilati" }
+]
+dependencies = [
+  "beet"
+]
+urls = { 
+  "Homepage" = "https://github.com/annhilati/beetsmith"
+}
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

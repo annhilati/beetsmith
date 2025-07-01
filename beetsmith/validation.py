@@ -57,3 +57,19 @@ def textComponent(obj: Any) -> list[list[dict]]:
         ValueError("Object has to be a list, a dictionary or a string")
 
     return newLines
+
+def get_clear_text(textcomponent: str | dict | list) -> str:
+    textcomponent: list[list[dict]] = textComponent(textcomponent)
+
+    result = ""
+    for line in textcomponent:
+        for segment in line:
+            for key, value in segment.items():
+                if key == "text":
+                    result += value
+                elif key in ["translate", "keybind"]:
+                    result += f"<{value}>"
+        if len(textcomponent) > 1:
+            result += "\n"
+    
+    return result

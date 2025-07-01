@@ -75,7 +75,8 @@ from .models import (
     )
 from .validation import (
     resourceLocation,
-    textComponent
+    textComponent,
+    get_clear_text
 )
 
 def _export(*objs):
