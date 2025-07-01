@@ -2,90 +2,63 @@ import re
 import yaml
 import beet
 import pathlib
+import inspect
 import warnings
+from pydantic import BaseModel, model_validator
+from typing import Optional, List, Dict
 from .core import CustomItem, ArmorSet
-
-allowed_types = [CustomItem, ArmorSet]
+from .models import ItemComponents
 
 # Developer Note:
 #   create_from_yaml shall be raising exceptions on problems,
 #   but load_dir_and_implement shall only warn the user.
 
 def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
-        """
-        Creates a CustomItem object from a file in a certain yaml based definition format
-        """
-        with open(file, 'r') as f:
-            data: dict = yaml.safe_load(f)
+    available_types = [CustomItem, ArmorSet]
 
+    with open(file, 'r') as f:
+        data: dict = yaml.safe_load(f)
+
+    obj_type: type        = [type for type in available_types if type.__name__ == data["type"]][0]
+    obj_params: list[str] = [name for name, param in inspect.signature(obj_type.__init__).parameters.items()]
+
+    instance_params = {param: value for param, value in data.items() if param in obj_params}
+    try:
+        instance: CustomItem | ArmorSet = obj_type(**instance_params)
+    except Exception as e:
+        msg = str(e)
+        if match := re.search(r"got an unexpected keyword argument '(\w+)'", msg):
+            error_info = f"Parameter '{match.group(1)}' was unexpected"
+        elif match := re.search(r"missing 1 required positional argument: '(\w+)'", msg):
+            error_info = f"Parameter '{match.group(1)}' is missing"
+        else:
+            raise e
+        
+    for behaviour in data["behaviour"]:
         try:
-            obj_type = [type for type in allowed_types if type.__name__ == data["type"]][0]
-            obj = obj_type(**{param: value for param, value in data.items() if param not in ["type", "behaviour"]})
-            test = data["behaviour"] # this is for checking if the parameter behaviour exists
+            method_name, args = list(behaviour.items())[0]
+            method = getattr(instance, method_name, None)
+            if method is None or not callable(method):
+                raise ValueError(f"'{method_name}' is not a valid behaviour for a {obj_type.__name__}")
+            if not isinstance(args, dict):
+                raise ValueError(f"Parameters for '{method_name}' have to be in a key-value format")
+            method(**args)
         
         except Exception as e:
             msg = str(e)
-            
-            if "got an unexpected keyword argument" in msg:
-                match = re.search(r"got an unexpected keyword argument '(\w+)'", msg)
-                if match:
-                    invalid_kwarg = match.group(1)
-                info = f"Parameter '{invalid_kwarg}' was unexpected"
-
-            elif "missing 1 required positional argument" in msg:
-                match = re.search(r"missing 1 required positional argument: '(\w+)'", msg)
-                if match:
-                    invalid_kwarg = match.group(1)
-                info = f"Parameter '{invalid_kwarg}' is missing"
-
-            elif isinstance(e, KeyError):
-                match = re.search(r"'(\w+)'", msg)
-                if match:
-                    invalid_kwarg = match.group(1)
-                info = f"Parameter '{invalid_kwarg}' is missing"
-
+            if match := re.search(r"(\w+)\(\) got an unexpected keyword argument '(\w+)'", msg):
+                error_info = f"Parameter '{match.group(2)}' for '{match.group(1)}' was unexpected"
+            elif match := re.search(r"(\w+)\(\) missing 1 required positional argument: '(\w+)'", msg):
+                error_info = f"'{match.group(1)}' is missing '{match.group(2)}' parameter"
+            elif match := re.search(r"(\w+)\(\) missing 1 required keyword-only argument: '(\w+)'", msg):
+                error_info = f"'{match.group(1)}' is missing '{match.group(2)}' parameter"
+            elif "'str' object has no attribute 'items'" in msg:
+                error_info = "'behaviour' parameter has to be a list"
             else:
                 raise e
+            raise SyntaxError(error_info)
 
-            raise SyntaxError(info)
-
-
-        for behaviour in data["behaviour"]:
-            try:
-                method_name, args = list(behaviour.items())[0]
-                method = getattr(obj, method_name, None)
-                if method is None or not callable(method):
-                    raise ValueError(f"'{method_name}' is not a valid behaviour for a {type(obj).__name__}")
-                if not isinstance(args, dict):
-                    raise ValueError(f"Parameters for '{method_name}' have to be in a key-value format")
-                method(**args)
-
-            except Exception as e:
-                msg = str(e)
-                
-                if "got an unexpected keyword argument" in msg:
-                    match = re.search(r"(\w+)\(\) got an unexpected keyword argument '(\w+)'", msg)
-                    if match:
-                        method = match.group(1)
-                        invalid_kwarg = match.group(2)
-                    info = f"Parameter '{invalid_kwarg}' for '{method}' was unexpected"
-
-                elif "missing 1 required positional argument" in msg:
-                    match = re.search(r"(\w+)\(\) missing 1 required positional argument: '(\w+)'", msg)
-                    if match:
-                        method = match.group(1)
-                        invalid_kwarg = match.group(2)
-                    info = f"'{method}' is missing '{invalid_kwarg}' parameter"
-
-                elif "'str' object has no attribute 'items'" in msg:
-                    info = f"'behaviour' parameter has to be a list"
-
-                else:
-                    raise e
-
-                raise SyntaxError(info)
-
-        return obj
+    return instance
 
 def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow_raises: bool = False) -> None:
     """

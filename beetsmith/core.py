@@ -115,7 +115,7 @@ class CustomItem():
     # ╰────────────────────────────────────────────────────────────╯
 
     @behaviour
-    def add_attribute_modifier(self, attribute: str, slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"], value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
+    def add_attribute_modifier(self, *, attribute: str, slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"], value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
         """
         Adds a attribute modifier to the custom item
 
@@ -139,7 +139,7 @@ class CustomItem():
         })
 
     @behaviour 
-    def consumable(self,
+    def consumable(self, *,
                    time: float,
                    animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn", "brush"],
                    nutrition: int,
@@ -175,7 +175,7 @@ class CustomItem():
         }
     
     @behaviour
-    def damagable(self, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def damagable(self, *, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         """
         Sets damagability behaviour
 
@@ -220,7 +220,7 @@ class CustomItem():
     #         self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
 
     @behaviour
-    def equippable(self,
+    def equippable(self, *,
                    slot: Literal["head", "chest", "legs", "feet", "body"],
                    asset: str,
                    equip_sound: str = "minecraft:item.armor.equip_generic",
@@ -273,7 +273,7 @@ class CustomItem():
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
     
     @behaviour
-    def right_click_ability(self, description: str | dict | list, cooldown: int, function: str, cooldown_group: str = uuid.UUID):
+    def right_click_ability(self, *, description: str | dict | list, cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """
         Sets right click behaviour
 
@@ -378,7 +378,7 @@ class CustomItem():
         }
 
     @behaviour
-    def weapon(self, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
+    def weapon(self, *, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
         """
         Sets weapon behaviour
 

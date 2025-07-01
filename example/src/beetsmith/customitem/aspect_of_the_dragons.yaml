@@ -6,4 +6,4 @@ behaviour:
     - right_click_ability:
         description: "hm"
         cooldown: 8
-        function: "doesnt:exist"
+        #function: "doesnt:exist"
