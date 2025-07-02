@@ -61,31 +61,30 @@ def main(ctx: Context):
 ```
 """
 
+# ╭───────────────────────────────────────────────────────────────────────────────╮
+# │                                     Exports                                   │ 
+# ╰───────────────────────────────────────────────────────────────────────────────╯
+
 import beet
-from .core import (
-    CustomItem
-    )
-from .parsing import (
-    create_from_yaml,
-    bulk_implement
-    )
-from .models import (
-    ItemComponents,
-    RegistryFile
-    )
-from .validation import (
-    resourceLocation,
-    textComponent,
-    get_clear_text
-)
+from .core import (CustomItem, ArmorSet)
+from .parsing import (create_from_yaml, bulk_implement)
+from .models import (ItemComponents, RegistryEntry)
+from .validation import (resourceLocation, TextComponent)
+from .plugin import (beetsmith)
 
 def _export(*objs):
     return [obj.__name__ for obj in objs]
 
-__all__ = _export(CustomItem, ItemComponents, RegistryFile,
+__all__ = _export(CustomItem, ArmorSet,
+                  RegistryEntry, ItemComponents,
                   bulk_implement, create_from_yaml,
-                  resourceLocation, textComponent,
+                  resourceLocation, TextComponent,
+                  beetsmith,
                   beet)
+
+# ╭───────────────────────────────────────────────────────────────────────────────╮
+# │                                     Config                                    │ 
+# ╰───────────────────────────────────────────────────────────────────────────────╯
 
 import warnings as _warnings
 def warning(message, category, filename, lineno, file=None, line=None):

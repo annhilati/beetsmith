@@ -4,10 +4,7 @@ import beet
 import pathlib
 import inspect
 import warnings
-from pydantic import BaseModel, model_validator
-from typing import Optional, List, Dict
 from .core import CustomItem, ArmorSet
-from .models import ItemComponents
 
 # Developer Note:
 #   create_from_yaml shall be raising exceptions on problems,
@@ -85,8 +82,9 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow
     Looks for yaml files in a directory and implements all of them into a datapack
 
     #### Parameters:
-        - datapack (DataPack): A beet datapack object
         - directory (str): Directory path with desired files
+        - datapack (DataPack): A beet datapack object
+        - allow_raises (bool): Whether problems should interupt the programm by raising exceptions
     """
     directory = pathlib.Path(directory) if not isinstance(directory, pathlib.Path) else directory
     files = [filepath for filepath in directory.glob("*.yml")] + [filepath for filepath in directory.glob("*.yaml")]

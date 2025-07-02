@@ -17,9 +17,9 @@ technical_namespace = "beetsmith"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
 armor_slots = ("head", "chest", "legs", "feet")
-chainmail_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplate", "minecraft:chainmail_leggings", "minecraft:chainmail_boots")
+be_trimmable_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplate", "minecraft:chainmail_leggings", "minecraft:chainmail_boots")
 
-registered_implementations: set[tuple] = set()
+registered_implementations: set[tuple[str, beet.DataPack]] = set()
 
 def log_duplicates(func):
     @functools.wraps(func)
@@ -41,6 +41,7 @@ def log_duplicates(func):
     return wrapper
 
 def behaviour(function):
+    # Current effects: - appends the decorated function's name to self._applied_behaviours
     def wrapper(self, *args, **kwargs):
         if not self._applied_behaviours.append: self._applied_behaviours = []
         self._applied_behaviours.append(function.__name__)
@@ -52,7 +53,7 @@ def behaviour(function):
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 class CustomItem():
-    """Class modeling a custom item.
+    """Class representing a custom item.
     
     #### Behaviour
             A custom item's behaviour can be defined through the CustomItem object's methods.
@@ -103,7 +104,7 @@ class CustomItem():
 
         self._id_namespace = self.id.split(":")[0]
         self._id_short = self.id.split(":")[1]
-        self._special_required_files: list[RegistryFile] = []
+        self._special_required_files: list[RegistryEntry] = []
         #Info: These are not all files! Use self.required_files
         self._applied_behaviours = []
         
@@ -299,7 +300,7 @@ class CustomItem():
         ability_function = resourceLocation(function)
 
         files = [
-            RegistryFile(
+            RegistryEntry(
                 registry=beet.Advancement,
                 name=ability_name,
                 content={
@@ -312,7 +313,7 @@ class CustomItem():
                     "rewards": { "function": ability_name }
                 }
             ),
-            RegistryFile(
+            RegistryEntry(
                 registry=beet.Function,
                 name=ability_name,
                 content=[
@@ -379,12 +380,13 @@ class CustomItem():
         for component in unset_components:
             components.pop(component)
         
-        # Remove components
+        # Remove components to remove
         for component in self.removed_components:
             components[f"!{component}"] = {}
       
         return components
     
+    # Delete sometime?
     def components_json(self, indent: int = 4) -> str:
         "Returns a formatted stringified JSON of the complete component data"
         return json.dumps(self._components_data, indent=indent, ensure_ascii=False)
@@ -406,7 +408,9 @@ class CustomItem():
         
         return beet.LootTable(json)
     
-    def recipe(self, items: tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]], category: str = "misc") -> beet.Recipe:
+    def shaped_recipe(self,
+               items: tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]],
+               category: Literal["building", "redstone", "misc", "equipment"] = "misc")-> beet.Recipe:
         "This function is only temporary"
         alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i"]
         pattern = []
@@ -437,7 +441,7 @@ class CustomItem():
         return beet.Recipe(json)
 
     @property
-    def required_files(self) -> list[RegistryFile]:
+    def required_files(self) -> list[RegistryEntry]:
         """
         Generates a list of RegistryEntry objects, that have all neccesarry data for a file
 
@@ -450,7 +454,7 @@ class CustomItem():
         # Tags
         for tag in self.required_tags:
             tag_data = {"replace": False, "values": [self.item]}
-            files.append(RegistryFile(registry=beet.ItemTag, name=tag, content=tag_data))
+            files.append(RegistryEntry(registry=beet.ItemTag, name=tag, content=tag_data))
 
         # Explicitely needed files
         files.extend(self._special_required_files)
@@ -489,18 +493,23 @@ class CustomItem():
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 class ArmorSet():
-    def __init__(self, id_format: str, name_format: str, nouns: list[str] = ["Helmet", "Chestplate", "Leggings", "Boots"], trimable: bool = False):
+    def __init__(self, id_format: str, name_format: str, nouns: tuple[str, str, str, str] = ("Helmet", "Chestplate", "Leggings", "Boots"), trimable: bool = False):
         """
         Data model representing an armor set
 
         #### Parameters
-            -
+            - id_format (str): Format of the armor pieces' ids. Use `{noun}` placeholder
+            - id_format (str): Format of the armor pieces' item names. Use `{noun}` placeholder
+            - trimable (bool): 
         """
+        ids = (resourceLocation(id_format.format(noun=noun).lower()) for noun in nouns)
+        names = (name_format.format(noun=noun) for noun in nouns)
+
         self.items = [
-            CustomItem(id_format.format(noun=nouns[0].lower()), name_format.format(noun=nouns[0]), "minecraft:chainmail_helmet"),
-            CustomItem(id_format.format(noun=nouns[1].lower()), name_format.format(noun=nouns[1]), "minecraft:chainmail_chestplate"),
-            CustomItem(id_format.format(noun=nouns[2].lower()), name_format.format(noun=nouns[2]), "minecraft:chainmail_leggings"),
-            CustomItem(id_format.format(noun=nouns[3].lower()), name_format.format(noun=nouns[3]), "minecraft:chainmail_boots"),
+            CustomItem(ids[0], names[0], "minecraft:chainmail_helmet"),
+            CustomItem(ids[1], names[1], "minecraft:chainmail_chestplate"),
+            CustomItem(ids[2], names[2], "minecraft:chainmail_leggings"),
+            CustomItem(ids[3], names[3], "minecraft:chainmail_boots"),
         ]
 
         for i, item in enumerate(self.items):
@@ -509,7 +518,7 @@ class ArmorSet():
                 asset="minecraft:chainmail"
             )
             if trimable:
-                item.item = chainmail_ids[i]
+                item.item = be_trimmable_ids[i]
 
         self._applied_behaviours = []
 
