@@ -19,7 +19,7 @@ generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 armor_slots = ("head", "chest", "legs", "feet")
 be_trimmable_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplate", "minecraft:chainmail_leggings", "minecraft:chainmail_boots")
 
-registered_implementations: set[tuple[str, beet.DataPack]] = set()
+_registered_implementations: set[tuple[str, beet.DataPack]] = set()
 
 def log_duplicates(func):
     @functools.wraps(func)
@@ -32,10 +32,10 @@ def log_duplicates(func):
         bound.apply_defaults()
         datapack = bound.arguments.get("datapack")
 
-        if (id, datapack) in registered_implementations:
+        if (id, datapack) in _registered_implementations:
             warnings.warn(f"Multiple custom items with the id '{id}' were implemented")
         else:
-            registered_implementations.add((id, datapack))
+            _registered_implementations.add((id, datapack))
 
         return func(*args, **kwargs)
     return wrapper
@@ -69,8 +69,7 @@ class CustomItem():
             - weapon
     """
     def __init__(self, id: str, name: str | dict | list, model: str, texture: str = None):
-        """
-        Class modeling a custom item
+        """Class representing a custom item
 
         #### Parameters
             - id (str): Self chosen id that will be used for naming files the custom item depends on
@@ -117,8 +116,7 @@ class CustomItem():
 
     @behaviour
     def add_attribute_modifier(self, *, attribute: str, slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"], value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
-        """
-        Adds a attribute modifier to the custom item
+        """Adds a attribute modifier to the custom item
 
         #### Parameters:
             - attribute (str): Name of the modified attribute [[Wiki](https://minecraft.wiki/w/Attribute#Attributes)]
@@ -493,9 +491,12 @@ class CustomItem():
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 class ArmorSet():
+    """
+    Class representing a custom armor set.
+    """
     def __init__(self, id_format: str, name_format: str, nouns: tuple[str, str, str, str] = ("Helmet", "Chestplate", "Leggings", "Boots"), trimable: bool = False):
         """
-        Data model representing an armor set
+        Class representing a custom armor set.
 
         #### Parameters
             - id_format (str): Format of the armor pieces' ids. Use `{noun}` placeholder

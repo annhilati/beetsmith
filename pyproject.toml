@@ -9,7 +9,8 @@ authors = [
   { name = "Annhilati" }
 ]
 dependencies = [
-  "beet"
+  "beet",
+  "pyyaml"
 ]
 
 [project.urls]

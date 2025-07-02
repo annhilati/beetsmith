@@ -82,7 +82,7 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow
     Looks for yaml files in a directory and implements all of them into a datapack
 
     #### Parameters:
-        - directory (str): Directory path with desired files
+        - directory (str | Path): Directory path with desired files
         - datapack (DataPack): A beet datapack object
         - allow_raises (bool): Whether problems should interupt the programm by raising exceptions
     """
