@@ -1,4 +1,5 @@
 import re
+import json
 from typing import Any
 
 resourceLocationPattern = r"^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?(?:\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?)*$" # currently: never leading special symbols
@@ -14,62 +15,73 @@ def resourceLocation(str: str):
     
     return str
 
-def textComponent(obj: Any) -> list[list[dict]]:
-    """Ensures that a text representing object is always a complete and correct formatted multiline text component
+class TextComponent():
+    "Utility class for working with text components"
 
-    #### Additional use:
-        - [0]: if only one line is allowed in the field
-    """
-    newLines = []
+    @staticmethod
+    def normalize(obj: Any):
+        """Brings a text component object to a completely not-shorthanded format of a list of lists (the lines) of dicts (segments in a line)
 
-    if type(obj) == list:                       # obj ist Line oder Multiline
-        if list in [type(e) for e in obj]:      # obj ist Multiline
-            for line in obj:
-                if type(line) == str:                   # line ist str
-                    newLines.append([{"text": line}])
-                elif type(line) == dict:                # line ist dict
-                    newLines.append([line])
-                elif type(line) == list:                # line ist list
-                    newLine = []
-                    for part in line:
-                        if type(part) == str:               # part ist str
-                            newLine.append({"text": part})
-                        elif type(part) == dict:            # part ist dict
-                            newLine.append(part)
-                        else:
-                            raise ValueError("Every part in a line in the object has to be a dictionary or a string")
-                    newLines.append(newLine)
-                else:                                   # line ist nicht str, dict oder list
-                    raise ValueError("Every line in the object has to be a list, a dictionary or a string")
-        else:                                   # obj ist line mit parts
-            newLine = []
-            for part in obj:
-                if type(part) == str:                   # part ist str
-                    newLine.append({"text": part})
-                elif type(part) == dict:                # part ist dict
-                    newLine.append(part)
-            newLines.append(newLine)
-    elif type(obj) == dict:
-        newLines.append([obj])
-    elif type(obj) == str:
-        newLines.append([{"text": obj}])
-    else:
-        ValueError("Object has to be a list, a dictionary or a string")
+        #### Additional use:
+            - [0]: if only one line is allowed in the field
+        """
+        newLines = []
 
-    return newLines
+        if type(obj) == list:                       # obj ist Line oder Multiline
+            if list in [type(e) for e in obj]:      # obj ist Multiline
+                for line in obj:
+                    if type(line) == str:                   # line ist str
+                        newLines.append([{"text": line}])
+                    elif type(line) == dict:                # line ist dict
+                        newLines.append([line])
+                    elif type(line) == list:                # line ist list
+                        newLine = []
+                        for part in line:
+                            if type(part) == str:               # part ist str
+                                newLine.append({"text": part})
+                            elif type(part) == dict:            # part ist dict
+                                newLine.append(part)
+                            else:
+                                raise ValueError("Every part in a line in the object has to be a dictionary or a string")
+                        newLines.append(newLine)
+                    else:                                   # line ist nicht str, dict oder list
+                        raise ValueError("Every line in the object has to be a list, a dictionary or a string")
+            else:                                   # obj ist line mit parts
+                newLine = []
+                for part in obj:
+                    if type(part) == str:                   # part ist str
+                        newLine.append({"text": part})
+                    elif type(part) == dict:                # part ist dict
+                        newLine.append(part)
+                newLines.append(newLine)
+        elif type(obj) == dict:
+            newLines.append([obj])
+        elif type(obj) == str:
+            newLines.append([{"text": obj}])
+        else:
+            ValueError("Object has to be a list, a dictionary or a string")
 
-def get_clear_text(textcomponent: str | dict | list) -> str:
-    textcomponent: list[list[dict]] = textComponent(textcomponent)
-
-    result = ""
-    for line in textcomponent:
-        for segment in line:
-            for key, value in segment.items():
-                if key == "text":
-                    result += value
-                elif key in ["translate", "keybind"]:
-                    result += f"<{value}>"
-        if len(textcomponent) > 1:
-            result += "\n"
+        return newLines
     
-    return result
+    @staticmethod
+    def from_json(stringified_json: str) -> list[list[dict]]:
+        data = json.load(stringified_json)
+        return TextComponent.normalize(data)
+
+    @staticmethod
+    def plain_text(textcomponent: str | dict | list) -> str:
+        "Returns a unformatted (and if the case multiline) string of a text component"
+        textcomponent: list[list[dict]] = TextComponent.normalize(textcomponent)
+
+        result = ""
+        for line in textcomponent:
+            for segment in line:
+                for key, value in segment.items():
+                    if key == "text":
+                        result += value
+                    elif key in ["translate", "keybind"]:
+                        result += f"<{value}>"
+            if len(textcomponent) > 1:
+                result += "\n"
+        
+        return result

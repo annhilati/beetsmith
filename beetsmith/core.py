@@ -93,7 +93,7 @@ class CustomItem():
         self.components = ItemComponents()
         "Modelation of the custom item's components. Components can be accessed and overwritten by setting this value's members"
 
-        self.components.item_name = textComponent(name)[0]
+        self.components.item_name = TextComponent.normalize(name)[0]
         self.components.custom_data = {"id": self.id}
         self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64
@@ -262,7 +262,7 @@ class CustomItem():
     @behaviour
     def lore(self, textcomponent: str | dict | list) -> None:
         "Sets the custom items lore"
-        self.components.lore = textComponent(textcomponent)
+        self.components.lore = TextComponent.normalize(textcomponent)
 
     @behaviour
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
@@ -293,7 +293,7 @@ class CustomItem():
         cooldown_name = cooldown_group.replace(":", ".").replace("/", ".")
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         
-        self.components.instrument = {"range": 10, "description": textComponent(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
+        self.components.instrument = {"range": 10, "description": TextComponent.normalize(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
         ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short) # e.g. 'customitemlib:lategame/ability/hunter_sword'
         ability_function = resourceLocation(function)
@@ -534,7 +534,7 @@ class ArmorSet():
     # ╰────────────────────────────────────────────────────────────╯
 
     @behaviour
-    def damagable(self, durability: int | tuple, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def damagable(self, durability: int | tuple[int, int, int, int], break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         ...
         for i, item in enumerate(self.items):
             if isinstance(durability, int):
