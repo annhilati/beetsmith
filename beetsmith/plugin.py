@@ -1,11 +1,10 @@
 import beet
 import pathlib
-
 from .core import *
 from .parsing import *
 
-def beetsmith(definitions_dir: str | pathlib.Path = "beetsmith") -> beet.Plugin:
-    """
+def beetsmither(definitions_dir: str | pathlib.Path = "beetsmith") -> beet.Plugin:
+    """Beet Plugin configurator for BeetSmith
     
     #### Usage
     ```

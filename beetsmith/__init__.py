@@ -70,7 +70,7 @@ from .core import (CustomItem, ArmorSet)
 from .parsing import (create_from_yaml, bulk_implement)
 from .models import (ItemComponents, RegistryEntry)
 from .validation import (resourceLocation, TextComponent)
-from .plugin import (beetsmith)
+from .plugin import (beetsmither)
 
 def _export(*objs):
     return [obj.__name__ for obj in objs]
@@ -79,7 +79,7 @@ __all__ = _export(CustomItem, ArmorSet,
                   RegistryEntry, ItemComponents,
                   bulk_implement, create_from_yaml,
                   resourceLocation, TextComponent,
-                  beetsmith,
+                  beetsmither,
                   beet)
 
 # ╭───────────────────────────────────────────────────────────────────────────────╮

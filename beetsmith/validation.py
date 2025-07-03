@@ -26,7 +26,7 @@ def resourceLocation(str: str):
     return str
 
 class TextComponent():
-    "Utility class for working with text components"
+    "Utility class for working with text components."
 
     @staticmethod
     def normalize(obj: Any) -> list[list[dict]]:

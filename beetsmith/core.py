@@ -146,7 +146,10 @@ class CustomItem():
                    consume_always: bool,
                    particles: bool,
                    effects: list[dict] = [],
-                   sound: str = "entity.generic.eat"):
+                   sound: str = "entity.generic.eat",
+                   cooldown: int = None,
+                   cooldown_group: str = None,
+                   function: str = None):
         """
         Sets consumption behaviour of the custom item
 
