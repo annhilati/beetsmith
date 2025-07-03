@@ -8,8 +8,8 @@
 - ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
 ### RoadMap
-[] #38 Custom Items ~ 70%
-[] Custom Armor Sets ~ 40%
+- [x] https://github.com/annhilati/beetsmith/issues/38 Custom Items ~ 70%  
+- [ ] Custom Armor Sets ~ 40%
 
 ### Usage
 > [!IMPORTANT]
