@@ -13,8 +13,11 @@ from .core import CustomItem, ArmorSet
 def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
     available_types = [CustomItem, ArmorSet]
 
-    with open(file, 'r') as f:
-        data: dict = yaml.safe_load(f)
+    try:
+        with open(file, 'r', encoding="utf-8") as f:
+            data: dict = yaml.safe_load(f)
+    except UnicodeDecodeError as e:
+        raise e
 
     obj_type: type        = [type for type in available_types if type.__name__ == data["type"]][0]
     obj_params: list[str] = [name for name, param in inspect.signature(obj_type.__init__).parameters.items()]

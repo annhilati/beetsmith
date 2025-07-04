@@ -7,6 +7,7 @@ import inspect
 import warnings
 import functools
 from typing import Literal
+from .text_components import TextComponent
 from .validation import *
 from .models import *
 from .calc import *

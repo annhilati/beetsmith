@@ -69,7 +69,7 @@ import beet
 from .core import (CustomItem, ArmorSet)
 from .parsing import (create_from_yaml, bulk_implement)
 from .models import (ItemComponents, RegistryEntry)
-from .validation import (resourceLocation, TextComponent)
+from .validation import (resourceLocation)
 from .plugin import (beetsmither)
 
 def _export(*objs):
@@ -78,7 +78,7 @@ def _export(*objs):
 __all__ = _export(CustomItem, ArmorSet,
                   RegistryEntry, ItemComponents,
                   bulk_implement, create_from_yaml,
-                  resourceLocation, TextComponent,
+                  resourceLocation,
                   beetsmither,
                   beet)
 
