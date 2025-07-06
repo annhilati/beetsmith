@@ -19,7 +19,7 @@ def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
     except UnicodeDecodeError as e:
         raise e
 
-    obj_type: type        = [type for type in available_types if type.__name__ == data["type"]][0]
+    obj_type:   type      = [type for type in available_types if type.__name__ == data["type"]][0]
     obj_params: list[str] = [name for name, param in inspect.signature(obj_type.__init__).parameters.items()]
 
     instance_params = {param: value for param, value in data.items() if param in obj_params}

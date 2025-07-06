@@ -3,24 +3,3 @@ id: lategame:test
 name: "Test"
 model: "diamond"
 behaviour:
-    - lore:
-        textcomponent:
-            - text: ""
-            - - color: gold
-                italic: false
-                text: "Ability: Dragon Rage"
-              - color: yellow
-                bold: true
-                italic: false
-                text: " RIGHT CLICK"
-            - - color: gray
-                italic: false
-                text: "All Monsters in front of you take "
-              - color: red
-                text: "35 "
-              - color: gray
-                italic: false
-                text: "damage."
-            - color: dark_gray
-              italic: false
-              text: "Cooldown: 30s"

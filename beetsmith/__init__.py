@@ -66,6 +66,7 @@ def main(ctx: Context):
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 import beet
+from . import typewriter
 from .core import (CustomItem, ArmorSet)
 from .parsing import (create_from_yaml, bulk_implement)
 from .models import (ItemComponents, RegistryEntry)
@@ -78,7 +79,7 @@ def _export(*objs):
 __all__ = _export(CustomItem, ArmorSet,
                   RegistryEntry, ItemComponents,
                   bulk_implement, create_from_yaml,
-                  resourceLocation,
+                  resourceLocation, typewriter,
                   beetsmither,
                   beet)
 
