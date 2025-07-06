@@ -73,15 +73,15 @@ from .models import (ItemComponents, RegistryEntry)
 from .validation import (resourceLocation)
 from .plugin import (beetsmither)
 
-def _export(*objs):
-    return [obj.__name__ for obj in objs]
+_symbols = [CustomItem, ArmorSet,
+            RegistryEntry, ItemComponents,
+            bulk_implement, create_from_yaml,
+            resourceLocation, typewriter,
+            beetsmither,
+            beet]
+_constants = []
 
-__all__ = _export(CustomItem, ArmorSet,
-                  RegistryEntry, ItemComponents,
-                  bulk_implement, create_from_yaml,
-                  resourceLocation, typewriter,
-                  beetsmither,
-                  beet)
+__all__ = [obj.__name__ for obj in _symbols].extend(_constants)
 
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                     Config                                    │ 

@@ -1,16 +1,16 @@
 """
 ## Typewriter
-BeetSmith sub-library for crafting, manipulating and formatting text components
+BeetSmith sub-library for crafting, manipulating and formatting object templates
 """
 
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                     Exports                                   │ 
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
-from .core import Placeholder, TextTemplate
+from .templates import Placeholder, Template
 from .skyblock import right_click_ability
 
-def _export(*objs):
-    return [obj.__name__ for obj in objs]
+_symbols = [Placeholder, Template]
+_constants = "right_click_ability"
 
-__all__ = _export(Placeholder, TextTemplate)
+__all__ = [obj.__name__ for obj in _symbols].extend(_constants)

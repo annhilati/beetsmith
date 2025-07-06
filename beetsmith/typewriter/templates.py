@@ -1,10 +1,17 @@
 import string
-from typing import Any, Type, Callable
+from typing import Any, Type, Callable, Generic, TypeVar
+from ..text_components import TextComponent # Used in modules importing from here <3
 
-class Placeholder():
+T = TypeVar("T")
+
+def identity(x):
+    "Returns the argument"
+    return x
+
+class Placeholder(Generic[T]):
     "BeetSmith object placeholder"
     
-    def __init__(self, name: str, input_type: Type, validator: Callable):
+    def __init__(self, name: str, input_type: T, validator: Callable):
         self.name = name
         self.input_type = input_type
         self.validator = validator
@@ -12,19 +19,19 @@ class Placeholder():
     def __hash__(self):
         return hash(self.name)
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: Any) -> bool:
         return self.name == other.name
     
     def __str__(self):
         raise Exception("Can't use Placeholder in strings")
     
-class TextTemplate():
-    "BeetSmith template for complex text components"
-    def __init__(self, value: list[list[dict]]):
+class Template(Generic[T]):
+    "BeetSmith template for complex objects"
+    def __init__(self, value: T):
         self.content = value
 
-    def fullfill(self, mapping: dict[str: str | Any]) -> list[list[dict]]:
-        """Replace the TextTemplates placeholders
+    def fullfill(self, mapping: dict[str: Any]) -> Any:
+        """Replace the Template's placeholders
 
         #### Parameters:
             - mapping (dict)
@@ -35,7 +42,6 @@ class TextTemplate():
         work = format_any(work, {key: value for key, value in mapping.items()})
         work = replace_placeholders(work, {key: value for key, value in mapping.items()})
         return work
-
 
 def format_any(obj: Any, mapping: dict[str, str]) -> Any:
     "Replaces string placeholders in objects of any complexity"
