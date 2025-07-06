@@ -3,7 +3,7 @@ import pathlib
 from .core import *
 from .parsing import *
 
-def beetsmither(definitions_dir: str | pathlib.Path = "beetsmith") -> beet.Plugin:
+def beetsmither(definitions_dir: str | pathlib.Path = "src/beetsmith") -> beet.Plugin:
     """Beet Plugin configurator for BeetSmith
     
     #### Usage
