@@ -46,7 +46,7 @@ class Template(Generic[T]):
 def format_any(obj: Any, mapping: dict[str, str]) -> Any:
     "Replaces string placeholders in objects of any complexity"
     if isinstance(obj, str):
-        return string.Template(obj).safe_substitute(mapping)
+        return obj.format(**mapping)
     
     elif isinstance(obj, list):
         return [format_any(e, mapping) for e in obj]
@@ -70,18 +70,24 @@ def replace_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
     if isinstance(obj, list):
         result = []
         for e in obj:
-            replaced = replace_placeholders(e, mapping)
-            if isinstance(e, Placeholder) and isinstance(replaced, tuple):
-                result.extend(replaced)
+            if isinstance(e, Placeholder):
+                value = e.validator(mapping[e.name])
+                if isinstance(value, tuple):
+                    result.extend(value)
+                else:
+                    result.append(value)
             else:
-                result.append(replaced)
+                result.append(replace_placeholders(e, mapping))
         return result
 
     elif isinstance(obj, dict):
         return {k: replace_placeholders(v, mapping) for k, v in obj.items()}
 
     elif isinstance(obj, Placeholder):
-        return obj.validator(mapping[obj.name])
+        value = obj.validator(mapping[obj.name])
+        if isinstance(value, tuple):
+            raise TypeError(f"Cannot insert a tuple outside a list context: {value}")
+        return value
 
     else:
         return obj

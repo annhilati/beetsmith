@@ -4,13 +4,12 @@ from .templates import *
 def description(text: str) -> tuple[list[dict]]:
     "Converts a text into a line-wrapped tuple of gray colored text lines"
     wrapped = textwrap.wrap(text, width=40)
-    print(wrapped)
     print([[line] for line in wrapped])
     normalized = TextComponent.normalize([[line] for line in wrapped])
     for line in normalized:
         for segment in line:
             segment["color"] = "gray"
-    return (normalized,)
+    return tuple(normalized)
 
 right_click_ability: Template[list[list[dict]]] = Template(
     [

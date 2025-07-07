@@ -27,6 +27,7 @@ class TextComponent():
             - [0]: if only one line is allowed in the field
         """
         newLines = []
+        print(obj)
 
         if type(obj) == list:                       # obj ist Line oder Multiline
             if list in [type(e) for e in obj]:      # obj ist Multiline
@@ -43,6 +44,8 @@ class TextComponent():
                             elif type(part) == dict:            # part ist dict
                                 newLine.append(part)
                             else:
+                                print(type(part)) # Debug
+                                print(part)
                                 raise ValueError("Every part in a line in the object has to be a dictionary or a string")
                         newLines.append(newLine)
                     else:                                   # line ist nicht str, dict oder list
