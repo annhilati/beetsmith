@@ -23,7 +23,7 @@ class Placeholder(Generic[T]):
         return self.name == other.name
     
     def __str__(self):
-        raise Exception("Can't use Placeholder in strings")
+        return f"<Placeholder '{self.name}'>"
     
 class Template(Generic[T]):
     "BeetSmith template for complex objects"
@@ -39,25 +39,25 @@ class Template(Generic[T]):
                 - v: Value to replace the placeholder with (Tuples will get unpacked automatically)
         """
         work = self.content
-        work = format_any(work, {key: value for key, value in mapping.items()})
-        work = replace_placeholders(work, {key: value for key, value in mapping.items()})
+        work = substitute_any_strings(work, mapping)
+        work = substitute_any_placeholders(work, mapping)
         return work
 
-def format_any(obj: Any, mapping: dict[str, str]) -> Any:
+def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
     "Replaces string placeholders in objects of any complexity"
     if isinstance(obj, str):
         return obj.format(**mapping)
     
     elif isinstance(obj, list):
-        return [format_any(e, mapping) for e in obj]
+        return [substitute_any_strings(e, mapping) for e in obj]
     
     elif isinstance(obj, dict):
-        return {k: format_any(v, mapping) for k, v in obj.items()}
+        return {k: substitute_any_strings(v, mapping) for k, v in obj.items()}
     
     else:
         return obj
 
-def replace_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
+def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
     """Replace Placeholder objects in obj of any complexity
 
     #### Parameters:
@@ -77,11 +77,11 @@ def replace_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
                 else:
                     result.append(value)
             else:
-                result.append(replace_placeholders(e, mapping))
+                result.append(substitute_any_placeholders(e, mapping))
         return result
 
     elif isinstance(obj, dict):
-        return {k: replace_placeholders(v, mapping) for k, v in obj.items()}
+        return {k: substitute_any_placeholders(v, mapping) for k, v in obj.items()}
 
     elif isinstance(obj, Placeholder):
         value = obj.validator(mapping[obj.name])
