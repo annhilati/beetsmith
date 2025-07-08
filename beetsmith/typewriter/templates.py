@@ -1,4 +1,4 @@
-import string
+import re
 from typing import Any, Type, Callable, Generic, TypeVar
 from ..text_components import TextComponent # Used in modules importing from here <3
 
@@ -45,17 +45,25 @@ class Template(Generic[T]):
 
 def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
     "Replaces string placeholders in objects of any complexity"
-    if isinstance(obj, str):
-        return obj.format(**mapping)
+    try:
     
-    elif isinstance(obj, list):
-        return [substitute_any_strings(e, mapping) for e in obj]
-    
-    elif isinstance(obj, dict):
-        return {k: substitute_any_strings(v, mapping) for k, v in obj.items()}
-    
-    else:
-        return obj
+        if isinstance(obj, str):
+            return obj.format(**mapping)
+        
+        elif isinstance(obj, list):
+            return [substitute_any_strings(e, mapping) for e in obj]
+        
+        elif isinstance(obj, dict):
+            return {k: substitute_any_strings(v, mapping) for k, v in obj.items()}
+        
+        else:
+            return obj
+        
+    except Exception as e:
+        msg = str(e)
+        if match := re.search(r"'(\w+)'", msg):
+            raise KeyError(f"Template is missing key '{match.group(1)}' for fullfillment")
+        raise e
 
 def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
     """Replace Placeholder objects in obj of any complexity
@@ -66,28 +74,34 @@ def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
             - k: Name of a placeholder
             - v: Value to replace the placeholder with (Tuples will get unpacked automatically)
     """
-    
-    if isinstance(obj, list):
-        result = []
-        for e in obj:
-            if isinstance(e, Placeholder):
-                value = e.validator(mapping[e.name])
-                if isinstance(value, tuple):
-                    result.extend(value)
+    try:
+        if isinstance(obj, list):
+            result = []
+            for e in obj:
+                if isinstance(e, Placeholder):
+                    value = e.validator(mapping[e.name])
+                    if isinstance(value, tuple):
+                        result.extend(value)
+                    else:
+                        result.append(value)
                 else:
-                    result.append(value)
-            else:
-                result.append(substitute_any_placeholders(e, mapping))
-        return result
+                    result.append(substitute_any_placeholders(e, mapping))
+            return result
 
-    elif isinstance(obj, dict):
-        return {k: substitute_any_placeholders(v, mapping) for k, v in obj.items()}
+        elif isinstance(obj, dict):
+            return {k: substitute_any_placeholders(v, mapping) for k, v in obj.items()}
 
-    elif isinstance(obj, Placeholder):
-        value = obj.validator(mapping[obj.name])
-        if isinstance(value, tuple):
-            raise TypeError(f"Cannot insert a tuple outside a list context: {value}")
-        return value
+        elif isinstance(obj, Placeholder):
+            value = obj.validator(mapping[obj.name])
+            if isinstance(value, tuple):
+                raise TypeError(f"Cannot insert a tuple outside a list context: {value}")
+            return value
+    
+        else:
+            return obj
 
-    else:
-        return obj
+    except Exception as e:
+        msg = str(e)
+        if match := re.search(r"'(\w+)'", msg):
+            raise KeyError(f"Template is missing key '{match.group(1)}' for fullfillment")
+        raise e

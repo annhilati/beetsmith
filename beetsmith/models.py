@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from typing import Type
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
 
 class ItemComponents(BaseModel):
     # https://minecraft.wiki/w/Data_component_format#List_of_components
@@ -37,9 +39,9 @@ class ItemComponents(BaseModel):
     use_remainder: dict = None
     weapon: dict = None
 
-class RegistryEntry(BaseModel):
-    registry: Type # tag, recipe, etc.
-    name: str # namespaced id
+class RegistryEntry(BaseModel, Generic[T]):
+    registry: type[T]
+    name: str
     content: dict | list[str]
 
     def __str__(self):
