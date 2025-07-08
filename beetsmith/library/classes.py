@@ -7,10 +7,10 @@ import inspect
 import warnings
 import functools
 from typing import Literal
-from .text_components import TextComponent
-from .validation import *
-from .models import *
-from .calc import *
+from beetsmith.text_components import TextComponent
+from beetsmith.validation import *
+from beetsmith.library.models import *
+from beetsmith.calc import *
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71

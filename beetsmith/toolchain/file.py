@@ -4,7 +4,7 @@ import beet
 import pathlib
 import inspect
 import warnings
-from .core import CustomItem, ArmorSet
+from beetsmith.library.classes import CustomItem, ArmorSet
 
 # Developer Note:
 #   create_from_yaml shall be raising exceptions on problems,
