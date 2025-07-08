@@ -211,16 +211,21 @@ class CustomItem():
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
-    # @behaviour
-    # def damage_resistance(self, fire: bool, explosions: bool) -> None:
-    #     if fire and explosions:
-    #         tag_data = {"values": ["#minecraft:is_fire", "#minecraft:is_explosion"]}
-    #         self._special_required_files.append(RegistryFile(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
-    #         self.components.damage_resistant = {"types": f"#{self.id}"}
-    #     elif fire:
-    #         self.components.damage_resistant = {"types": "#minecraft:is_fire"}
-    #     elif explosions:
-    #         self.components.damage_resistant = {"types": "#minecraft:is_explosion"}
+    @behaviour
+    def damage_resistance(self, damage_types: list[str]) -> None:
+        """
+        Sets which damage types the custom item (as item entity or as equippable when the wearer takes damage) is immune to
+
+        #### Parameters
+            - damage_types (list[str]): A list of damage type tags (without leading `#`) [[Wiki](https://minecraft.wiki/w/Damage_type_tag_(Java_Edition)#List_of_tags)]
+        
+        """
+        if len(damage_types) > 1:
+            tag_data = {"values": [f"#{damage_type}" for damage_type in damage_types]}
+            self._special_required_files.append(RegistryEntry(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
+            self.components.damage_resistant = {"types": f"#{self.id}"}
+        else:
+            self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
 
     @behaviour
     def equippable(self, *,
