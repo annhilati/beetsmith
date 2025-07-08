@@ -23,7 +23,7 @@ class Placeholder(Generic[T]):
         return self.name == other.name
     
     def __str__(self):
-        return f"<Placeholder '{self.name}'>"
+        raise Exception("Placeholder should not be used in f-strings")
     
 class Template(Generic[T]):
     "BeetSmith template for complex objects"
