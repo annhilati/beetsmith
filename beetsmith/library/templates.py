@@ -33,10 +33,13 @@ class Template(Generic[T]):
     def fullfill(self, mapping: dict[str: Any]) -> Any:
         """Replace the Template's placeholders
 
-        #### Parameters:
+        #### Parameters
             - mapping (dict)
                 - k: Name of a string placeholder or Placeholder object
                 - v: Value to replace the placeholder with (Tuples will get unpacked automatically)
+
+        #### Raises
+            - KeyError: If a placeholder key present in the templates content is missing in mapping
         """
         work = self.content
         work = substitute_any_strings(work, mapping)

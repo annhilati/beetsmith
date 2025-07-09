@@ -10,6 +10,8 @@ from beetsmith.core.classes import CustomItem, ArmorSet, Implementable
 #   create_from_yaml shall be raising exceptions on problems,
 #   but load_dir_and_implement shall only warn the user.
 
+available_types = [CustomItem, ArmorSet]
+
 def load_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
     """
     Creates a CustomItem or ArmorSet object from a YAML definition file
@@ -18,15 +20,14 @@ def load_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
         - SyntaxError: If the definition file has a faulty structure or is missing an argument
         - Exception: Any other not foreseen problem
     """
-    available_types = [CustomItem, ArmorSet]
-
+    
     try:
         with open(file, 'r', encoding="utf-8") as f:
             data: dict = yaml.safe_load(f)
     except UnicodeDecodeError as e:
         raise e
 
-    obj_type:   type      = [type for type in available_types if type.__name__ == data["type"]][0]
+    obj_type:   type      = [type for type in available_types if type.__name__ == data["type"]][0] # [0] because list comprehension
     obj_params: list[str] = [name for name, param in inspect.signature(obj_type.__init__).parameters.items()]
 
     instance_params = {param: value for param, value in data.items() if param in obj_params}
@@ -87,14 +88,14 @@ def load_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
 
     return instance
 
-def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow_raises: bool = False) -> None:
+def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, *, raise_on_error: bool = False) -> None:
     """
     Looks for yaml files in a directory and implements all of them into a datapack
 
-    #### Parameters:
+    #### Parameters
         - directory (str | Path): Directory path with desired files
         - datapack (DataPack): A beet datapack object
-        - allow_raises (bool): Whether problems should interupt the programm by raising exceptions
+        - raise_on_error (bool): Whether the process should be interrupted by raised exceptions
     """
     directory = pathlib.Path(directory) if not isinstance(directory, pathlib.Path) else directory
     files = [filepath for filepath in directory.glob("*.yml")] + [filepath for filepath in directory.glob("*.yaml")]
@@ -105,6 +106,6 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow
             obj.implement(datapack)
 
         except Exception as e:
-            if allow_raises:
+            if raise_on_error:
                 raise e
             warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)

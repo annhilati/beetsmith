@@ -23,6 +23,7 @@ be_trimmable_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplat
 _registered_implementations: set[tuple[str, beet.DataPack]] = set()
 
 def log_duplicates(func):
+    "Watches implemented custom item ids on `_registered_implementations` and warns on duplicates"
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         self = args[0]
@@ -43,7 +44,6 @@ def log_duplicates(func):
 
 def behaviour(function):
     "Appends the decorated function to self._applied_behaviours when it is called"
-    # Current effects: - appends the decorated function's name to self._applied_behaviours
     def wrapper(self, *args, **kwargs):
         self._applied_behaviours.append(function.__name__)
         return function(self, *args, **kwargs)
@@ -63,17 +63,17 @@ class CustomItem():
     """Class representing a custom item.
     
     #### Behaviour
-            A custom item's behaviour can be defined through the CustomItem object's methods.
-            - add_attribute_modifier
-            - consumable
-            - damagable
-            - enchantable
-            - damage_resistance
-            - equippable
-            - lore
-            - rarity
-            - right_click_ability
-            - weapon
+        A custom item's behaviour can be defined through the CustomItem object's methods.
+        - add_attribute_modifier
+        - consumable
+        - damagable
+        - enchantable
+        - damage_resistance
+        - equippable
+        - lore
+        - rarity
+        - right_click_ability
+        - weapon
     """
     def __init__(self, id: str, name: str | dict | list, model: str, texture: str = None):
         """Class representing a custom item
