@@ -1,6 +1,6 @@
 import re
-from typing import Any, Type, Callable, Generic, TypeVar
-from ..text_components import TextComponent # Used in modules importing from here <3
+from typing import Any, Callable, Generic, TypeVar
+from beetsmith.library.text_components import TextComponent # Used in modules importing from here <3
 
 T = TypeVar("T")
 

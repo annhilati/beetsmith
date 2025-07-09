@@ -1,4 +1,4 @@
-from ..typewriter.templates import *
+from beetsmith.library.templates import *
 
 trigger_advancement: Template[dict] = Template(
     {

@@ -1,7 +1,7 @@
 import beet
 import pathlib
-from beetsmith.library.classes import *
-from beetsmith.parsing import *
+from beetsmith.core.classes import *
+from beetsmith.toolchain.file import *
 
 def beetsmither(definitions_dir: str | pathlib.Path = "src/beetsmith") -> beet.Plugin:
     """Beet Plugin configurator for BeetSmith

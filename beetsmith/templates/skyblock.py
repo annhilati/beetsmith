@@ -1,5 +1,5 @@
 import textwrap
-from .templates import *
+from beetsmith.library.templates import *
 
 def description(text: str) -> tuple[list[dict]]:
     "Converts a text into a line-wrapped tuple of gray colored text lines"
