@@ -1,0 +1,1 @@
+"BeetSmith module containing additional features for better usability"

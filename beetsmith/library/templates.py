@@ -11,7 +11,7 @@ def identity(x):
 class Placeholder(Generic[T]):
     "BeetSmith object placeholder"
     
-    def __init__(self, name: str, input_type: T, validator: Callable):
+    def __init__(self, name: str, input_type: T, validator: Callable[[T], Any] = identity):
         self.name = name
         self.input_type = input_type
         self.validator = validator

@@ -1,0 +1,1 @@
+"BeetSmith module containing utility functionality and helpers"

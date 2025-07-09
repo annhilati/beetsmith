@@ -1,10 +1,8 @@
 import re
-import json
-from typing import Any
 
 resourceLocationPattern = r"^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?(?:\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?)*$" # currently: never leading special symbols
 
-def resourceLocation(str: str):
+def resourceLocation(str: str) -> str:
     """
     Ensures that the argument is formatted like a valid resource location and passes it on
     

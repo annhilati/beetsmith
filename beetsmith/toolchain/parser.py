@@ -4,13 +4,20 @@ import beet
 import pathlib
 import inspect
 import warnings
-from beetsmith.core.classes import CustomItem, ArmorSet
+from beetsmith.core.classes import CustomItem, ArmorSet, Implementable
 
 # Developer Note:
 #   create_from_yaml shall be raising exceptions on problems,
 #   but load_dir_and_implement shall only warn the user.
 
-def create_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
+def load_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
+    """
+    Creates a CustomItem or ArmorSet object from a YAML definition file
+    
+    #### Raises
+        - SyntaxError: If the definition file has a faulty structure or is missing an argument
+        - Exception: Any other not foreseen problem
+    """
     available_types = [CustomItem, ArmorSet]
 
     try:
@@ -94,7 +101,7 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, allow
 
     for file in files:
         try: 
-            obj = create_from_yaml(file)
+            obj = load_from_yaml(file)
             obj.implement(datapack)
 
         except Exception as e:

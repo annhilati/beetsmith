@@ -1,0 +1,1 @@
+"BeetSmith module containing core classes and functionality"

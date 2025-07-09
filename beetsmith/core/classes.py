@@ -6,11 +6,11 @@ import uuid
 import inspect
 import warnings
 import functools
-from typing import Literal
+from typing import Literal, Protocol, runtime_checkable
 from beetsmith.library.text_components import TextComponent
 from beetsmith.library.validation import *
-from beetsmith.core.models import *
 from beetsmith.library.calc import *
+from beetsmith.core.models import *
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
@@ -26,12 +26,12 @@ def log_duplicates(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         self = args[0]
-        id = getattr(self, "id", None)
+        id: str = getattr(self, "id", None)
 
         sig = inspect.signature(func)
         bound = sig.bind(*args, **kwargs)
         bound.apply_defaults()
-        datapack = bound.arguments.get("datapack")
+        datapack: beet.DataPack = bound.arguments.get("datapack")
 
         if (id, datapack) in _registered_implementations:
             warnings.warn(f"Multiple custom items with the id '{id}' were implemented")
@@ -42,12 +42,18 @@ def log_duplicates(func):
     return wrapper
 
 def behaviour(function):
+    "Appends the decorated function to self._applied_behaviours when it is called"
     # Current effects: - appends the decorated function's name to self._applied_behaviours
     def wrapper(self, *args, **kwargs):
-        if not self._applied_behaviours.append: self._applied_behaviours = []
         self._applied_behaviours.append(function.__name__)
         return function(self, *args, **kwargs)
     return wrapper
+
+@runtime_checkable
+class Implementable(Protocol):
+    "Protocol for types with a `implement` method"
+    def implement(self, datapack: beet.DataPack) -> None:
+        ...
 
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                  CustomItem                                   │ 
@@ -469,7 +475,7 @@ class CustomItem():
         return files
     
     @log_duplicates
-    def implement(self, datapack: beet.DataPack) -> None:
+    def implement(self, datapack: beet.DataPack, /) -> None:
         """
         Implement the custom item into a beet datapack
         """
@@ -553,7 +559,7 @@ class ArmorSet():
     # ╰────────────────────────────────────────────────────────────╯
 
     @behaviour
-    def damagable(self, durability: int | tuple[int, int, int, int], break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
+    def damagable(self, *, durability: int | tuple[int, int, int, int], break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         ...
         for i, item in enumerate(self.items):
             if isinstance(durability, int):
@@ -574,7 +580,7 @@ class ArmorSet():
         ...
 
     @behaviour
-    def material(self, model_asset: str, trim_pattern: str = None, trim_material: str = None, color: int = None, helmet_texture: str = None, equip_sound: str = "item.armor.equip_generic"):
+    def material(self, *, model_asset: str, trim_pattern: str = None, trim_material: str = None, color: int = None, helmet_texture: str = None, equip_sound: str = "item.armor.equip_generic"):
         ...
         for i, item in enumerate(self.items):
             item.components.equippable["asset_id"] = resourceLocation(model_asset)
@@ -597,7 +603,7 @@ class ArmorSet():
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    def implement(self, datapack: beet.DataPack):
+    def implement(self, datapack: beet.DataPack, /):
         ...
         for item in self.items:
             item.implement(datapack=datapack)

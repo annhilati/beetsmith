@@ -66,17 +66,16 @@ def main(ctx: Context):
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 import beet
-from beetsmith import typewriter
 from beetsmith.core.models import (ItemComponents, RegistryEntry)
 from beetsmith.core.classes import (CustomItem, ArmorSet)
-from beetsmith.toolchain.beet import (beetsmither)
-from beetsmith.toolchain.file import (create_from_yaml, bulk_implement)
+from beetsmith.toolchain.plugin import (beetsmither)
+from beetsmith.toolchain.parser import (load_from_yaml, bulk_implement)
 from beetsmith.library.validation import (resourceLocation)
 
 _symbols = [CustomItem, ArmorSet,
             RegistryEntry, ItemComponents,
-            bulk_implement, create_from_yaml,
-            resourceLocation, typewriter,
+            bulk_implement, load_from_yaml,
+            resourceLocation,
             beetsmither,
             beet]
 _constants = []
