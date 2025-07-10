@@ -1,6 +1,6 @@
 <img align="right" src="https://github.com/annhilati/beetsmith/blob/main/icon.png" alt="logo" width="74">
 
-> ![INFO]
+> [!INFO]
 > This library is not that powerful. There are similar projects like stewbeet and simple_custom_item that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
 
 # BeetSmith
