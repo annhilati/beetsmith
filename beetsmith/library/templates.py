@@ -4,7 +4,7 @@ from beetsmith.library.text_components import TextComponent # Used in modules im
 
 T = TypeVar("T")
 
-def identity(x):
+def identity(x, /):
     "Returns the argument"
     return x
 
@@ -30,7 +30,7 @@ class Template(Generic[T]):
     def __init__(self, value: T):
         self.content = value
 
-    def fullfill(self, mapping: dict[str: Any]) -> Any:
+    def fullfill(self, mapping: dict[str: Any]) -> T:
         """Replace the Template's placeholders
 
         #### Parameters
@@ -42,8 +42,8 @@ class Template(Generic[T]):
             - KeyError: If a placeholder key present in the templates content is missing in mapping
         """
         work = self.content
-        work = substitute_any_strings(work, mapping)
         work = substitute_any_placeholders(work, mapping)
+        work = substitute_any_strings(work, mapping)
         return work
 
 def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
@@ -71,14 +71,27 @@ def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
 def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
     """Replace Placeholder objects in obj of any complexity
 
-    #### Parameters:
-        - obj: (Any): Currently supported are lists and dicts. Placeholders will be replaced, everything else ignored
+    #### Parameters
+        - obj: (Any): Currently supported are lists, dicts and nested Templates. Placeholders will be replaced, everything else ignored
         - mapping (dict)
             - k: Name of a placeholder
             - v: Value to replace the placeholder with (Tuples will get unpacked automatically)
+
+    #### Raises
+        - KeyError: If any key present in a Placeholder isn't given in mapping
     """
     try:
-        if isinstance(obj, list):
+
+        if isinstance(obj, Placeholder):
+            value = obj.validator(mapping[obj.name])
+            if isinstance(value, tuple):
+                raise TypeError(f"Cannot insert a tuple outside a list context: {value}")
+            return value
+    
+        elif isinstance(obj, Template):
+            return substitute_any_placeholders(obj.fullfill(mapping), mapping)
+    
+        elif isinstance(obj, list):
             result = []
             for e in obj:
                 if isinstance(e, Placeholder):
@@ -94,12 +107,6 @@ def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
         elif isinstance(obj, dict):
             return {k: substitute_any_placeholders(v, mapping) for k, v in obj.items()}
 
-        elif isinstance(obj, Placeholder):
-            value = obj.validator(mapping[obj.name])
-            if isinstance(value, tuple):
-                raise TypeError(f"Cannot insert a tuple outside a list context: {value}")
-            return value
-    
         else:
             return obj
 

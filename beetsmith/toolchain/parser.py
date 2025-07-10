@@ -12,20 +12,23 @@ from beetsmith.core.classes import CustomItem, ArmorSet, Implementable
 
 available_types = [CustomItem, ArmorSet]
 
-def load_from_yaml(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
-    """
-    Creates a CustomItem or ArmorSet object from a YAML definition file
-    
-    #### Raises
-        - SyntaxError: If the definition file has a faulty structure or is missing an argument
-        - Exception: Any other not foreseen problem
-    """
-    
+def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
     try:
         with open(file, 'r', encoding="utf-8") as f:
             data: dict = yaml.safe_load(f)
     except UnicodeDecodeError as e:
         raise e
+    
+    return load_from_yaml(data)
+
+def load_from_yaml(data: dict, /) -> CustomItem | ArmorSet:
+    """
+    Creates a CustomItem or ArmorSet object from a YAML definition file
+    
+    #### Raises
+        - SyntaxError: If the definition has a faulty structure or is missing an argument
+        - Exception: Any other not foreseen problem
+    """
 
     obj_type:   type      = [type for type in available_types if type.__name__ == data["type"]][0] # [0] because list comprehension
     obj_params: list[str] = [name for name, param in inspect.signature(obj_type.__init__).parameters.items()]
@@ -102,7 +105,7 @@ def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, *, ra
 
     for file in files:
         try: 
-            obj = load_from_yaml(file)
+            obj = load_from_file(file)
             obj.implement(datapack)
 
         except Exception as e:

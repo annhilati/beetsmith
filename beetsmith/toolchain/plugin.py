@@ -12,6 +12,7 @@ class YAMLDefinition(beet.YamlFile):
 def beetsmither() -> beet.Plugin:
     """Beet Plugin configurator for BeetSmith
     
+    ---
     #### Usage
     ```
     from beetsmith import beet, beetsmith
@@ -27,7 +28,7 @@ def beetsmither() -> beet.Plugin:
         #ctx.data.extend_namespace.append(YAMLDefinition)
 
         for resource_location, file in ctx.data[YAMLDefinition].items():
-            load_from_yaml(file._content).implement(ctx.data)
+            load_from_yaml(file.data).implement(ctx.data)
 
     return plugin
 
