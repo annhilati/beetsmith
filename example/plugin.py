@@ -1,5 +1,5 @@
 from beet import Context
-from beetsmith import bulk_implement, CustomItem, load_from_yaml, load_from_yaml, typewriter
+from beetsmith import bulk_implement, CustomItem, load_from_yaml, load_from_yaml, typewriter, beetsmither
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")
@@ -16,6 +16,4 @@ def main(ctx: Context):
 
     print(ctx.directory)
 
-    item = load_from_yaml("./src/beetsmith/customitem/aspect_of_the_dragons.yaml")
-    item.lore(typewriter.skyblock.right_click_ability.fullfill({"ability_name": "Dragon Rage", "cooldown_seconds": "30"}))
-    item.implement(ctx.data)
+    ctx.require(beetsmither())

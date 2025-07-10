@@ -1,0 +1,8 @@
+name: build
+data_pack:
+    load:
+        - src
+pipeline: ["plugin.main"]
+output: "."
+require:
+    - beetsmith.toolchain.plugin.test

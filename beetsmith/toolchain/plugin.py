@@ -1,9 +1,15 @@
 import beet
 import pathlib
+from typing import ClassVar
 from beetsmith.core.classes import *
 from beetsmith.toolchain.parser import *
 
-def beetsmither(*, definitions_dir: str | pathlib.Path = "src/beetsmith") -> beet.Plugin:
+class YAMLDefinition(beet.YamlFile):
+    "Class representing a BeetSmith YAML definition file inside a datapack"
+    scope: ClassVar[beet.NamespaceFileScope] = ("beetsmith",)
+    extension: ClassVar[str] = ".yaml"
+
+def beetsmither() -> beet.Plugin:
     """Beet Plugin configurator for BeetSmith
     
     #### Usage
@@ -12,12 +18,19 @@ def beetsmither(*, definitions_dir: str | pathlib.Path = "src/beetsmith") -> bee
 
     def main(ctx: beet.Context):
         ctx.require(
-            beetsmith(definitions_dir="beetsmith")
+            beetsmither
         )
     ```
     """
 
     def plugin(ctx: beet.Context):
-        bulk_implement(directory=definitions_dir, datapack=ctx.data)
+        #ctx.data.extend_namespace.append(YAMLDefinition)
+
+        for resource_location, file in ctx.data[YAMLDefinition].items():
+            load_from_yaml(file._content).implement(ctx.data)
 
     return plugin
+
+def test(ctx: beet.Context):
+    print(ctx.data.extend_namespace)
+    ctx.data.extend_namespace.append(YAMLDefinition)

@@ -12,7 +12,7 @@ from beetsmith.core.classes import CustomItem, ArmorSet, Implementable
 
 available_types = [CustomItem, ArmorSet]
 
-def load_from_yaml(file: str | pathlib.Path) -> CustomItem | ArmorSet:
+def load_from_yaml(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
     """
     Creates a CustomItem or ArmorSet object from a YAML definition file
     
