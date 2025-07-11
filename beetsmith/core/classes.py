@@ -207,7 +207,7 @@ class CustomItem:
         """
         if len(damage_types) > 1:
             tag_data = {"values": [f"#{damage_type}" for damage_type in damage_types]}
-            self._special_required_files.append(tuple(self.id, beet.DamageTypeTag(tag_data)))
+            self._special_required_files.append(tuple([self.id, beet.DamageTypeTag(tag_data)]))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         else:
             self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
@@ -444,7 +444,7 @@ class CustomItem:
         # Tags
         for tag in self.required_tags:
             tag_data = {"replace": False, "values": [self.item]}
-            files.append(tuple(tag, beet.ItemTag(tag_data)))
+            files.append(tuple([tag, beet.ItemTag(tag_data)]))
 
         # Explicitely needed files
         files.extend(self._special_required_files)
@@ -468,15 +468,16 @@ class CustomItem:
 
         # Required Files
         for file in self.required_files:
-
-            if file.registry == beet.FunctionTag:
-                datapack.function_tags.setdefault(file.name).merge(file.registry(file.content)) # Can either merge or create function tags
             
-            if file.registry == beet.Function:
-                datapack.functions.setdefault(file.name).append(file.registry(file.content)) # Can either merge or create functions
+            match file[1]:
+                case beet.FunctionTag:
+                    datapack.function_tags.setdefault(file[0]).merge(file[1]) # Can either merge or create function tags
             
-            else:
-                datapack[file.name] = file.registry(file.content)
+                case beet.Function:
+                    datapack.functions.setdefault(file[0]).append(file[1]) # Can either merge or create functions
+                
+                case _:
+                    datapack[file[0]] = file[1]
 
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                   ArmorSet                                    │ 
