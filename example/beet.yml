@@ -2,7 +2,8 @@ name: build
 data_pack:
     load:
         - src
-pipeline: ["plugin.main"]
 output: "."
 require:
     - beetsmith.requirements
+pipeline:
+    - beetsmith

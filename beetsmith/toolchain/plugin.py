@@ -9,6 +9,11 @@ class YAMLDefinition(beet.YamlFile):
     scope: ClassVar[beet.NamespaceFileScope] = ("beetsmith",)
     extension: ClassVar[str] = ".yaml"
 
+def beet_default(ctx: beet.Context) -> None:
+    ctx.require(
+        beetsmither()
+    )
+
 def beetsmither() -> beet.Plugin:
     """Beet Plugin configurator for BeetSmith
     
