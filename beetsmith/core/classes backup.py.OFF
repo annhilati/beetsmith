@@ -6,8 +6,7 @@ import uuid
 import inspect
 import warnings
 import functools
-from typing import Literal, Union, Protocol, runtime_checkable
-from dataclasses import dataclass, field, InitVar
+from typing import Literal, Protocol, runtime_checkable
 from beetsmith.library.text_components import TextComponent
 from beetsmith.library.validation import *
 from beetsmith.library.calc import *
@@ -60,39 +59,61 @@ class Implementable(Protocol):
 # │                                  CustomItem                                   │ 
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
+class CustomItem():
+    """Class representing a custom item.
+    
+    #### Behaviour
+        A custom item's behaviour can be defined through the CustomItem object's methods.
+        - add_attribute_modifier
+        - consumable
+        - damagable
+        - enchantable
+        - damage_resistance
+        - equippable
+        - lore
+        - rarity
+        - right_click_ability
+        - weapon
+    """
+    def __init__(self, id: str, name: str | dict | list, model: str, texture: str = None):
+        """Class representing a custom item
 
+        #### Parameters
+            - id (str): Self chosen id that will be used for naming files the custom item depends on
+            - name (str | dict | list): Name of the item as a text component
+            - model (str): Asset name of the items model
+            - texture (str): Texture of the item if the model is 'minecraft:player_head' in encoded base64
+        """
 
-@dataclass
-class CustomItem:
-    id: str
-    name: Union[str, dict, list]
-    model: str
-    texture: str = None
+        self.id = resourceLocation(id)
+        "Namespaced vanilla like id used for naming files"
+        
+        self.item: str = "minecraft:music_disc_11"
+        "The custom item's hardcoded item type"
+        
+        self.required_tags: list[str] = []
+        "List of item tags the item the custom item is built on needs to have"
 
-    item:                       str                             = field(init=False, default="minecraft:music_disc_11")
-    required_tags:              list[str]                       = field(init=False, default_factory=list)
-    removed_components:         list[str]                       = field(init=False, default_factory=lambda: ["jukebox_playable"])
-    components:                 ItemComponents                  = field(init=False)
-    _id_namespace:              str                             = field(init=False)
-    _id_short:                  str                             = field(init=False)
-    _special_required_files:    list[tuple[str, beet.TextFile]] = field(init=False, default_factory=list)
-    _applied_behaviours:        list                            = field(init=False, default_factory=list)
+        self.removed_components: list[str] = ["jukebox_playable"]
+        "List of removed components"
 
-    def __post_init__(self):
-        self.id = resourceLocation(self.id)
         self.components = ItemComponents()
-        self.components.item_name = TextComponent.normalize(self.name)[0]
+        "Modelation of the custom item's components. Components can be accessed and overwritten by setting this value's members"
+
+        self.components.item_name = TextComponent.normalize(name)[0]
         self.components.custom_data = {"id": self.id}
-        self.components.item_model = resourceLocation(self.model)
+        self.components.item_model = resourceLocation(model)
         self.components.max_stack_size = 64
         self.components.unbreakable = {}
-        if self.texture:
-            self.components.profile = {
-                "properties": [{"name": "texture", "value": self.texture}]
-            }
+        if texture:
+            self.components.profile = {"properties": [{"name": "texture", "value": texture}]}
+
         self._id_namespace = self.id.split(":")[0]
         self._id_short = self.id.split(":")[1]
-
+        self._special_required_files: list[RegistryEntry] = []
+        #Info: These are not all files! Use self.required_files
+        self._applied_behaviours = []
+        
     def __str__(self) -> str:
         return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self.required_files)} additional files needed)>"
 
@@ -207,7 +228,7 @@ class CustomItem:
         """
         if len(damage_types) > 1:
             tag_data = {"values": [f"#{damage_type}" for damage_type in damage_types]}
-            self._special_required_files.append(tuple(self.id, beet.DamageTypeTag(tag_data)))
+            self._special_required_files.append(RegistryEntry(registry=beet.DamageTypeTag, name=self.id, content=tag_data))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         else:
             self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
@@ -292,9 +313,10 @@ class CustomItem:
         ability_function = resourceLocation(function)
 
         files = [
-            tuple(
-                ability_name,
-                beet.Advancement({
+            RegistryEntry(
+                registry=beet.Advancement,
+                name=ability_name,
+                content={
                     "criteria": { "use_item": {
                         "trigger": "minecraft:using_item",
                         "conditions": { "item": { "predicates": {
@@ -302,17 +324,18 @@ class CustomItem:
                         }}}
                     }},
                     "rewards": { "function": ability_name }
-                })
+                }
             ),
-            tuple(
-                ability_name,
-                beet.Function([
+            RegistryEntry(
+                registry=beet.Function,
+                name=ability_name,
+                content=[
                     f"data modify storage beetsmith:temp HandItem set from entity @s Inventory[{{Slot:0b}}]",
                     f"item replace entity @s weapon.mainhand with air",
                     f"function {ability_function}",
                     f"advancement revoke @s only {ability_name}",
                     f"data modify entity @s Inventory[{{Slot:0b}}] set from storage beetsmith:temp HandItem",
-                ])
+                ]
             )
         ]
         self._special_required_files.extend(files)
@@ -431,7 +454,7 @@ class CustomItem:
         return beet.Recipe(json)
 
     @property
-    def required_files(self) -> list[tuple[str, beet.TextFile]]:
+    def required_files(self) -> list[RegistryEntry]:
         """
         Generates a list of RegistryEntry objects, that have all neccesarry data for a file
 
@@ -444,7 +467,7 @@ class CustomItem:
         # Tags
         for tag in self.required_tags:
             tag_data = {"replace": False, "values": [self.item]}
-            files.append(tuple(tag, beet.ItemTag(tag_data)))
+            files.append(RegistryEntry(registry=beet.ItemTag, name=tag, content=tag_data))
 
         # Explicitely needed files
         files.extend(self._special_required_files)
@@ -482,22 +505,21 @@ class CustomItem:
 # │                                   ArmorSet                                    │ 
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
-@dataclass
-class ArmorSet:
-    """Class representing a custom armor set.
+class ArmorSet():
     """
+    Class representing a custom armor set.
+    """
+    def __init__(self, id_format: str, name_format: str, nouns: tuple[str, str, str, str] = ("Helmet", "Chestplate", "Leggings", "Boots"), trimable: bool = False):
+        """
+        Class representing a custom armor set.
 
-    id_format: InitVar[str]
-    name_format: InitVar[str]
-    nouns: InitVar[tuple[str, str, str, str]] = ("Helmet", "Chestplate", "Leggings", "Boots")
-    trimable: InitVar[bool] = False
-
-    items:                  list[CustomItem]    = field(init=False)
-    _applied_behaviours:    list[str]           = field(init=False, default_factory=list)
-
-    def __post_init__(self):
-        ids = [resourceLocation(self.id_format.format(noun=noun).lower()) for noun in self.nouns]
-        names = [self.name_format.format(noun=noun) for noun in self.nouns]
+        #### Parameters
+            - id_format (str): Format of the armor pieces' ids. Use `{noun}` placeholder
+            - id_format (str): Format of the armor pieces' item names. Use `{noun}` placeholder
+            - trimable (bool): 
+        """
+        ids = (resourceLocation(id_format.format(noun=noun).lower()) for noun in nouns)
+        names = (name_format.format(noun=noun) for noun in nouns)
 
         self.items = [
             CustomItem(ids[0], names[0], "minecraft:chainmail_helmet"),
@@ -511,8 +533,10 @@ class ArmorSet:
                 slot=armor_slots[i],
                 asset="minecraft:chainmail"
             )
-            if self.trimable:
+            if trimable:
                 item.item = be_trimmable_ids[i]
+
+        self._applied_behaviours = []
 
     @property
     def helmet(self) -> CustomItem:

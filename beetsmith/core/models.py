@@ -39,10 +39,10 @@ class ItemComponents(BaseModel):
     use_remainder: dict = None
     weapon: dict = None
 
-class RegistryEntry(BaseModel, Generic[T]):
-    registry: type[T]
-    name: str
-    content: dict | list[str]
+# class RegistryEntry(BaseModel, Generic[T]):
+#     registry: type[T]
+#     name: str
+#     content: dict | list[str]
 
-    def __str__(self):
-        return f"<{self.registry.__name__} '{self.name}'>"
+#     def __str__(self):
+#         return f"<{self.registry.__name__} '{self.name}'>"

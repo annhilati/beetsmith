@@ -1,5 +1,6 @@
 import re
 import yaml
+import json
 import beet
 import pathlib
 import inspect
@@ -13,12 +14,18 @@ from beetsmith.core.classes import CustomItem, ArmorSet, Implementable
 available_types = [CustomItem, ArmorSet]
 
 def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
-    try:
-        with open(file, 'r', encoding="utf-8") as f:
-            data: dict = yaml.safe_load(f)
-    except UnicodeDecodeError as e:
-        raise e
-    
+    """Instanciates a CustomItem or ArmorSet object from a file.
+
+    Supported are YAML and JSON
+    """
+
+    with open(file, 'r', encoding="utf-8") as f:
+        match file.suffix:
+            case ".yml" | "yaml":
+                data: dict = yaml.safe_load(f)
+            case ".json":
+                data: dict = json.load(f)
+
     return load_from_yaml(data)
 
 def load_from_yaml(data: dict, /) -> CustomItem | ArmorSet:

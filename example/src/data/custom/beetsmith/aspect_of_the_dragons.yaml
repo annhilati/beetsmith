@@ -3,3 +3,7 @@ id: lategame:test
 name: "Test"
 model: "diamond"
 behaviour:
+  - weapon:
+      attack_damage: 6
+      attack_speed: 6
+      can_sweep: true

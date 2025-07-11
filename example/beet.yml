@@ -5,4 +5,4 @@ data_pack:
 pipeline: ["plugin.main"]
 output: "."
 require:
-    - beetsmith.toolchain.plugin.test
+    - beetsmith.requirements
