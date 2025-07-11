@@ -53,14 +53,11 @@ def behaviour(function):
 @runtime_checkable
 class Implementable(Protocol):
     "Protocol for types with a `implement` method"
-    def implement(self, datapack: beet.DataPack) -> None:
-        ...
+    def implement(self, datapack: beet.DataPack) -> None: ...
 
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                  CustomItem                                   │ 
 # ╰───────────────────────────────────────────────────────────────────────────────╯
-
-
 
 @dataclass
 class CustomItem:
@@ -207,7 +204,7 @@ class CustomItem:
         """
         if len(damage_types) > 1:
             tag_data = {"values": [f"#{damage_type}" for damage_type in damage_types]}
-            self._special_required_files.append(tuple([self.id, beet.DamageTypeTag(tag_data)]))
+            self._special_required_files.append((self.id, beet.DamageTypeTag(tag_data)))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         else:
             self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
@@ -222,7 +219,7 @@ class CustomItem:
                    swappable: bool = True,
                    damage_on_hurt: bool = True,
                    equip_on_interaction: bool = False,
-                   color: int = None):
+                   color: int = None) -> None:
         """
         Sets equippability behaviour
 
@@ -292,7 +289,7 @@ class CustomItem:
         ability_function = resourceLocation(function)
 
         files = [
-            tuple(
+            (
                 ability_name,
                 beet.Advancement({
                     "criteria": { "use_item": {
@@ -304,7 +301,7 @@ class CustomItem:
                     "rewards": { "function": ability_name }
                 })
             ),
-            tuple(
+            (
                 ability_name,
                 beet.Function([
                     f"data modify storage beetsmith:temp HandItem set from entity @s Inventory[{{Slot:0b}}]",
@@ -444,7 +441,7 @@ class CustomItem:
         # Tags
         for tag in self.required_tags:
             tag_data = {"replace": False, "values": [self.item]}
-            files.append(tuple([tag, beet.ItemTag(tag_data)]))
+            files.append((tag, beet.ItemTag(tag_data)))
 
         # Explicitely needed files
         files.extend(self._special_required_files)
@@ -570,11 +567,12 @@ class ArmorSet:
             self.helmet.components.item_model = "minecraft:player_head"
 
     @behaviour
-    def protection(self, armor: tuple, toughness: tuple):
+    def protection(self, armor: tuple[float, float, float, float], toughness: tuple[float, float, float, float] = None):
         ...
         for i, item in enumerate(self.items):
             item.add_attribute_modifier("minecraft:armor", armor_slots[i], armor[i], "add_value")
-            item.add_attribute_modifier("minecraft:armor_toughness", armor_slots[i], toughness[i], "add_value")
+            if toughness:
+                item.add_attribute_modifier("minecraft:armor_toughness", armor_slots[i], toughness[i], "add_value")
 
     # ╭────────────────────────────────────────────────────────────╮
     # │                        Implementation                      │ 

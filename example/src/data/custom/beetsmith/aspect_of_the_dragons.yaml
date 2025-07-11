@@ -7,3 +7,7 @@ behaviour:
       attack_damage: 6
       attack_speed: 6
       can_sweep: true
+  - right_click_ability:
+      description: "Sigma description"
+      cooldown: 7
+      function: "dumb:function"
