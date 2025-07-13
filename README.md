@@ -1,9 +1,7 @@
 <img align="right" src="https://github.com/annhilati/beetsmith/blob/main/icon.png" alt="logo" width="74">
 
 > [!TIP]
-> While being easy to use, this library is not that powerful. There are similar projects like [Stewbeet](https://github.com/Stoupy51/StewBeet) and simple_custom_item that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
-
-- @Stoupy51/StewBeet
+> While being easy to use, this library is not that powerful. There are similar projects like [Stewbeet](https://github.com/Stoupy51/StewBeet) and [simple_item_plugin](https://github.com/edayot/simple_item_plugin) that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
 
 # BeetSmith
 ### Features
