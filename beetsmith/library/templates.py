@@ -26,13 +26,17 @@ class Placeholder(Generic[InputType, RepresentedType]):
     
     name: str
     input_type: InputType
-    validator: Callable[[InputType], RepresentedType]
+    processor: Callable[[InputType], RepresentedType]
 
     def __eq__(self, other: Any) -> bool:
         return self.name == other.name
     
     def __str__(self):
         raise Exception("Placeholder should not be used in f-strings")
+    
+    def resolve(self, input: InputType) -> RepresentedType:
+        "Equivalent to `.processor(input)`"
+        return self.processor(input)
     
 @dataclass
 class Template(Generic[RepresentedType]):
@@ -122,7 +126,7 @@ def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
     try:
 
         if isinstance(obj, Placeholder):
-            value = obj.validator(mapping[obj.name])
+            value = obj.resolve(mapping[obj.name])
             if isinstance(value, tuple):
                 raise TypeError(f"Cannot insert a tuple outside a list context: {value}")
             return value
@@ -134,7 +138,7 @@ def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
             result = []
             for e in obj:
                 if isinstance(e, Placeholder):
-                    value = e.validator(mapping[e.name])
+                    value = e.resolve(mapping[e.name])
                     if isinstance(value, tuple):
                         result.extend(value)
                     else:

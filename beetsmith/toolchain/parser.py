@@ -16,7 +16,7 @@ available_types = [CustomItem, ArmorSet]
 def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
     """Instanciates a CustomItem or ArmorSet object from a file.
 
-    Supported are YAML and JSON
+    Supported are YAML and JSON.
     """
 
     with open(file, 'r', encoding="utf-8") as f:
@@ -26,11 +26,10 @@ def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
             case ".json":
                 data: dict = json.load(f)
 
-    return load_from_yaml(data)
+    return _load_from_yaml(data)
 
-def load_from_yaml(data: dict, /) -> CustomItem | ArmorSet:
-    """
-    Creates a CustomItem or ArmorSet object from a YAML definition file
+def _load_from_yaml(data: dict, /) -> CustomItem | ArmorSet:
+    """Creates a CustomItem or ArmorSet object from data in a specific format.
     
     #### Raises
         - SyntaxError: If the definition has a faulty structure or is missing an argument

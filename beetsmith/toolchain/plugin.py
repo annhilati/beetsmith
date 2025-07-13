@@ -39,7 +39,7 @@ def beetsmither() -> beet.Plugin:
 
         try:
             for resource_location, file in ctx.data[YAMLDefinition].items():
-                instances.append(load_from_yaml(file.data))
+                instances.append(_load_from_yaml(file.data))
                 definition_files.append(resource_location)
                 
             for instance in instances:

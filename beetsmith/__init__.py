@@ -69,12 +69,12 @@ import beet
 from beetsmith.core.models import (ItemComponents)
 from beetsmith.core.classes import (CustomItem, ArmorSet)
 from beetsmith.toolchain.plugin import (beetsmither, requirements, beet_default)
-from beetsmith.toolchain.parser import (load_from_yaml, load_from_file, bulk_implement)
+from beetsmith.toolchain.parser import (_load_from_yaml, load_from_file, bulk_implement)
 from beetsmith.library.validation import (resourceLocation)
 
 _symbols = [CustomItem, ArmorSet,
             ItemComponents,
-            bulk_implement, load_from_yaml, load_from_yaml,
+            bulk_implement, _load_from_yaml, _load_from_yaml,
             resourceLocation,
             beetsmither, requirements, beet_default,
             beet]

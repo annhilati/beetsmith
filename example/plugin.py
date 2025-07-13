@@ -1,5 +1,5 @@
 from beet import Context
-from beetsmith import bulk_implement, CustomItem, load_from_yaml, load_from_yaml, typewriter, beetsmither
+from beetsmith import bulk_implement, CustomItem, _load_from_yaml, _load_from_yaml, typewriter, beetsmither
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")
