@@ -3,7 +3,7 @@
 > [!TIP]
 > While being easy to use, this library is not that powerful. There are similar projects like [Stewbeet](https://github.com/Stoupy51/StewBeet) and simple_custom_item that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
 
-- Stoupy51/StewBeet
+- @Stoupy51/StewBeet
 
 # BeetSmith
 ### Features
