@@ -1,23 +1,32 @@
 import re
 from typing import Any, Callable, Generic, TypeVar
+from dataclasses import dataclass
 from beetsmith.library.text_components import TextComponent # Used in modules importing from here <3
 
-T = TypeVar("T")
+InputType = TypeVar("InputType")
+RepresentedType = TypeVar("RepresentedType")
+#T = TypeVar("T")
 
-def identity(x, /):
+def identity(x: InputType, /):
     "Returns the argument"
     return x
 
-class Placeholder(Generic[T]):
-    "BeetSmith object placeholder"
+@dataclass(unsafe_hash=True)
+class Placeholder(Generic[InputType, RepresentedType]):
+    """Class representing a placeholder in a template.
     
-    def __init__(self, name: str, input_type: T, validator: Callable[[T], Any] = identity):
-        self.name = name
-        self.input_type = input_type
-        self.validator = validator
-
-    def __hash__(self):
-        return hash(self.name)
+    ---
+    #### Usage
+    Use Placeholders in a Template's content, to leave the options for entering a value later without needing to remember the position.
+    Specify a function, that will manipulate or validate the value put in later.
+    ```
+    template = Template({"text": Placeholder("text", Tomato, some_Tomato_to_string_turning_function)})
+    ```
+    """
+    
+    name: str
+    input_type: InputType
+    validator: Callable[[InputType], RepresentedType]
 
     def __eq__(self, other: Any) -> bool:
         return self.name == other.name
@@ -25,13 +34,42 @@ class Placeholder(Generic[T]):
     def __str__(self):
         raise Exception("Placeholder should not be used in f-strings")
     
-class Template(Generic[T]):
-    "BeetSmith template for complex objects"
-    def __init__(self, value: T):
-        self.content = value
+@dataclass
+class Template(Generic[RepresentedType]):
+    """Class representing a template.
+    
+    ---
+    #### Usage
+    Use Templates to define complex nested structures with placeholders, that can be easily filled out.
+    Supported nested types are list, dict, Template & Placeholder.
+    ```
+    template = Template(
+        {
+            "text": Placeholder("text", str, identity),
+            "tags": [
+                "tag_number_one",
+                "tag_{tag_name}_that_has_a_string_placeholder",
+                Placeholder("tags", SomeOminousObject, tuplify)
+            ]
+        }
+    )
+    ```
+    Generate a normal usable object from the Template by filling out the placeholders:
+    ```
+    result = template.fullfill(
+        {
+            "text": "Wow!",
+            "tag_name": "Yep, that should be a string!",
+            "tags": this_is_some_ominous_object
+        }
+    )
+    ```
+    """
 
-    def fullfill(self, mapping: dict[str: Any]) -> T:
-        """Replace the Template's placeholders
+    content: RepresentedType
+
+    def fullfill(self, mapping: dict[str: Any]) -> RepresentedType:
+        """Retunrs the Template's content with placeholders filled out
 
         #### Parameters
             - mapping (dict)
@@ -48,6 +86,7 @@ class Template(Generic[T]):
 
 def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
     "Replaces string placeholders in objects of any complexity"
+    
     try:
     
         if isinstance(obj, str):
