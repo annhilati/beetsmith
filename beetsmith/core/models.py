@@ -1,7 +1,10 @@
 from pydantic import BaseModel
 
 class ItemComponents(BaseModel):
-    "Class representing a Minecraft item's components."
+    """Class representing a Minecraft item's components.
+    
+    Removed components are not stored.
+    """
     # https://minecraft.wiki/w/Data_component_format#List_of_components
     # https://misode.github.io/changelog?tags=component
     attribute_modifiers:            list[dict]          = []

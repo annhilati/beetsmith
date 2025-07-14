@@ -27,12 +27,12 @@ def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
 class BeetSmithBehavior(RootModel[Dict[str, Dict[str, Any]]]):
 
     @field_validator('root')
-    def single_entry(cls, v):
+    def single_entry(cls, v: dict):
         if len(v) != 1:
-            raise ValueError("Jedes Behaviour muss genau einen Methodennamen als Key enthalten")
+            raise ValueError("Behavior shouldn't have multiple keys")
         name, args = next(iter(v.items()))
         if not isinstance(args, dict):
-            raise ValueError(f"Parameter für '{name}' müssen als Key-Value-Dict angegeben werden")
+            raise ValueError(f"Parameters for '{name}' have to be in a key-value format")
         return v
 
 class BeetSmithDefinition(BaseModel):
@@ -93,14 +93,14 @@ class BeetSmithDefinition(BaseModel):
                 raise
 
         # Verarbeite Components
-        for comp, override in self.components.items():
-            current = getattr(instance.components, comp, None)
+        for component, override in self.components.items():
+            current = getattr(instance.components, component, None)
             if isinstance(current, dict) and isinstance(override, dict):
                 current.update(override)
             elif isinstance(current, str) and isinstance(override, str):
-                setattr(instance.components, comp, override)
+                setattr(instance.components, component, override)
             elif current is None:
-                setattr(instance.components, comp, override)
+                setattr(instance.components, component, override)
             else:
                 raise NotImplementedError(f"Can't override component of type '{type(current).__name__}' with '{type(override).__name__}'")
 

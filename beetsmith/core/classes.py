@@ -10,7 +10,7 @@ from typing import Literal, Union, Protocol, runtime_checkable
 from dataclasses import dataclass, field, InitVar
 from beetsmith.library.text_components import TextComponent
 from beetsmith.library.validation import *
-from beetsmith.library.calc import *
+from beetsmith.library.utils import *
 from beetsmith.core.models import *
 
 __minecraft_game_version__ = "1.21.5"
@@ -24,7 +24,7 @@ be_trimmable_ids = ("minecraft:chainmail_helmet", "minecraft:chainmail_chestplat
 _registered_implementations: set[tuple[str, beet.DataPack]] = set()
 
 def log_duplicates(func):
-    "Watches implemented custom item ids on `_registered_implementations` and warns on duplicates"
+    "Watches implemented custom item's ids on `_registered_implementations` and warns on duplicates."
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         self = args[0]
@@ -43,7 +43,7 @@ def log_duplicates(func):
         return func(*args, **kwargs)
     return wrapper
 
-def behaviour(function):
+def behavior(function):
     "Appends the decorated function to self._applied_behaviours when it is called"
     def wrapper(self, *args, **kwargs):
         self._applied_behaviours.append(function.__name__)
@@ -94,16 +94,16 @@ class CustomItem:
         return f"<CustomItem '{self.id}' ('{self.item}' with {len(self._components_data)} components and {len(self.required_files)} additional files needed)>"
 
     # ╭────────────────────────────────────────────────────────────╮
-    # │                         Behaviours                         │ 
+    # │                          Behaviors                         │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    @behaviour
+    @behavior
     def add_attribute_modifier(self, *,
                                attribute: str,
                                slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"],
                                value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"],
                                id: str = uuid.UUID) -> None:
-        """Adds a attribute modifier to the custom item
+        """Adds a attribute modifier to the custom item.
 
         #### Parameters:
             - attribute (str): Name of the modified attribute [[Wiki](https://minecraft.wiki/w/Attribute#Attributes)]
@@ -124,7 +124,7 @@ class CustomItem:
             "slot": slot
         })
 
-    @behaviour 
+    @behavior 
     def consumable(self, *,
                    time: float,
                    animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn", "brush"],
@@ -137,8 +137,7 @@ class CustomItem:
                    cooldown: int = None,
                    cooldown_group: str = None,
                    function: str = None):
-        """
-        Sets consumption behaviour of the custom item
+        """Adds consumption behaviour to the custom item.
 
         #### Parameters:
             - time (float): Number of seconds the consumption takes
@@ -198,10 +197,9 @@ class CustomItem:
             ]
             self._special_required_files.extend(files)
     
-    @behaviour
+    @behavior
     def damagable(self, *, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
-        """
-        Sets damagability behaviour
+        """Adds damagability behaviour to the custom item.
 
         #### Parameters:
             - durability (int): Amount of actions the item can perform until it breaks
@@ -218,10 +216,9 @@ class CustomItem:
         self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1
 
-    @behaviour
+    @behavior
     def enchantable(self, enchantability: int, enchantable_tag: str):
-        """
-        Sets the custom item's enchantability properties
+        """Adds enchantability behavior to the custom item.
 
         #### Parameters:
             - enchantability (int): How high the quality of enchantments is when enchanting (diamond armor has 10, gold armor has 25)
@@ -232,10 +229,9 @@ class CustomItem:
         self.components.enchantable = {"value": enchantability}
         self.required_tags.append(resourceLocation(enchantable_tag)) # Needs to include enchantable/
     
-    @behaviour
+    @behavior
     def damage_resistance(self, damage_types: list[str]) -> None:
-        """
-        Sets which damage types the custom item (as item entity or as equippable when the wearer takes damage) is immune to
+        """Sets which damage types the custom item (as item entity or as equippable when the wearer takes damage) is immune to.
 
         #### Parameters
             - damage_types (list[str]): A list of damage type tags (without leading `#`) [[Wiki](https://minecraft.wiki/w/Damage_type_tag_(Java_Edition)#List_of_tags)]
@@ -248,7 +244,7 @@ class CustomItem:
         else:
             self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
 
-    @behaviour
+    @behavior
     def equippable(self, *,
                    slot: Literal["head", "chest", "legs", "feet", "body"],
                    asset: str,
@@ -259,8 +255,7 @@ class CustomItem:
                    damage_on_hurt: bool = True,
                    equip_on_interaction: bool = False,
                    color: int = None) -> None:
-        """
-        Sets equippability behaviour
+        """Adds equippability behavior to the custom item.
 
         #### Parameters
             - slot (str): Slot the item can be equipped in
@@ -288,23 +283,22 @@ class CustomItem:
         if color:
             self.components.dyed_color = color
 
-    @behaviour
+    @behavior
     def lore(self, textcomponent: str | dict | list) -> None:
-        "Sets the custom items lore"
+        "Sets the custom items lore."
         self.components.lore = TextComponent.normalize(textcomponent)
 
-    @behaviour
+    @behavior
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
-        "Sets the custom items rarity"
+        "Sets the custom items rarity."
         if rarity in ["common", "uncommon", "rare", "epic"]:
             self.components.rarity = rarity
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
     
-    @behaviour
+    @behavior
     def right_click_ability(self, *, description: str | dict | list, cooldown: int, function: str, cooldown_group: str = uuid.UUID):
-        """
-        Sets right click behaviour
+        """Adds right click behavior to the custom item.
 
         #### Parameters:
             - description (str | dict | list): Text component displayed under the item's name
@@ -352,7 +346,7 @@ class CustomItem:
         ]
         self._special_required_files.extend(files)
 
-    @behaviour
+    @behavior
     def trim(self, pattern: str, material: str):
         ...
         self.components.trim = {
@@ -360,10 +354,9 @@ class CustomItem:
             "material": resourceLocation(material)
         }
 
-    @behaviour
+    @behavior
     def weapon(self, *, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
-        """
-        Sets weapon behaviour
+        """Adds weapon behavior to the custom item.
 
         #### Parameters:
             - attack_damage (int): Amount of damage dealt to entities on attack
@@ -538,7 +531,7 @@ class ArmorSet:
     # │                          Behaviour                         │ 
     # ╰────────────────────────────────────────────────────────────╯
 
-    @behaviour
+    @behavior
     def damagable(self, *, durability: int | tuple[int, int, int, int], break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
         ...
         for i, item in enumerate(self.items):
@@ -549,17 +542,17 @@ class ArmorSet:
 
             item.damagable(durability=durability[i], break_sound=break_sound, repair_materials=repair_materials, additional_repair_cost=additional_repair_cost)
     
-    @behaviour
+    @behavior
     def enchantable(self, enchantability: int, enchantable_tag: str):
         ...
         for item in self.items:
             item.enchantable(enchantability, enchantable_tag)
 
-    @behaviour
+    @behavior
     def full_set_ability(self, function: str):
         ...
 
-    @behaviour
+    @behavior
     def material(self, *, model_asset: str, trim_pattern: str = None, trim_material: str = None, color: int = None, helmet_texture: str = None, equip_sound: str = "item.armor.equip_generic"):
         ...
         for i, item in enumerate(self.items):
@@ -572,7 +565,7 @@ class ArmorSet:
             self.helmet.components.profile = {"properties": [{"name": "texture", "value": helmet_texture}]}
             self.helmet.components.item_model = "minecraft:player_head"
 
-    @behaviour
+    @behavior
     def protection(self, armor: tuple[float, float, float, float], toughness: tuple[float, float, float, float] = None):
         ...
         for i, item in enumerate(self.items):
