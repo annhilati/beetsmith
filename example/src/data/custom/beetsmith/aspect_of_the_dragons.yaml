@@ -2,7 +2,7 @@ type: CustomItem
 id: lategame:test
 name: "Test"
 model: "diamond"
-behaviour:
+behavior:
   - weapon:
       attack_damage: 6
       attack_speed: 6

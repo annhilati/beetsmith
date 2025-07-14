@@ -1,15 +1,11 @@
-import re
+import pathlib
 import yaml
 import json
-import beet
-import pathlib
-import inspect
-import warnings
-from beetsmith.core.classes import CustomItem, ArmorSet, Implementable
+import re
+from pydantic import BaseModel, RootModel, Field, field_validator, model_validator, PrivateAttr, ConfigDict
+from typing import Any, Dict, List, Optional, ClassVar, Callable
+from beetsmith.core.classes import *
 
-# Developer Note:
-#   create_from_yaml shall be raising exceptions on problems,
-#   but load_dir_and_implement shall only warn the user.
 
 available_types = [CustomItem, ArmorSet]
 
@@ -26,95 +22,109 @@ def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
             case ".json":
                 data: dict = json.load(f)
 
-    return _load_from_yaml(data)
+    return BeetSmithDefinition(**data).to_object()
 
-def _load_from_yaml(data: dict, /) -> CustomItem | ArmorSet:
-    """Creates a CustomItem or ArmorSet object from data in a specific format.
-    
-    #### Raises
-        - SyntaxError: If the definition has a faulty structure or is missing an argument
-        - Exception: Any other not foreseen problem
-    """
+class BeetSmithBehaviour(RootModel[Dict[str, Dict[str, Any]]]):
 
-    obj_type:   type      = [type for type in available_types if type.__name__ == data["type"]][0] # [0] because list comprehension
-    obj_params: list[str] = [name for name, param in inspect.signature(obj_type.__init__).parameters.items()]
+    @field_validator('root')
+    def single_entry(cls, v):
+        if len(v) != 1:
+            raise ValueError("Jedes Behaviour muss genau einen Methodennamen als Key enthalten")
+        name, args = next(iter(v.items()))
+        if not isinstance(args, dict):
+            raise ValueError(f"Parameter für '{name}' müssen als Key-Value-Dict angegeben werden")
+        return v
 
-    instance_params = {param: value for param, value in data.items() if param in obj_params}
-    try:
-        instance: CustomItem | ArmorSet = obj_type(**instance_params)
-    except Exception as e:
-        msg = str(e)
-        # Unexpected arguments are already excluded through if param in obj_params
-        if match := re.search(r"missing 1 required positional argument: '(\w+)'", msg):
-            error_info = f"Parameter '{match.group(1)}' is missing"
-        else:
-            raise e
-        raise SyntaxError(error_info)
+class BeetSmithDefinition(BaseModel):
+    type:       str
+    behavior:   Optional[List[BeetSmithBehaviour]]  = Field(default_factory=list)
+    components: Optional[Dict[str, Any]]            = Field(default_factory=dict)
+    params:    Optional[Dict[str, Any]]                      = Field(default_factory=dict)
+
+    model_config = ConfigDict(extra="allow")
+
+    @field_validator("type")
+    def valid_type(cls, v):
+        if v not in [t.__name__ for t in available_types]:
+            raise ValueError(f"Unbekannter Typ '{v}'")
+        return v
+
+    @model_validator(mode="before")
+    def split_params(cls, values: dict):
+        print(f"model validator", values) # Debug
+
+        reserved = {"type", "behavior", "components"}
+        params = {k: v for k, v in values.items() if k not in reserved}
+        values["_params"] = params
+        for k in params:
+            values.pop(k)
         
-    if data.get("behaviour") is not None:
-        for behaviour in data["behaviour"]:
-            try:
-                method_name, args = list(behaviour.items())[0]
-                method = getattr(instance, method_name, None)
-                if method is None or not callable(method):
-                    raise ValueError(f"Unknown behaviour '{method_name}' for {obj_type.__name__} object")
-                if not isinstance(args, dict):
-                    raise ValueError(f"Parameters for '{method_name}' have to be in a key-value format")
-                method(**args)
-            
-            except Exception as e:
-                msg = str(e)
-                if match := re.search(r"(\w+)\(\) got an unexpected keyword argument '(\w+)'", msg):
-                    error_info = f"Parameter '{match.group(2)}' for '{match.group(1)}' was unexpected"
-                elif match := re.search(r"(\w+)\(\) missing 1 required positional argument: '(\w+)'", msg):
-                    error_info = f"'{match.group(1)}' is missing '{match.group(2)}' parameter"
-                elif match := re.search(r"(\w+)\(\) missing 1 required keyword-only argument: '(\w+)'", msg):
-                    error_info = f"'{match.group(1)}' is missing '{match.group(2)}' parameter"
-                elif "'str' object has no attribute 'items'" in msg:
-                    error_info = "'behaviour' parameter has to be a list"
-                else:
-                    raise e
-                raise SyntaxError(error_info)
-    
-    # This is not finished
-    # Currently, if a component wants to overwrite something already set by a behaviour, it doesn't get changed. Don't know why yet
-    if data.get("components") is not None:
+        print(f"model validator", values) # Debug
+        return values
+
+    def to_object(self) -> CustomItem | ArmorSet:
+        # Instanziiere das Objekt
+        obj_cls: type = next(t for t in available_types if t.__name__ == self.type)
         try:
-            for component, value_overwrite in data["components"].items():
-                current_value = getattr(instance.components, component)
-                match current_value:
-                    case dict() if type(value_overwrite) is dict:
-                        setattr(instance.components, component, current_value.update(value_overwrite))
-                    case str() if type(value_overwrite) is str:
-                        setattr(instance.components, component, value_overwrite)
-                    case None:
-                        setattr(instance.components, component, value_overwrite)
-                    case _:
-                        raise NotImplementedError(f"You are trying to overlay a {type(value_overwrite).__name__} on to a {type(current_value).__name__}")
-        
-        except Exception as e:
+            print(self._params) # Debug
+            instance: CustomItem | ArmorSet = obj_cls(**self._params)
+        except TypeError as e:
+            msg = str(e)
+            if match := re.search(r"missing (\d+) required positional argument: '([^']+)'", msg):
+                raise SyntaxError(f"Missing parameter '{match.group(2)}'")
             raise e
 
-    return instance
+        # Verarbeite Behaviour
+        for behavior in self.behavior:
+            name, args = next(iter(behavior.root.items()))
+            method = getattr(instance, name, None)
+            if method is None or not callable(method):
+                raise SyntaxError(f"Unknown behavior '{name}' for {self.type}")
+            try:
+                method(**args)
+            except TypeError as e:
+                msg = str(e)
+                if match := re.search(r"(\w+)\(\) got an unexpected keyword argument '([^']+)'", msg):
+                    raise SyntaxError(f"Parameter '{match.group(2)}' for '{match.group(1)}' was unexpected")
+                if match := re.search(r"(\w+)\(\) missing .* argument: '([^']+)'", msg):
+                    raise SyntaxError(f"Behaviour '{match.group(1)}' is missing parameter '{match.group(2)}'")
+                raise
 
-def bulk_implement(directory: str | pathlib.Path, datapack: beet.DataPack, *, raise_on_error: bool = False) -> None:
-    """
-    Looks for yaml files in a directory and implements all of them into a datapack
+        # Verarbeite Components
+        for comp, override in self.components.items():
+            current = getattr(instance.components, comp, None)
+            if isinstance(current, dict) and isinstance(override, dict):
+                current.update(override)
+            elif isinstance(current, str) and isinstance(override, str):
+                setattr(instance.components, comp, override)
+            elif current is None:
+                setattr(instance.components, comp, override)
+            else:
+                raise NotImplementedError(f"Can't override component of type '{type(current).__name__}' with '{type(override).__name__}'")
 
-    #### Parameters
-        - directory (str | Path): Directory path with desired files
-        - datapack (DataPack): A beet datapack object
-        - raise_on_error (bool): Whether the process should be interrupted by raised exceptions
-    """
-    directory = pathlib.Path(directory) if not isinstance(directory, pathlib.Path) else directory
-    files = [filepath for filepath in directory.glob("*.yml")] + [filepath for filepath in directory.glob("*.yaml")]
+        return instance
+    
+def file_decoder(str: str) -> BeetSmithDefinition:
+    try:
+        data: dict = yaml.safe_load(str)
+    except:
+        data: dict = json.load(str)
 
-    for file in files:
-        try: 
-            obj = load_from_file(file)
-            obj.implement(datapack)
+    return BeetSmithDefinition(**data)
 
-        except Exception as e:
-            if raise_on_error:
-                raise e
-            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+def file_encoder(obj: BeetSmithDefinition) -> str:
+    return yaml.dump(obj.model_dump())
+
+class YAMLDefinition(beet.YamlFile):
+    "Class representing a BeetSmith YAML definition file inside a datapack."
+    
+    scope: ClassVar[beet.NamespaceFileScope] = ("beetsmith",)
+    extension: ClassVar[str] = ".yaml"
+    data: ClassVar[beet.FileDeserialize[BeetSmithDefinition]] = beet.FileDeserialize()
+    decoder: Callable[[str], Any] = file_decoder
+    encoder: Callable[[Any], str] = file_encoder
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.decoder = file_decoder
+        self.encoder = file_encoder

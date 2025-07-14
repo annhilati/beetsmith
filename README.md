@@ -1,7 +1,7 @@
 <img align="right" src="https://github.com/annhilati/beetsmith/blob/main/icon.png" alt="logo" width="74">
 
 > [!TIP]
-> While being easy to use, this library is not that powerful. There are similar projects like [Stewbeet](https://github.com/Stoupy51/StewBeet) and [simple_item_plugin](https://github.com/edayot/simple_item_plugin) that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
+> While being easy to use, this library is not that powerful. There are similar projects like [StewBeet](https://github.com/Stoupy51/StewBeet) and [simple_item_plugin](https://github.com/edayot/simple_item_plugin) that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
 
 # BeetSmith
 ### Features
@@ -11,7 +11,7 @@
 - ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
 ### RoadMap
-- [x] https://github.com/annhilati/beetsmith/issues/38 Custom Items ~ 70%  
+- [x] [Custom Items](https://github.com/annhilati/beetsmith/issues/38) ~ 70%  
 - [ ] Custom Armor Sets ~ 40%
 
 ### Usage

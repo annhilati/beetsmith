@@ -1,20 +1,14 @@
 import beet
 import warnings
-from typing import ClassVar
 from beetsmith.core.classes import *
 from beetsmith.toolchain.parser import *
 
-class YAMLDefinition(beet.YamlFile):
-    "Class representing a BeetSmith YAML definition file inside a datapack."
-    scope: ClassVar[beet.NamespaceFileScope] = ("beetsmith",)
-    extension: ClassVar[str] = ".yaml"
-
-def beet_default(ctx: beet.Context, **kwargs) -> None:
+def beet_default(ctx: beet.Context) -> None:
     ctx.require(
-        beetsmither(kwargs)
+        anvil()
     )
 
-def beetsmither() -> beet.Plugin:
+def anvil() -> beet.Plugin:
     """Beet Plugin configurator for BeetSmith
     
     ---
@@ -35,19 +29,24 @@ def beetsmither() -> beet.Plugin:
             raise beet.PluginError("BeetSmith plugin cannot be executed")
 
         instances: list[Implementable] = []
-        definition_files: list[str] = []
 
-        try:
-            for resource_location, file in ctx.data[YAMLDefinition].items():
-                instances.append(_load_from_yaml(file.data))
-                definition_files.append(resource_location)
-                
-            for instance in instances:
+        for resource_location, file in ctx.data[YAMLDefinition].items():
+            try:
+                instances.append(file.data.to_object())
+
+            except Exception as e:
+                raise e # Debug
+                warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+            
+        for instance in instances:
+            try:
                 instance.implement(ctx.data)
 
-        except Exception as e:
-            raise e # Debug
-            warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
+            except Exception as e:
+                raise e # Debug
+                warnings.warn(f"File '{file}' could not be implemented: {e}", category=UserWarning)
+
+        # del ctx.data[YAMLDefinition]
 
     return plugin
 

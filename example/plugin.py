@@ -1,5 +1,5 @@
 from beet import Context
-from beetsmith import bulk_implement, CustomItem, _load_from_yaml, _load_from_yaml, typewriter, beetsmither
+from beetsmith import bulk_implement, CustomItem, _load_from_yaml, _load_from_yaml, typewriter, anvil
 
 def main(ctx: Context):
     # item = CustomItem(id="custom:test", name="Test", model="minecraft:diamond")
@@ -16,4 +16,4 @@ def main(ctx: Context):
 
     print(ctx.directory)
 
-    ctx.require(beetsmither())
+    ctx.require(anvil())
