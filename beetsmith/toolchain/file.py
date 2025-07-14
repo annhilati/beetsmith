@@ -1,10 +1,10 @@
-import pathlib
-import inspect
+import re
 import yaml
 import json
-import re
-from pydantic import BaseModel, RootModel, Field, field_validator, model_validator, PrivateAttr, ConfigDict
-from typing import Any, Dict, List, Optional, ClassVar, Callable
+import pathlib
+import inspect
+from pydantic import BaseModel, RootModel, Field, field_validator, model_validator, ConfigDict
+from typing import Any, Dict, List, Optional, ClassVar
 from beetsmith.core.classes import *
 
 available_types = [CustomItem, ArmorSet]
@@ -51,8 +51,7 @@ class BeetSmithDefinition(BaseModel):
 
     @model_validator(mode="before")
     def split_params(cls, values: dict):
-        reserved_keys = {"type", "behavior", "components", "params"}
-
+        
         obj_cls: type = next(t for t in available_types if t.__name__ == values["type"])
 
         p = [name for name, param in inspect.signature(obj_cls.__init__).parameters.items()]
@@ -116,21 +115,21 @@ class BeetSmithDefinitionFile(beet.YamlFile):
 
     def __post_init__(self):
         super().__post_init__()
-        self.decoder = BeetSmithDefinitionFile.file_decoder
-        self.encoder = BeetSmithDefinitionFile.file_encoder
+        self.decoder = BeetSmithDefinitionFile.decoder
+        self.encoder = BeetSmithDefinitionFile.encoder
 
     @staticmethod
-    def file_decoder(str: str) -> BeetSmithDefinition:
+    def decoder(str: str) -> BeetSmithDefinition:
         try:
             data: dict = yaml.safe_load(str)
         except:
-            data: dict = json.load(str)
+            data: dict = json.loads(str)
 
         return BeetSmithDefinition(**data)
 
     @staticmethod
-    def file_encoder(obj: BeetSmithDefinition) -> str:
-        return yaml.dump(obj.model_dump())
+    def encoder(data: BeetSmithDefinition) -> str:
+        return yaml.dump(data.model_dump())
     
     @property
     def instance(self) -> CustomItem | ArmorSet:

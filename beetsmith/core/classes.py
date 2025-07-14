@@ -98,7 +98,11 @@ class CustomItem:
     # ╰────────────────────────────────────────────────────────────╯
 
     @behaviour
-    def add_attribute_modifier(self, *, attribute: str, slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"], value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"], id: str = uuid.UUID) -> None:
+    def add_attribute_modifier(self, *,
+                               attribute: str,
+                               slot: Literal["any", "hand", "armor", "mainhand", "offhand", "head", "chest", "legs", "feet", "body"],
+                               value: float, operation: Literal["add_value", "add_multiplied_base", "add_multiplied_total"],
+                               id: str = uuid.UUID) -> None:
         """Adds a attribute modifier to the custom item
 
         #### Parameters:
@@ -129,7 +133,7 @@ class CustomItem:
                    consume_always: bool,
                    particles: bool,
                    effects: list[dict] = [],
-                   sound: str = "entity.generic.eat",
+                   sound: str = "minecraft:entity.generic.eat",
                    cooldown: int = None,
                    cooldown_group: str = None,
                    function: str = None):
@@ -143,8 +147,14 @@ class CustomItem:
             - saturation (float): Amount of saturation added after consumption
             - consume_always (bool): Whether the item can be consumed even if nutrition is full
             - particles (bool): Whether to create particles while consuming
-            - effects (list[dict]): List of effects taking place after consumption [[Wiki](https://minecraft.wiki/w/Data_component_format/consumable)]
             - sound (str): Sound event played while consuming
+            - cooldown (int): Number of seconds the item can't be used again after using
+            - cooldown_group (str): Group of items that share the cooldown with this item
+                1. default: The item will share cooldown time with all items of the same type
+                2. (str): The item will share cooldown time with all items of this cooldown group
+                3. (None): Each instance of the item will have it's own unique cooldown
+            - effects (list[dict]): List of effects taking place after consumption [[Wiki](https://minecraft.wiki/w/Data_component_format/consumable)]
+            - function (str): Function that is called when using the ability
         """
         self.components.consumable = {
             "consume_seconds": time,
@@ -158,6 +168,35 @@ class CustomItem:
             "saturation": saturation,
             "can_always_eat": consume_always
         }
+        if cooldown is not None:
+            if cooldown_group == uuid.UUID:
+                cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="cooldown", id=self._id_short)
+            self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
+        if function is not None:
+            ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short)
+            ability_function = resourceLocation(function)
+            files = [
+                (
+                    ability_name,
+                    beet.Advancement({
+                        "criteria": { "use_item": {
+                            "trigger": "minecraft:using_item",
+                            "conditions": { "item": { "predicates": {
+                                "minecraft:custom_data": {"id": self.id}
+                            }}}
+                        }},
+                        "rewards": { "function": ability_name }
+                    })
+                ),
+                (
+                ability_name,
+                    beet.Function([
+                        f"function {ability_function}",
+                        f"advancement revoke @s only {ability_name}",
+                    ])
+                )
+            ]
+            self._special_required_files.extend(files)
     
     @behaviour
     def damagable(self, *, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
@@ -280,7 +319,6 @@ class CustomItem:
 
         if cooldown_group == uuid.UUID:
             cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="cooldown", id=self._id_short)
-        cooldown_name = cooldown_group.replace(":", ".").replace("/", ".")
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         
         self.components.instrument = {"range": 10, "description": TextComponent.normalize(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
@@ -394,38 +432,6 @@ class CustomItem:
         }]}]}]}
         
         return beet.LootTable(json)
-    
-    def shaped_recipe(self,
-               items: tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]],
-               category: Literal["building", "redstone", "misc", "equipment"] = "misc")-> beet.Recipe:
-        "This function is only temporary"
-        alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i"]
-        pattern = []
-        register = {}
-        for row in items:
-            pattern_row = ""
-            for item in row:
-                if item is None:
-                    pattern_row += " "
-                elif item in register:
-                    pattern_row += register[item]
-                else:
-                    pattern_row += alphabet[len(register)]
-                    register[item] = alphabet[len(register)]
-            pattern.append(pattern_row)
-
-        json = {
-            "type": "minecraft:crafting_shaped",
-            "category": category,
-            "pattern": pattern,
-            "key": {key: item for item, key in register.items()},
-            "result": {
-                "id": self.item,
-                "components": self._components_data
-            }
-        }
-
-        return beet.Recipe(json)
 
     @property
     def required_files(self) -> list[tuple[str, beet.TextFile]]:

@@ -89,8 +89,14 @@ class Template(Generic[RepresentedType]):
         return work
 
 def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
-    "Replaces string placeholders in objects of any complexity"
-    
+    """Substitutes placeholders in strings in an nested object of any complexity.
+
+    #### Parameters
+        - obj: (Any): Currently supported are strings, lists and dicts
+        - mapping (dict)
+            - k: Name of a placeholder
+            - v: Value to replace the placeholder with
+    """
     try:
     
         if isinstance(obj, str):
@@ -112,7 +118,7 @@ def substitute_any_strings(obj: Any, mapping: dict[str, str]) -> Any:
         raise e
 
 def substitute_any_placeholders(obj: Any, mapping: dict[str, Any]) -> Any:
-    """Replace Placeholder objects in obj of any complexity
+    """Substitutes Placeholders in an nested object of any complexity.
 
     #### Parameters
         - obj: (Any): Currently supported are lists, dicts and nested Templates. Placeholders will be replaced, everything else ignored
