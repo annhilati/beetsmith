@@ -1,11 +1,11 @@
 import pathlib
+import inspect
 import yaml
 import json
 import re
 from pydantic import BaseModel, RootModel, Field, field_validator, model_validator, PrivateAttr, ConfigDict
 from typing import Any, Dict, List, Optional, ClassVar, Callable
 from beetsmith.core.classes import *
-
 
 available_types = [CustomItem, ArmorSet]
 
@@ -22,9 +22,9 @@ def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
             case ".json":
                 data: dict = json.load(f)
 
-    return BeetSmithDefinition(**data).to_object()
+    return BeetSmithDefinition(**data).object
 
-class BeetSmithBehaviour(RootModel[Dict[str, Dict[str, Any]]]):
+class BeetSmithBehavior(RootModel[Dict[str, Dict[str, Any]]]):
 
     @field_validator('root')
     def single_entry(cls, v):
@@ -37,37 +37,40 @@ class BeetSmithBehaviour(RootModel[Dict[str, Dict[str, Any]]]):
 
 class BeetSmithDefinition(BaseModel):
     type:       str
-    behavior:   Optional[List[BeetSmithBehaviour]]  = Field(default_factory=list)
+    params:     Optional[Dict[str, Any]]            = Field(default_factory=dict)
+    behavior:   Optional[List[BeetSmithBehavior]]   = Field(default_factory=list)
     components: Optional[Dict[str, Any]]            = Field(default_factory=dict)
-    params:    Optional[Dict[str, Any]]                      = Field(default_factory=dict)
 
     model_config = ConfigDict(extra="allow")
 
     @field_validator("type")
     def valid_type(cls, v):
         if v not in [t.__name__ for t in available_types]:
-            raise ValueError(f"Unbekannter Typ '{v}'")
+            raise ValueError(f"Unknown type '{v}'")
         return v
 
     @model_validator(mode="before")
     def split_params(cls, values: dict):
-        print(f"model validator", values) # Debug
+        reserved_keys = {"type", "behavior", "components", "params"}
 
-        reserved = {"type", "behavior", "components"}
-        params = {k: v for k, v in values.items() if k not in reserved}
-        values["_params"] = params
+        obj_cls: type = next(t for t in available_types if t.__name__ == values["type"])
+
+        p = [name for name, param in inspect.signature(obj_cls.__init__).parameters.items()]
+
+        values["params"] = params = {key: value for key, value in values.items() if key in p}
+
         for k in params:
             values.pop(k)
-        
-        print(f"model validator", values) # Debug
+
         return values
 
-    def to_object(self) -> CustomItem | ArmorSet:
-        # Instanziiere das Objekt
+    @property
+    def object(self) -> CustomItem | ArmorSet:
+        "Returns an Instance of the object described in the definition."
+
         obj_cls: type = next(t for t in available_types if t.__name__ == self.type)
         try:
-            print(self._params) # Debug
-            instance: CustomItem | ArmorSet = obj_cls(**self._params)
+            instance: CustomItem | ArmorSet = obj_cls(**self.params)
         except TypeError as e:
             msg = str(e)
             if match := re.search(r"missing (\d+) required positional argument: '([^']+)'", msg):
@@ -103,28 +106,32 @@ class BeetSmithDefinition(BaseModel):
                 raise NotImplementedError(f"Can't override component of type '{type(current).__name__}' with '{type(override).__name__}'")
 
         return instance
-    
-def file_decoder(str: str) -> BeetSmithDefinition:
-    try:
-        data: dict = yaml.safe_load(str)
-    except:
-        data: dict = json.load(str)
 
-    return BeetSmithDefinition(**data)
-
-def file_encoder(obj: BeetSmithDefinition) -> str:
-    return yaml.dump(obj.model_dump())
-
-class YAMLDefinition(beet.YamlFile):
+class BeetSmithDefinitionFile(beet.YamlFile):
     "Class representing a BeetSmith YAML definition file inside a datapack."
     
     scope: ClassVar[beet.NamespaceFileScope] = ("beetsmith",)
     extension: ClassVar[str] = ".yaml"
     data: ClassVar[beet.FileDeserialize[BeetSmithDefinition]] = beet.FileDeserialize()
-    decoder: Callable[[str], Any] = file_decoder
-    encoder: Callable[[Any], str] = file_encoder
 
     def __post_init__(self):
         super().__post_init__()
-        self.decoder = file_decoder
-        self.encoder = file_encoder
+        self.decoder = BeetSmithDefinitionFile.file_decoder
+        self.encoder = BeetSmithDefinitionFile.file_encoder
+
+    @staticmethod
+    def file_decoder(str: str) -> BeetSmithDefinition:
+        try:
+            data: dict = yaml.safe_load(str)
+        except:
+            data: dict = json.load(str)
+
+        return BeetSmithDefinition(**data)
+
+    @staticmethod
+    def file_encoder(obj: BeetSmithDefinition) -> str:
+        return yaml.dump(obj.model_dump())
+    
+    @property
+    def instance(self) -> CustomItem | ArmorSet:
+        return self.data.object

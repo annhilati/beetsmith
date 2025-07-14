@@ -11,3 +11,4 @@ behavior:
       description: "Sigma description"
       cooldown: 7
       function: "dumb:function"
+hello: lol
