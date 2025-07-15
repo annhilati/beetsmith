@@ -56,10 +56,7 @@ class BeetSmithDefinition(BaseModel):
 
         p = [name for name, param in inspect.signature(obj_cls.__init__).parameters.items()]
 
-        values["params"] = params = {key: value for key, value in values.items() if key in p}
-
-        for k in params:
-            values.pop(k)
+        values["params"] = {key: value for key, value in values.items() if key in p}
 
         return values
 
