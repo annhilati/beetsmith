@@ -1,3 +1,7 @@
+from typing import Literal
+from beetsmith.core.classes import CustomItem
+import beet
+
 def shaped_recipe(result: CustomItem,
                   items: tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]],
                   category: Literal["building", "redstone", "misc", "equipment"] = "misc")-> beet.Recipe:
