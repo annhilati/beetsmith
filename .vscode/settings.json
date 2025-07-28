@@ -14,7 +14,8 @@
         "beetsmith.egg-info": true,
         "beetsmith/__pycache__": true,
         "example/__pycache__": true,
-        "example/.beet_cache": true
+        "example/.beet_cache": true,
+        "build": true
     },
     "hide-files.files": [
         ".vscode",
@@ -25,6 +26,7 @@
         "beetsmith.egg-info",
         "beetsmith/__pycache__",
         "example/__pycache__",
-        "example/.beet_cache"
+        "example/.beet_cache",
+        "build"
     ]
 }
