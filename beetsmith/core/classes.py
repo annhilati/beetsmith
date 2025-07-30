@@ -211,7 +211,7 @@ class CustomItem:
         self.components.break_sound = resourceLocation(break_sound)
         self.components.damage = 0
         self.components.max_damage = durability
-        self.components.repairable = {"items": [resourceLocation(item) for item in repair_materials]}
+        self.components.repairable = {"items": repair_materials}
         self.components.repair_cost = additional_repair_cost
         self.components.weapon = self.components.weapon or {} # Needed for items like player heads to take damage on hit
         self.components.max_stack_size = 1

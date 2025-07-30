@@ -15,8 +15,10 @@ def load_from_file(file: str | pathlib.Path, /) -> CustomItem | ArmorSet:
     Supported are YAML and JSON.
     """
 
+    suffix = file.suffix if isinstance(file, pathlib.Path) else file.split(":")[-1]
+
     with open(file, 'r', encoding="utf-8") as f:
-        match file.suffix:
+        match suffix:
             case ".yml" | "yaml":
                 data: dict = yaml.safe_load(f)
             case ".json":
