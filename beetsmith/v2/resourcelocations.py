@@ -3,6 +3,22 @@ import re
 regex = r"^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?:[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?(?:\/[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)*$"
 
 class ResourceLocationChecker:
+    """Class for configurating a functor that can be used to check if a string is a valid resource location.
+
+    Example
+    ---------
+    ```
+    componentQueryValidator = ResourceLocationChecker(allow_tag=True, allow_negation=False)
+    componentQueryValidator("minecraft:stone")   # -> minecraft:stone
+    componentQueryValidator("stone")             # -> minecraft:stone
+    componentQueryValidator("#minecraft:stones") # -> #minecraft:stones
+    ```
+    """
+
+    # Currently missing:
+    #  - correctly adding 'minecraft:' when there is a ! or #
+    #  - checking for multiple ! or # when splitting
+
     def __init__(self, *, allow_tag, allow_negation):
         self.allow_tag = allow_tag
         self.allow_negation = allow_negation

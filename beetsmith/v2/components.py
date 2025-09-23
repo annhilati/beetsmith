@@ -14,7 +14,7 @@ REMOVED = RemovedComponentState()
 ValidValueInComponent = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
 ValidComponentValue   = None | RemovedComponentState | ValidValueInComponent
 
-componentValidator = ResourceLocationChecker(allow_tag=False, allow_negation=False)
+componentQueryValidator = ResourceLocationChecker(allow_tag=False, allow_negation=False)
 "No negation"
 
 @dataclass
@@ -78,8 +78,8 @@ class ItemComponents():
             if field.name not in ["_other_components"]}
 
     def _set_component(self, component: str, value: ValidComponentValue) -> None:
-        componentValidator(component)
-        id = componentValidator.id(component)
+        componentQueryValidator(component)
+        id = componentQueryValidator.id(component)
         
         if id in self._vanilla_components:
             setattr(self, id, value)
