@@ -95,6 +95,11 @@ class ItemComponents():
     
     @classmethod
     def fromDict(cls, data: dict[str, ValidValueInComponent], /):
+        """Create an ItemComponents instance from a dictionary.
+        
+        The type of dictionary required is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables,<br>
+        whereby the keys are the names of the components which can have a leading `!` and their values are the components values.
+        """
         instance: ItemComponents = cls()
 
         for component, value in data.items():
@@ -105,7 +110,12 @@ class ItemComponents():
     
     @classmethod
     def fromVanillaItem(cls, id: str, /):
-        "Requires the if of a vanilla item"
+        """Create an ItemComponents instance from the data of a vanilla item.
+        
+        This will issue a HTTP request (~800 kB).
+
+        If no data is found for the specified item id, an empty ItemComponents instance is returned.
+        """
         import requests
 
         query = id.split(":")[-1]
@@ -122,7 +132,7 @@ class ItemComponents():
     def asDict(self) -> dict[str, ValidValueInComponent]:
         """Return the item components as a dictionary.
         
-        The type of dictionary produced here is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables,<br>
+        The type of dictionary produced is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables,<br>
         whereby the keys are the names of the components which can have a leading `!` and their values are the components values.
         """
 
