@@ -1,8 +1,7 @@
 # https://minecraft.wiki/w/Data_component_format#List_of_components
 # https://misode.github.io/changelog?tags=component
-import requests
+
 from dataclasses import dataclass, fields
-from typing import Any
 
 class RemovedComponentState(object):
     def __str__(self) -> str:
@@ -10,12 +9,16 @@ class RemovedComponentState(object):
 
 REMOVED = RemovedComponentState()
 "Constant denoting that an item component is removed"
-ValidInComponentValue = list["ValidInComponentValue"] | dict[str, "ValidInComponentValue"] | int | float | str
-ValidComponentValue = None | RemovedComponentState | ValidInComponentValue
+ValidValueInComponent = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
+ValidComponentValue   = None | RemovedComponentState | ValidValueInComponent
 
 @dataclass
 class ItemComponents():
     """Class representing a Minecraft item's components.
+
+    You really shouldn't use the constructor of this class. Use `.fromDict()` or `.fromVanillaItem()` instead.
+
+    Only some vanilla components are accesible through attributes. For components
 
     Supports
     ---------
@@ -64,8 +67,10 @@ class ItemComponents():
         return str(self.asDict())
 
     @classmethod
-    def fromVanillaItem(cls, id: str):
+    def fromVanillaItem(cls, id: str, /):
         "Requires the if of a vanilla item"
+        import requests
+
         query = id.split(":")[-1]
         url = "https://raw.githubusercontent.com/misode/mcmeta/summary/item_components/data.json"
         res = requests.get(url)
@@ -78,8 +83,12 @@ class ItemComponents():
         return cls.fromDict(data[query])
 
     @classmethod
-    def fromDict(cls, data: dict[str, ValidInComponentValue]):
-        "Requires a dictionary where the keys are the names of components and the values are their values."
+    def fromDict(cls, data: dict[str, ValidValueInComponent], /):
+        """Create an ItemComponent object from a dictionary.
+        
+        The type of dictionary required here is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables,<br>
+        whereby the keys are the names of the components which can have a leading `!` and their values are the components values.
+        """
         allowedFields = {f.name for f in fields(cls)}
 
         main_fields = {
@@ -116,7 +125,13 @@ class ItemComponents():
             "_other_components": other_fields
         })
 
-    def asDict(self) -> dict[str, ValidInComponentValue]:
+    @property
+    def asDict(self) -> dict[str, ValidValueInComponent]:
+        """Return the item components as a dictionary.
+        
+        The type of dictionary produced here is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables,<br>
+        whereby the keys are the names of the components which can have a leading `!` and their values are the components values.
+        """
         allowedFields = {f.name for f in fields(self)}
 
         main_fields = {
@@ -162,8 +177,17 @@ class ItemComponents():
         else:
             self._other_components[query] = value
 
-components = ItemComponents.fromVanillaItem("elytra")
-print(components.asDict())
-print(components["equippable"])
-components["equippable"] = REMOVED
-print(components["equippable"])
+    # We need methods separate from the dunders here
+    # def __getattr__(self, query: str) -> ValidComponentValue | None:
+    #     return self.__getitem__(query=query)
+    
+    # def __setattr__(self, query: str, value: ValidComponentValue) -> None:
+    #     return self.__setitem__(query=query, value=value)
+
+components = ItemComponents.fromDict({
+    "minecraft:equippable": {"lol"},
+    "weapon": REMOVED,
+    "random:data": ["wow", "!"]
+})
+components.tax = {"test"}
+print(components.asDict)
