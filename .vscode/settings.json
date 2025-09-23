@@ -15,7 +15,11 @@
         "beetsmith/__pycache__": true,
         "example/__pycache__": true,
         "example/.beet_cache": true,
-        "build": true
+        "build": true,
+        ".venv": true,
+        ".github": true,
+        "beetsmith/v2/__pycache__": true,
+        "beetsmith/core/__pycache__": true
     },
     "hide-files.files": [
         ".vscode",
@@ -27,6 +31,12 @@
         "beetsmith/__pycache__",
         "example/__pycache__",
         "example/.beet_cache",
-        "build"
-    ]
+        "build",
+        ".venv",
+        ".github",
+        "beetsmith/v2/__pycache__",
+        "beetsmith/core/__pycache__"
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.pythonProjects": []
 }
