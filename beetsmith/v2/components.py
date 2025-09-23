@@ -70,14 +70,18 @@ class ItemComponents():
     _other_components:           dict[str, ValidComponentValue] = field(default_factory=dict)
 
     @property
-    def _vanillaFields(self) -> set[str]:
-        return {f.name for f in fields(self) if f.name != "_other_components"}
+    def _vanilla_components(self) -> dict[str, ValidComponentValue]:
+        return {
+            field.name: getattr(self, field.name)
+            for field
+            in fields(self)
+            if field.name not in ["_other_components"]}
 
     def _set_component(self, component: str, value: ValidComponentValue) -> None:
         componentValidator(component)
         id = componentValidator.id(component)
         
-        if id in self._vanillaFields:
+        if id in self._vanilla_components:
             setattr(self, id, value)
         else:
             self._other_components[component] = value
@@ -85,7 +89,7 @@ class ItemComponents():
     def _get_component(self, component: str) -> ValidComponentValue:
         return (
             getattr(self, component.split(":")[-1])
-            if component in self._vanillaFields
+            if component in self._vanilla_components
             else self._other_components.get(component)
         )
     
@@ -137,7 +141,7 @@ class ItemComponents():
         """
         out = {}
 
-        for component, value in {component: getattr(self, component) for component in self._vanillaFields}.items():
+        for component, value in self._vanilla_components.items():
             if value is not REMOVED:
                 out[component] = value
             else:
