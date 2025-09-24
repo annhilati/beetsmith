@@ -1,6 +1,7 @@
-from beetsmith.v2.components import ItemComponents
-from beetsmith.v2.resourcelocations import ResourceLocationChecker
+from beetsmith.v2.core.components import ItemComponents
+from beetsmith.v2.core.resourcelocations import ResourceLocationChecker
+from beetsmith.v2.library.customitem import CustomItem
 
-data = ItemComponents.fromVanillaItem("diamond_sword")
-
-print(data.asDict())
+item = CustomItem("test:item", "Testitem", "minecraft:diamond")
+print(item.components.asDict())
+print(item)

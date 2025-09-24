@@ -2,15 +2,14 @@
 # https://misode.github.io/changelog?tags=component
 
 from dataclasses import dataclass, field, fields
- 
-from .resourcelocations import ResourceLocationChecker
+from beetsmith.v2.core.resourcelocations import ResourceLocationChecker
 
 class RemovedComponentState(object):
     def __str__(self) -> str:
         return "REMOVED"
 
 REMOVED = RemovedComponentState()
-"Constant denoting that an item component is removed"
+"Constant denoting that an items component is removed"
 ValidValueInComponent = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
 ValidComponentValue   = None | RemovedComponentState | ValidValueInComponent
 
@@ -26,11 +25,13 @@ class ItemComponents():
 
     Only some vanilla components are accessible through attributes. Item setting and getting can be used instead.
 
+    To remove a component, set it's value to `REMOVED`. It can be imported from this same module.
+
     Supports
     ---------
-    - `str(·)`
     - `·[...]`
     - `·[...] = ...`
+    - `str(·)`
     """
     attribute_modifiers:         list[dict]          = None
     block_attacks:               dict                = None
@@ -142,15 +143,15 @@ class ItemComponents():
         out = {}
 
         for component, value in self._vanilla_components.items():
-            if value is not REMOVED:
-                out[component] = value
-            else:
-                out["!" + component] = {}
+            if value is not REMOVED and value is not None:
+                out["minecraft:" + component] = value
+            elif value is REMOVED and value is not None:
+                out["!minecraft:" + component] = {}
 
         for component, value in self._other_components.items():
-            if value is not REMOVED:
+            if value is not REMOVED and value is not None:
                 out[component] = value
-            else:
+            elif value is REMOVED and value is not None:
                 out["!" + component] = {}
         
         return out
