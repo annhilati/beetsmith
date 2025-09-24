@@ -2,19 +2,16 @@
 # https://misode.github.io/changelog?tags=component
 
 from dataclasses import dataclass, field, fields
-from beetsmith.v2.core.resourcelocations import ResourceLocationChecker
+from beetsmith.v2.core.resourcelocations import ensureComponent
 
 class RemovedComponentState(object):
     def __str__(self) -> str:
         return "REMOVED"
 
 REMOVED = RemovedComponentState()
-"Constant denoting that an items component is removed"
+"Constant denoting that an items component is removed."
 ValidValueInComponent = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
 ValidComponentValue   = None | RemovedComponentState | ValidValueInComponent
-
-componentQueryValidator = ResourceLocationChecker(allow_tag=False, allow_negation=False)
-"No negation"
 
 @dataclass
 class ItemComponents():
@@ -33,40 +30,40 @@ class ItemComponents():
     - `·[...] = ...`
     - `str(·)`
     """
-    attribute_modifiers:         list[dict]          = None
-    block_attacks:               dict                = None
-    break_sound:                 str                 = None
-    consumable:                  dict                = None
-    custom_data:                 dict                = None
-    damage:                      int                 = None
-    damage_resistant:            dict                = None
-    death_protection:            dict                = None
-    dyed_color:                  int | list          = None
-    enchantable:                 dict                = None
-    enchantment_glint_override:  bool                = None
-    enchantments:                dict                = None
-    equippable:                  dict                = None
-    food:                        dict                = None
-    glider:                      dict                = None
-    instrument:                  dict                = None
-    item_model:                  str                 = None
-    item_name:                   str | dict | list   = None
-    jukebox_playable:            str                 = None
-    lore:                        str | dict | list   = None
-    max_damage:                  int                 = None
-    max_stack_size:              int                 = None
-    profile:                     dict                = None
-    potion_content:              dict                = None
-    rarity:                      str                 = None
-    repairable:                  dict                = None
-    repair_cost:                 int                 = None
-    tool:                        dict                = None
-    tooltip_display:             dict                = None
-    trim:                        dict                = None
-    unbreakable:                 dict                = None
-    use_cooldown:                dict                = None
-    use_remainder:               dict                = None
-    weapon:                      dict                = None
+    attribute_modifiers:         list[dict]        | RemovedComponentState | None = None
+    block_attacks:               dict              | RemovedComponentState | None = None
+    break_sound:                 str               | RemovedComponentState | None = None
+    consumable:                  dict              | RemovedComponentState | None = None
+    custom_data:                 dict              | RemovedComponentState | None = None
+    damage:                      int               | RemovedComponentState | None = None
+    damage_resistant:            dict              | RemovedComponentState | None = None
+    death_protection:            dict              | RemovedComponentState | None = None
+    dyed_color:                  int | list        | RemovedComponentState | None = None
+    enchantable:                 dict              | RemovedComponentState | None = None
+    enchantment_glint_override:  bool              | RemovedComponentState | None = None
+    enchantments:                dict              | RemovedComponentState | None = None
+    equippable:                  dict              | RemovedComponentState | None = None
+    food:                        dict              | RemovedComponentState | None = None
+    glider:                      dict              | RemovedComponentState | None = None
+    instrument:                  dict              | RemovedComponentState | None = None
+    item_model:                  str               | RemovedComponentState | None = None
+    item_name:                   str | dict | list | RemovedComponentState | None = None
+    jukebox_playable:            str               | RemovedComponentState | None = None
+    lore:                        str | dict | list | RemovedComponentState | None = None
+    max_damage:                  int               | RemovedComponentState | None = None
+    max_stack_size:              int               | RemovedComponentState | None = None
+    profile:                     dict              | RemovedComponentState | None = None
+    potion_content:              dict              | RemovedComponentState | None = None
+    rarity:                      str               | RemovedComponentState | None = None
+    repairable:                  dict              | RemovedComponentState | None = None
+    repair_cost:                 int               | RemovedComponentState | None = None
+    tool:                        dict              | RemovedComponentState | None = None
+    tooltip_display:             dict              | RemovedComponentState | None = None
+    trim:                        dict              | RemovedComponentState | None = None
+    unbreakable:                 dict              | RemovedComponentState | None = None
+    use_cooldown:                dict              | RemovedComponentState | None = None
+    use_remainder:               dict              | RemovedComponentState | None = None
+    weapon:                      dict              | RemovedComponentState | None = None
 
     _other_components:           dict[str, ValidComponentValue] = field(default_factory=dict)
 
@@ -79,8 +76,8 @@ class ItemComponents():
             if field.name not in ["_other_components"]}
 
     def _set_component(self, component: str, value: ValidComponentValue) -> None:
-        componentQueryValidator(component)
-        id = componentQueryValidator.id(component)
+        ensureComponent(component)
+        id = component.split(":")[-1]
         
         if id in self._vanilla_components:
             setattr(self, id, value)

@@ -56,5 +56,6 @@ class ResourceLocationChecker:
         return self.validate(string)
     
 ensureNoPathRL      = ResourceLocationChecker(allow_tag=False, allow_negation=False, allow_paths=False)
+ensureNoTagPathRL   = ResourceLocationChecker(allow_tag=False, allow_negation=False, allow_paths=True)
 ensureTagLikeRL     = ResourceLocationChecker(allow_tag=True,  allow_negation=False, allow_paths=True)
-ensureNoTagPath     = ResourceLocationChecker(allow_tag=False, allow_negation=False, allow_paths=True)
+ensureComponent     = ResourceLocationChecker(allow_tag=False, allow_negation=True,  allow_paths=True)

@@ -1,7 +1,7 @@
 from beetsmith.v2.core.components import ItemComponents
 from beetsmith.v2.core.resourcelocations import ResourceLocationChecker
-from beetsmith.v2.library.customitem import CustomItem
+from beetsmith.v2.library.customitem import Item
 
-item = CustomItem("test:item", "Testitem", "minecraft:diamond")
-print(item.components.asDict())
+item = Item("test:item", "Testitem", "minecraft:diamond")
 print(item)
+print(item.asLootTablePoolEntry())

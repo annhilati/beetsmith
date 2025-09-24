@@ -5,59 +5,50 @@ import beet
 import uuid
 import warnings
 from typing import Literal
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from beetsmith.library.text_components import TextComponent
 from beetsmith.v2.core.components import ItemComponents, REMOVED
-from beetsmith.v2.core.resourcelocations import ResourceLocationChecker, ensureNoPathRL, ensureTagLikeRL, ensureNoTagPath
-from beetsmith.v2.core.compat import watch_out_for_duplicates
+from beetsmith.v2.core.resourcelocations import ensureNoPathRL, ensureTagLikeRL, ensureNoTagPathRL
+from beetsmith.v2.core.compat import watch_out_for_duplicates, behavior
 
 __minecraft_game_version__ = "1.21.5"
 __minecraft_data_version__ = 71
 technical_namespace = "beetsmith"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
-
-
-def behavior(function):
-    "Appends the decorated function to self._applied_behaviours when it is called"
-    def wrapper(self: CustomItem, *args, **kwargs):
-        self._applied_behaviours.append(function.__name__)
-        return function(self, *args, **kwargs)
-    return wrapper
-
 # ╭───────────────────────────────────────────────────────────────────────────────╮
 # │                                  CustomItem                                   │ 
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 @dataclass
-class CustomItem:
-    id: str
-    name: str | dict | list
-    model: str
-    texture: str = None
+class Item:
+    id:                         str
+    name:                       InitVar[str | dict | list]
+    model:                      InitVar[str]
+    texture:                    InitVar[str] = None
 
     item:                       str                             = field(init=False, default="minecraft:music_disc_11")
+    components:                 ItemComponents                  = field(init=False, default_factory=ItemComponents.empty)
     required_tags:              list[str]                       = field(init=False, default_factory=list)
-    components:                 ItemComponents                  = field(init=False)
-    _special_required_files:    list[tuple[str, beet.TextFile]] = field(init=False, default_factory=list)
-    _applied_behaviours:        list                            = field(init=False, default_factory=list)
+    _applied_behaviours:        list[str]                       = field(init=False, default_factory=list)
+    _specific_required_files:   list[tuple[str, beet.TextFile]] = field(init=False, default_factory=list)
+    "Don't use this. Use `.required_files` instead"
 
-    def __post_init__(self):
+    def __post_init__(self, name, model, texture):
         self.id = ensureNoPathRL(self.id)
-        self.components = ItemComponents.empty()
-        self.components.item_name = TextComponent.normalize(self.name)[0]
         self.components.custom_data = {"id": self.id}
-        self.components.item_model = ensureNoPathRL(self.model)
-        self.components.max_stack_size = 64
-        self.components.unbreakable = {}
-        self.components.jukebox_playable = REMOVED
-        if self.texture:
+        self.components.item_name = TextComponent.normalize(name)[0]
+        self.components.item_model = ensureNoPathRL(model)
+        if texture is not None:
             self.components.profile = {
-                "properties": [{"name": "texture", "value": self.texture}]
+                "properties": [{"name": "texture", "value": texture}]
             }
+        self.components.unbreakable = {}
+        self.components.max_stack_size = 64
+        self.components.jukebox_playable = REMOVED
 
     def __str__(self) -> str:
-        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self.components.asDict())} components and {len(self.required_files)} additional files needed)>"
+        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self.components.asDict())} components and {len(self._required_files)} additional files needed)>"
     
     @property
     def _id_namespace(self) -> str: return self.id.split(":")[0]
@@ -97,19 +88,21 @@ class CustomItem:
             "slot": slot
         })
 
-    @behavior 
-    def consumable(self, *,
-                   time: float,
-                   animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn", "brush"],
-                   nutrition: int,
-                   saturation: float,
-                   consume_always: bool,
-                   particles: bool,
-                   effects: list[dict] = [],
-                   sound: str = "minecraft:entity.generic.eat",
-                   cooldown: int = None,
-                   cooldown_group: str = None,
-                   function: str = None):
+    @behavior(warn_for_incompatability=["right_click_ability"])
+    def consumable(
+        self, *,
+        time: float,
+        animation: Literal["none", "eat", "drink", "block", "bow", "spear", "crossbow", "spyglass", "toot_horn", "brush"],
+        nutrition: int,
+        saturation: float,
+        consume_always: bool,
+        particles: bool,
+        effects: list[dict] = [],
+        sound: str = "minecraft:entity.generic.eat",
+        cooldown: int = None,
+        cooldown_group: str = None,
+        function: str = None
+        ) -> None:
         """Adds consumption behaviour to the custom item.
 
         #### Parameters:
@@ -146,7 +139,7 @@ class CustomItem:
             self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         if function is not None:
             ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short)
-            ability_function = ensureNoTagPath(function)
+            ability_function = ensureNoTagPathRL(function)
             files = [
                 (
                     ability_name,
@@ -161,14 +154,14 @@ class CustomItem:
                     })
                 ),
                 (
-                ability_name,
+                    ability_name,
                     beet.Function([
                         f"function {ability_function}",
                         f"advancement revoke @s only {ability_name}",
                     ])
                 )
             ]
-            self._special_required_files.extend(files)
+            self._specific_required_files.extend(files)
     
     @behavior
     def damagable(self, *, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
@@ -200,7 +193,7 @@ class CustomItem:
                 - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
         self.components.enchantable = {"value": enchantability}
-        self.required_tags.append(ensureNoTagPath(enchantable_tag)) # Needs to include enchantable/
+        self.required_tags.append(ensureNoTagPathRL(enchantable_tag)) # Needs to include enchantable/
     
     @behavior
     def damage_resistance(self, damage_types: list[str]) -> None:
@@ -211,8 +204,8 @@ class CustomItem:
         
         """
         if len(damage_types) > 1:
-            tag_data = {"values": [f"#{ensureNoTagPath(damage_type)}" for damage_type in damage_types]}
-            self._special_required_files.append((self.id, beet.DamageTypeTag(tag_data)))
+            tag_data = {"values": [f"#{ensureNoTagPathRL(damage_type)}" for damage_type in damage_types]}
+            self._specific_required_files.append((self.id, beet.DamageTypeTag(tag_data)))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         else:
             self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
@@ -246,7 +239,7 @@ class CustomItem:
         self.components.equippable = {
             "slot": slot,
             "equip_sound": equip_sound,
-            "asset_id": resourceLocation(asset),
+            "asset_id": ensureNoPathRL(asset),
             "allowed_entities": [],
             "dispensable": dispensable,
             "swappable": swappable,
@@ -271,7 +264,7 @@ class CustomItem:
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
     
-    @behavior
+    @behavior(warn_for_incompatability=["consumable"])
     def right_click_ability(self, *, description: str | dict | list, cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """Adds right click behavior to the custom item.
 
@@ -293,7 +286,7 @@ class CustomItem:
         self.components.instrument = {"range": 10, "description": TextComponent.normalize(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
         ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short) # e.g. 'customitemlib:lategame/ability/hunter_sword'
-        ability_function = resourceLocation(function)
+        ability_function = ensureNoTagPathRL(function)
 
         files = [
             (
@@ -319,18 +312,25 @@ class CustomItem:
                 ])
             )
         ]
-        self._special_required_files.extend(files)
+        self._specific_required_files.extend(files)
 
     @behavior
     def trim(self, pattern: str, material: str):
         ...
         self.components.trim = {
-            "pattern": resourceLocation(pattern),
-            "material": resourceLocation(material)
+            "pattern": ensureNoPathRL(pattern),
+            "material": ensureNoPathRL(material)
         }
 
     @behavior
-    def weapon(self, *, attack_damage: float, attack_speed: float, can_sweep: bool, disable_blocking: float = 0, item_damage_per_attack: int = 1):
+    def weapon(
+        self, *,
+        attack_damage: float,
+        attack_speed: float,
+        can_sweep: bool,
+        disable_blocking: float = 0,
+        item_damage_per_attack: int = 1
+        ) -> None:
         """Adds weapon behavior to the custom item.
 
         #### Parameters:
@@ -362,26 +362,35 @@ class CustomItem:
     # ╭────────────────────────────────────────────────────────────╮
     # │                        Implementation                      │ 
     # ╰────────────────────────────────────────────────────────────╯
-     
-    @property
-    def loot_table(self) -> beet.LootTable:
-        "Returns a minimal beet loot table object of the custom item with all component data"
-        # Version: 1.21.5
-        json = {
-            "pools": [{
-                "rolls": 1,
-                "entries": [{
-                    "type": "minecraft:item",
-                    "name": self.item,
-                    "functions": [{
-                        "function": "minecraft:set_components",
-                        "components": self.components.asDict()
-        }]}]}]}
-        
-        return beet.LootTable(json)
+    
+    def asLootTablePoolEntry(self) -> dict:
+        """Returns a dict, like it can be used as an item in `pools/*/entries` in a loot table definition.
+
+        Note that, depending on the application, other functions (`·.asLootTableEntry["functions"]`) or conditions (`·.asLootTableEntry["conditions"]`) may need to be set.<br>
+        This must then be done separately. Otherwise, the entire loot table can be written by hand and (`·.components.asDict()`) can be used for the components.
+        """
+        return {
+          "type": "minecraft:item",
+          "name": self.item,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": self.components.asDict()
+            }
+          ]
+        }
+    
+    def asRecipeResult(self, amount: int = 1) -> dict:
+        """Returns a dict, like it can be used as the value of `result` in a recipe definition.
+        """
+        return {
+            "id": self.item,
+            "components": self.components.asDict(),
+            "count": amount
+        }
 
     @property
-    def required_files(self) -> list[tuple[str, beet.TextFile]]:
+    def _required_files(self) -> list[tuple[str, beet.TextFile]]:
         """
         Generates a list of 2-tuples whereby the first is the resourcelocation of the file and the second is a beet TextFile
         """
@@ -393,7 +402,7 @@ class CustomItem:
             files.append((tag, beet.ItemTag(tag_data)))
 
         # Explicitely needed files
-        files.extend(self._special_required_files)
+        files.extend(self._specific_required_files)
 
         return files
     
@@ -402,18 +411,25 @@ class CustomItem:
         """
         Implement the custom item into a beet datapack
         """
-        if "right_click_ability" in self._applied_behaviours and "consumable" in self._applied_behaviours:
-            warnings.warn(f"The custom item '{self.id}' has two different right-clik-behaviours (consumption and ability) which will lead to incompatibilities")
 
         pack_format = datapack.pack_format
         if pack_format != __minecraft_data_version__:
             warnings.warn(f"The datapack does not match the beetsmith pack format {__minecraft_data_version__}! Some content may not be loaded by Minecraft!", category=UserWarning)
 
         # Loottable
-        datapack[f"{self._id_namespace}:item/{self._id_short}"] = self.loot_table
+        datapack[f"{self._id_namespace}:item/{self._id_short}"] = beet.LootTable(
+            {
+                "pools": [{
+                    "rolls": 1,
+                    "entries": [
+                        self.asLootTablePoolEntry()
+                    ]
+                }]
+            }
+        )
 
         # Required Files
-        for file in self.required_files:
+        for file in self._required_files:
             
             match file[1]:
                 case beet.FunctionTag:
