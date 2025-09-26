@@ -18,7 +18,7 @@ cd ..; pip install .; cd example; beet
 ```
 
 ```mermaid
-graph TD
+graph LR
     core(core) --> library(library)
     library --> toolchain
     core --> toolchain(toolchain)

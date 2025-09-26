@@ -80,6 +80,7 @@ class Item:
         """
         if id is uuid.UUID:
             id = str(uuid.uuid4())
+        self.components.attribute_modifiers = self.components.attribute_modifiers or []
         self.components.attribute_modifiers.append({
             "id": id,
             "amount": value,

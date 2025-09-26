@@ -4,6 +4,6 @@ data_pack:
         - src
 output: "."
 require:
-    - beetsmith.requirements
+    - beetsmith.v2.toolchain.plugin.requirements
 pipeline:
-    - beetsmith
+    - beetsmith.v2.toolchain.plugin

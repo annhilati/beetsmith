@@ -7,7 +7,7 @@ from pydantic import BaseModel, RootModel, Field, field_validator, model_validat
 from typing import Any, Dict, List, Optional, ClassVar
 from beetsmith.v2.library.item import Item
 
-available_types = [Item]
+_available_types = [Item]
 
 def parse_from_file(file: str | pathlib.Path, /) -> Item:
     """Instanciates an Item object from a file.
@@ -29,13 +29,13 @@ def parse_from_file(file: str | pathlib.Path, /) -> Item:
 class BeetSmithBehavior(RootModel[Dict[str, Dict[str, Any]]]):
 
     @field_validator('root')
-    def single_entry(cls, v: dict):
-        if len(v) != 1:
-            raise ValueError("Behavior shouldn't have multiple keys")
-        name, args = next(iter(v.items()))
+    def single_entry(cls, pair: dict[str, dict]):
+        if len(pair) != 1:
+            raise ValueError("Behavior should have exactly one key")
+        name, args = next(iter(pair.items()))
         if not isinstance(args, dict):
             raise ValueError(f"Parameters for '{name}' have to be in a key-value format")
-        return v
+        return pair
 
 class BeetSmithDefinition(BaseModel):
     type:       str
@@ -46,26 +46,26 @@ class BeetSmithDefinition(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     @field_validator("type")
-    def valid_type(cls, v):
-        if v not in [t.__name__ for t in available_types]:
-            raise ValueError(f"Unknown type '{v}'")
-        return v
+    def valid_type(cls, type):
+        if type not in [t.__name__ for t in _available_types]:
+            raise ValueError(f"Unknown BeetSmith definition type '{type}'")
+        return type
 
     @model_validator(mode="before")
     def split_params(cls, values: dict):
         
-        obj_cls: type = next(t for t in available_types if t.__name__ == values["type"])
+        obj_cls: type = next(t for t in _available_types if t.__name__ == values["type"])
 
-        p = [name for name, param in inspect.signature(obj_cls.__init__).parameters.items()]
+        cls_params = [name for name, param in inspect.signature(obj_cls.__init__).parameters.items()]
 
-        values["params"] = {key: value for key, value in values.items() if key in p}
+        values["params"] = {key: value for key, value in values.items() if key in cls_params}
 
         return values
 
     def instance(self) -> Item:
         "Returns an Instance of the object described in the definition."
 
-        obj_cls: type = next(t for t in available_types if t.__name__ == self.type)
+        obj_cls: type = next(t for t in _available_types if t.__name__ == self.type)
         try:
             instance: Item = obj_cls(**self.params)
         except TypeError as e:
