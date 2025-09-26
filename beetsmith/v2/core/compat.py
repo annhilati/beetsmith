@@ -1,8 +1,8 @@
 import beet
 import inspect
 import warnings
-from typing import Callable
 import functools
+from typing import Callable
 
 REGISTERED_IMPLEMENTATIONS: set[tuple[str, beet.DataPack]] = set()
 "Live action value"
