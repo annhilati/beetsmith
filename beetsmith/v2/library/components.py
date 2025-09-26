@@ -4,12 +4,26 @@
 from dataclasses import dataclass, field, fields
 from beetsmith.v2.core.resourcelocations import ensureComponent
 
-class RemovedComponentState(object):
+class RemovedComponentState:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __str__(self) -> str:
         return "REMOVED"
 
 REMOVED = RemovedComponentState()
-"Constant denoting that an items component is removed."
+"""Constant denoting that an item's component is removed.<br>
+Similar to `None`, `REMOVED` can be checked on instance with `is`:
+```
+if component is REMOVED:
+    ...
+```
+"""
+
 ValidValueInComponent = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
 ValidComponentValue   = None | RemovedComponentState | ValidValueInComponent
 
@@ -75,7 +89,7 @@ class ItemComponents():
             in fields(self)
             if field.name not in ["_other_components"]}
 
-    def _set_component(self, component: str, value: ValidComponentValue) -> None:
+    def set_component(self, component: str, value: ValidComponentValue) -> None:
         ensureComponent(component)
         id = component.split(":")[-1]
         
@@ -84,7 +98,7 @@ class ItemComponents():
         else:
             self._other_components[component] = value
 
-    def _get_component(self, component: str) -> ValidComponentValue:
+    def get_component(self, component: str) -> ValidComponentValue:
         return (
             getattr(self, component.split(":")[-1])
             if component in self._vanilla_components
@@ -107,7 +121,7 @@ class ItemComponents():
         for component, value in data.items():
             if component.startswith("!"):
                 value = REMOVED
-            instance._set_component(component, value)
+            instance.set_component(component, value)
         return instance
     
     @classmethod
@@ -157,7 +171,7 @@ class ItemComponents():
         return str(self.asDict())
 
     def __getitem__(self, query: str) -> ValidComponentValue:
-        return self._get_component(component=query)
+        return self.get_component(component=query)
 
     def __setitem__(self, query: str, value: ValidComponentValue) -> None:
-        self._set_component(component=query, value=value)
+        self.set_component(component=query, value=value)
