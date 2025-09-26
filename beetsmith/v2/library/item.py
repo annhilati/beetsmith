@@ -6,8 +6,8 @@ import uuid
 import warnings
 from typing import Literal
 from dataclasses import dataclass, field, InitVar
-from beetsmith.library.text_components import TextComponent
-from beetsmith.v2.core.components import ItemComponents, REMOVED
+from beetsmith.v1.library.text_components import TextComponent
+from beetsmith.v2.library.components import ItemComponents, REMOVED
 from beetsmith.v2.core.resourcelocations import ensureNoPathRL, ensureTagLikeRL, ensureNoTagPathRL
 from beetsmith.v2.core.compat import watch_out_for_duplicates, behavior
 

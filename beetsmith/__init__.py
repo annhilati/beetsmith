@@ -66,17 +66,12 @@ def main(ctx: Context):
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 import beet
-from beetsmith.core.models import (ItemComponents)
-from beetsmith.core.classes import (CustomItem, ArmorSet)
-from beetsmith.toolchain.plugin import (anvil, requirements, beet_default)
-from beetsmith.toolchain.file import (load_from_file, BeetSmithDefinitionFile)
-from beetsmith.library.validation import (resourceLocation)
+from beetsmith.v2.library.components import (ItemComponents)
+from beetsmith.v2.core.resourcelocations import (ResourceLocationChecker)
+from beetsmith.v2.library.item import (Item)
 
-_symbols = [CustomItem, ArmorSet,
+_symbols = [Item,
             ItemComponents,
-            load_from_file, BeetSmithDefinitionFile,
-            resourceLocation,
-            anvil, requirements, beet_default,
             beet]
 _constants = []
 
