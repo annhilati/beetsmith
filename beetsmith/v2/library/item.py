@@ -69,14 +69,20 @@ class Item:
         ) -> None:
         """Adds a attribute modifier to the custom item.
 
-        #### Parameters:
-            - attribute (str): Name of the modified attribute [[Wiki](https://minecraft.wiki/w/Attribute#Attributes)]
-            - slot (str): Slot where the modifier takes action
-            - value (float): Amount or factor the attribute is modified with
-            - operation (str): How the value is to be applied [[Wiki](https://minecraft.wiki/w/Attribute#Modifiers)]
-            - id (str): Identifier of the modifier
-                - Modifiers with the same identifier will overwrite each other
-                - Some behaviours require specific identifiers [[Wiki](https://minecraft.wiki/w/Attribute#Vanilla_modifiers)]
+        Parameters
+        ------------
+        attribute : str
+            Name of the modified attribute [[Wiki](https://minecraft.wiki/w/Attribute#Attributes)]
+        slot : str
+            Slot where the modifier takes action
+        value : float
+            Amount or factor the attribute is modified with
+        operation : `"add_value"` | `"add_multiplied_base"` | `"add_multiplied_total"`
+            How the value is to be applied [[Wiki](https://minecraft.wiki/w/Attribute#Modifiers)]
+        id : str
+            Identifier of the modifier<br>
+            Modifiers with the same identifier will overwrite each other<br>
+            Some behaviours require specific identifiers [[Wiki](https://minecraft.wiki/w/Attribute#Vanilla_modifiers)]
         """
         if id is uuid.UUID:
             id = str(uuid.uuid4())
@@ -184,7 +190,7 @@ class Item:
         self.components.max_stack_size = 1
 
     @behavior
-    def enchantable(self, enchantability: int, enchantable_tag: str):
+    def enchantable(self, enchantability: int, enchantable_tags: list[str]):
         """Adds enchantability behavior to the custom item.
 
         #### Parameters:
@@ -194,7 +200,7 @@ class Item:
                 - Vanilla tags begin with `enchantable/` and are `armor`, `bow`, `chest_armor`, `crossbow`, `durability`, `equippable`, `fire_aspect`, `fishing`, `foot_armor`, `head_armor`, `leg_armor`, `mace`, `mining`, `mining_loot`, `sharp_weapon`, `sword`, `trident` and `weapon`
         """
         self.components.enchantable = {"value": enchantability}
-        self.required_tags.append(ensureNoTagPathRL(enchantable_tag)) # Needs to include enchantable/
+        self.required_tags.extend([ensureNoTagPathRL(tag) for tag in enchantable_tags]) # Needs to include enchantable/
     
     @behavior
     def damage_resistance(self, damage_types: list[str]) -> None:
