@@ -87,7 +87,8 @@ class ItemComponents():
             field.name: getattr(self, field.name)
             for field
             in fields(self)
-            if field.name not in ["_other_components"]}
+            if field.name not in ["_other_components"]
+        }
 
     def set_component(self, component: str, value: ValidComponentValue) -> None:
         ensureComponent(component)

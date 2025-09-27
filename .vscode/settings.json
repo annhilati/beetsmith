@@ -24,7 +24,6 @@
         "beetsmith/v2/library/__pycache__": true
     },
     "hide-files.files": [
-        ".vscode",
         "beetgear.egg-info",
         "test/__pycache__",
         "test/.beet_cache",

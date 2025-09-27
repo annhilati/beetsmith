@@ -404,9 +404,10 @@ class Item:
         files = []
 
         # Tags
-        for tag in self.required_tags:
-            tag_data = {"replace": False, "values": [self.item]}
-            files.append((tag, beet.ItemTag(tag_data)))
+        files.extend([
+            (tag, beet.ItemTag({"replace": False, "values": [self.item]}))
+            for tag in self.required_tags
+        ])
 
         # Explicitely needed files
         files.extend(self._specific_required_files)

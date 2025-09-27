@@ -1,7 +1,6 @@
 import beet
-import inspect
 import warnings
-import functools
+import inspect, functools
 from typing import Callable
 
 REGISTERED_IMPLEMENTATIONS: set[tuple[str, beet.DataPack]] = set()
