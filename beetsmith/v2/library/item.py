@@ -6,13 +6,13 @@ import uuid
 import warnings
 from typing import Literal
 from dataclasses import dataclass, field, InitVar
-from beetsmith.v1.library.text_components import TextComponent
-from beetsmith.v2.library.components import ItemComponents, REMOVED
+from beetsmith.v2.core.text_components import normalize
 from beetsmith.v2.core.resourcelocations import ensureNoPathRL, ensureTagLikeRL, ensureNoTagPathRL
 from beetsmith.v2.core.compat import watch_out_for_duplicates, behavior
+from beetsmith.v2.library.components import ItemComponents, REMOVED
 
-__minecraft_game_version__ = "1.21.5"
-__minecraft_data_version__ = 71
+__minecraft_game_version__ = "1.21.9"
+__minecraft_data_version__ = 88
 technical_namespace = "beetsmith"
 generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
@@ -37,7 +37,7 @@ class Item:
     def __post_init__(self, name, model, texture):
         self.id = ensureNoPathRL(self.id)
         self.components.custom_data = {"id": self.id}
-        self.components.item_name = TextComponent.normalize(name)[0]
+        self.components.item_name = normalize(name)[0]
         self.components.item_model = ensureNoPathRL(model)
         if texture is not None:
             self.components.profile = {
@@ -261,7 +261,7 @@ class Item:
     @behavior
     def lore(self, textcomponent: str | dict | list) -> None:
         "Sets the custom items lore."
-        self.components.lore = TextComponent.normalize(textcomponent)
+        self.components.lore = normalize(textcomponent)
 
     @behavior
     def rarity(self, rarity: Literal["common", "uncommon", "rare", "epic"]):
@@ -290,7 +290,7 @@ class Item:
             cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="cooldown", id=self._id_short)
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
         
-        self.components.instrument = {"range": 10, "description": TextComponent.normalize(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
+        self.components.instrument = {"range": 10, "description": normalize(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
         ability_name = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="ability", id=self._id_short) # e.g. 'customitemlib:lategame/ability/hunter_sword'
         ability_function = ensureNoTagPathRL(function)
