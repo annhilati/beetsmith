@@ -7,7 +7,7 @@ import warnings
 from typing import Literal
 from dataclasses import dataclass, field, InitVar
 from beetsmith.v2.core.text_components import normalize
-from beetsmith.v2.core.resourcelocations import ensureNoPathRL, ensureTagLikeRL, ensureNoTagPathRL
+from beetsmith.v2.core.resourcelocations import ensureNoSpecialRL, ensureTagLikeRL, ensureNoTagPathRL
 from beetsmith.v2.core.compat import watch_out_for_duplicates, behavior
 from beetsmith.v2.library.components import ItemComponents, REMOVED
 
@@ -22,6 +22,20 @@ generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 
 @dataclass
 class Item:
+    """Class representing a Minecraft item.
+
+    Parameter
+    ----------
+    id : str
+        Resource location that will be used internally for the item instance
+    name : str | dict | list
+        Item name as a text component
+    model : str
+        Resource location of a model definition
+    texture : str
+        base64 encoded texture that will be used for the item if it has the `minecraft:player_head` model
+    
+    """
     id:                         str
     name:                       InitVar[str | dict | list]
     model:                      InitVar[str]
@@ -35,10 +49,10 @@ class Item:
     "Don't use this. Use `.required_files` instead"
 
     def __post_init__(self, name, model, texture):
-        self.id = ensureNoPathRL(self.id)
+        self.id = ensureNoSpecialRL(self.id)
         self.components.custom_data = {"id": self.id}
         self.components.item_name = normalize(name)[0]
-        self.components.item_model = ensureNoPathRL(model)
+        self.components.item_model = ensureNoSpecialRL(model)
         if texture is not None:
             self.components.profile = {
                 "properties": [{"name": "texture", "value": texture}]
@@ -131,7 +145,7 @@ class Item:
         self.components.consumable = {
             "consume_seconds": time,
             "animation": animation,
-            "sound": ensureNoPathRL(sound),
+            "sound": ensureNoSpecialRL(sound),
             "has_consume_particles": particles,
             "on_consume_effects": effects
         }
@@ -181,7 +195,7 @@ class Item:
             - additional_repair_cost (int): Amount of experience levels additionally raised when repairing the item in an anvil 
         """        
         self.components.unbreakable = REMOVED
-        self.components.break_sound = ensureNoPathRL(break_sound)
+        self.components.break_sound = ensureNoSpecialRL(break_sound)
         self.components.damage = 0
         self.components.max_damage = durability
         self.components.repairable = {"items": [ensureTagLikeRL(material) for material in repair_materials]}
@@ -246,7 +260,7 @@ class Item:
         self.components.equippable = {
             "slot": slot,
             "equip_sound": equip_sound,
-            "asset_id": ensureNoPathRL(asset),
+            "asset_id": ensureNoSpecialRL(asset),
             "allowed_entities": [],
             "dispensable": dispensable,
             "swappable": swappable,
@@ -325,8 +339,8 @@ class Item:
     def trim(self, pattern: str, material: str):
         ...
         self.components.trim = {
-            "pattern": ensureNoPathRL(pattern),
-            "material": ensureNoPathRL(material)
+            "pattern": ensureNoSpecialRL(pattern),
+            "material": ensureNoSpecialRL(material)
         }
 
     @behavior
