@@ -51,6 +51,7 @@ class ItemComponents():
     custom_data:                 dict              | RemovedComponentState | None = None
     damage:                      int               | RemovedComponentState | None = None
     damage_resistant:            dict              | RemovedComponentState | None = None
+    damage_type:                 str               | RemovedComponentState | None = None
     death_protection:            dict              | RemovedComponentState | None = None
     dyed_color:                  int | list        | RemovedComponentState | None = None
     enchantable:                 dict              | RemovedComponentState | None = None
@@ -63,11 +64,15 @@ class ItemComponents():
     item_model:                  str               | RemovedComponentState | None = None
     item_name:                   str | dict | list | RemovedComponentState | None = None
     jukebox_playable:            str               | RemovedComponentState | None = None
+    kinetic_weapon:              dict              | RemovedComponentState | None = None
     lore:                        str | dict | list | RemovedComponentState | None = None
+    minimum_attack_charge:       float             | RemovedComponentState | None = None
     max_damage:                  int               | RemovedComponentState | None = None
     max_stack_size:              int               | RemovedComponentState | None = None
+    piercing_weapon:             dict              | RemovedComponentState | None = None
     profile:                     dict              | RemovedComponentState | None = None
     potion_content:              dict              | RemovedComponentState | None = None
+    swing_animation:             dict              | RemovedComponentState | None = None
     rarity:                      str               | RemovedComponentState | None = None
     repairable:                  dict              | RemovedComponentState | None = None
     repair_cost:                 int               | RemovedComponentState | None = None
@@ -76,6 +81,7 @@ class ItemComponents():
     trim:                        dict              | RemovedComponentState | None = None
     unbreakable:                 dict              | RemovedComponentState | None = None
     use_cooldown:                dict              | RemovedComponentState | None = None
+    use_effects:                 dict              | RemovedComponentState | None = None
     use_remainder:               dict              | RemovedComponentState | None = None
     weapon:                      dict              | RemovedComponentState | None = None
 
