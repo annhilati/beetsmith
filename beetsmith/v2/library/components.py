@@ -3,8 +3,10 @@
 
 from dataclasses import dataclass, field, fields
 from beetsmith.v2.core.resourcelocations import ensureComponent
+from typing import TypeAlias
 
 class RemovedComponentState:
+    "Every instanciation of this class will result in identical objetcs."
     _instance = None
 
     def __new__(cls):
@@ -24,8 +26,8 @@ if component is REMOVED:
 ```
 """
 
-ValidValueInComponent = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
-ValidComponentValue   = None | RemovedComponentState | ValidValueInComponent
+ValidValueInComponent: TypeAlias = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
+ValidComponentValue:   TypeAlias = ValidValueInComponent | RemovedComponentState | None
 
 @dataclass
 class ItemComponents():
@@ -86,9 +88,11 @@ class ItemComponents():
     weapon:                      dict              | RemovedComponentState | None = None
 
     _other_components:           dict[str, ValidComponentValue] = field(default_factory=dict)
+    "All components in the component stack that cannot be accessed by attribution. Complementary to `._builtin_components`"
 
     @property
-    def _vanilla_components(self) -> dict[str, ValidComponentValue]:
+    def _builtin_components(self) -> dict[str, ValidComponentValue]:
+        "All components in the component stack that can be accessed by attribution. Complementary to `._other_components`"
         return {
             field.name: getattr(self, field.name)
             for field
@@ -100,7 +104,7 @@ class ItemComponents():
         ensureComponent(component)
         id = component.split(":")[-1]
         
-        if id in self._vanilla_components:
+        if id in self._builtin_components:
             setattr(self, id, value)
         else:
             self._other_components[component] = value
@@ -108,7 +112,7 @@ class ItemComponents():
     def get_component(self, component: str) -> ValidComponentValue:
         return (
             getattr(self, component.split(":")[-1])
-            if component in self._vanilla_components
+            if component in self._builtin_components
             else self._other_components.get(component)
         )
     
@@ -160,7 +164,7 @@ class ItemComponents():
         """
         out = {}
 
-        for component, value in self._vanilla_components.items():
+        for component, value in self._builtin_components.items():
             if value is not REMOVED and value is not None:
                 out["minecraft:" + component] = value
             elif value is REMOVED and value is not None:
