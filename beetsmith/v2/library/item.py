@@ -303,6 +303,7 @@ class Item:
         if cooldown_group == uuid.UUID:
             cooldown_group = generated_file_pattern.format(technical_namespace=technical_namespace, namespace=self._id_namespace, thing="cooldown", id=self._id_short)
         self.components.use_cooldown = {"seconds": cooldown, "cooldown_group": cooldown_group}
+        self.components.use_effects = {"can_sprint": True, speed_multiplier: 1.0}
         
         self.components.instrument = {"range": 10, "description": normalize(description), "sound_event": "minecraft:intentionally_empty", "use_duration": 0.001}
     
