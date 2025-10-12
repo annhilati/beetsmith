@@ -46,7 +46,7 @@ class Item:
     required_tags:              list[str]                       = field(init=False, default_factory=list)
     _applied_behaviours:        list[str]                       = field(init=False, default_factory=list)
     _specific_required_files:   list[tuple[str, beet.TextFile]] = field(init=False, default_factory=list)
-    "Don't use this. Use `.required_files` instead"
+    "Don't use this. Use `.required_files()` instead"
 
     def __post_init__(self, name, model, texture):
         self.id = ensureNoSpecialRL(self.id)
@@ -62,7 +62,7 @@ class Item:
         self.components.jukebox_playable = REMOVED
 
     def __str__(self) -> str:
-        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self.components.asDict())} components and {len(self._required_files)} additional files needed)>"
+        return f"<CustomItem '{self.id}' ('{self.item}' with {len(self.components.asDict())} components and {len(self._required_files())} additional files needed)>"
     
     @property
     def _id_namespace(self) -> str: return self.id.split(":")[0]
@@ -237,12 +237,12 @@ class Item:
         slot: Literal["head", "chest", "legs", "feet", "body"],
         asset: str,
         equip_sound: str = "minecraft:item.armor.equip_generic",
-        glider: bool = False,
         dispensable: bool = True,
         swappable: bool = True,
         damage_on_hurt: bool = True,
         equip_on_interaction: bool = False,
-        color: int = None
+        color: int = None,
+        glider: bool = False
         ) -> None:
         """Adds equippability behavior to the custom item.
 
@@ -411,7 +411,6 @@ class Item:
             "count": amount
         }
 
-    @property
     def _required_files(self) -> list[tuple[str, beet.TextFile]]:
         """
         Generates a list of 2-tuples whereby the first is the resourcelocation of the file and the second is a beet TextFile
@@ -452,7 +451,7 @@ class Item:
         )
 
         # Required Files
-        for file in self._required_files:
+        for file in self._required_files():
             
             match file[1]:
                 case beet.FunctionTag:
