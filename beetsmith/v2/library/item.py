@@ -109,7 +109,7 @@ class Item:
             "slot": slot
         })
 
-    @behavior(warn_for_incompatability=["right_click_ability"])
+    @behavior(warn_for_incompatibility=["right_click_ability"])
     def consumable(
         self, *,
         time: float,
@@ -285,7 +285,7 @@ class Item:
         else:
             raise ValueError("Rarity has to be one of 'common', 'uncommon', 'rare' or 'epic'")
     
-    @behavior(warn_for_incompatability=["consumable"])
+    @behavior(warn_for_incompatibility=["consumable"])
     def right_click_ability(self, *, description: str | dict | list, cooldown: int, function: str, cooldown_group: str = uuid.UUID):
         """Adds right click behavior to the custom item.
 

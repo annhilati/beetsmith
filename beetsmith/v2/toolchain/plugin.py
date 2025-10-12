@@ -1,32 +1,21 @@
 import beet
 import warnings
+import pydantic
 from beetsmith.v2.library.item import Item
 from beetsmith.v2.toolchain.file import BeetSmithDefinitionFile
-from pydantic import BaseModel
 
-class BeetSmithConfig(BaseModel):
-    ...
+class BeetSmithConfig(pydantic.BaseModel):
+    auto: bool = True
+    debug: bool = False
 
 @beet.configurable(validator=BeetSmithConfig)
 def beet_default(ctx: beet.Context, opts: BeetSmithConfig) -> None:
-    ctx.require(
-        anvil()
-    )
-
-def anvil() -> beet.Plugin:
-    """Beet Plugin configurator for BeetSmith
-    
-    ---
-    #### Usage
-    ```
-    from beetsmith import beet, beetsmith
-
-    def main(ctx: beet.Context):
+    if opts.auto:
         ctx.require(
-            beetsmither
+            auto_item(debug=opts.debug)
         )
-    ```
-    """
+
+def auto_item(debug: bool = False) -> beet.Plugin:
 
     def plugin(ctx: beet.Context):
 
@@ -40,7 +29,8 @@ def anvil() -> beet.Plugin:
                 instances.append(file.instance)
 
             except Exception as e:
-                raise e # Debug
+                if debug:
+                    raise e
                 warnings.warn(f"File '{file}' could not be loaded and implemented: {e}", category=UserWarning)
             
         for instance in instances:
@@ -48,7 +38,8 @@ def anvil() -> beet.Plugin:
                 instance.implement(ctx.data)
 
             except Exception as e:
-                raise e # Debug
+                if debug:
+                    raise e
                 warnings.warn(f"File '{file}' could not be implemented: {e}", category=UserWarning)
 
         # del ctx.data[YAMLDefinition]

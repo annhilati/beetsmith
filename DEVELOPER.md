@@ -1,6 +1,6 @@
-cd .. & pip install . & cd example & beet
+cd .. & pip install . & cd example & beet build
 
-cd ..; pip install .; cd example; beet
+cd ..; pip install .; cd example; beet build
 
 
 ## Project Structure
