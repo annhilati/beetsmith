@@ -1,11 +1,19 @@
+"Submodule for working with text components."
+
 import json
 from typing import Any
 
 def normalize(obj: Any) -> list[list[dict]]:
-    """Brings a text component object to a completely not-shorthanded format of a list of lists (the lines) of dicts (segments in a line)
+    """Brings a text component object to a completely not-shorthanded format of a list of lists (the lines) of dicts (segments in a line).
 
-    #### Additional use:
-        - [0]: if only one line is allowed in the field
+    Use `·[0]` if only one line is allowed.
+
+    Raises
+    ----------
+    ValueError : If the given object is not a valid text component
+        - Part in a line is neither a string nor a dictionary
+        - Line is not neither a string, a dictionary, nor a list
+        - Object itself is neither a string, a dictionary, nor a list
     """
     newLines = []
 
@@ -48,7 +56,7 @@ def normalize(obj: Any) -> list[list[dict]]:
     return newLines
 
 def from_json(stringified_json: str) -> list[list[dict]]:
-    data = json.load(stringified_json)
+    data = json.loads(stringified_json)
     return normalize(data)
 
 def get_plain_text(textcomponent: str | dict | list) -> str:

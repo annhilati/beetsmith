@@ -1,3 +1,15 @@
+"Submodule for working with resource locations"
+
+# DEVELOPMENT STATUS
+# -----------------------
+# There's already a good concept and implementation for abstracting resource location checkers.
+# Although, due to the high complexity that such strings can have and the many combinations that are not allowed,
+# there is still a lot of specific situations where validation falsly completes.
+# Missing are:
+#  - correctly adding 'minecraft:' when there are modifiers like `!` or `#`
+#  - toggle dots
+#  - raise on multiple consecutive dots
+
 import re
 
 regex = r"^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?:[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?(?:\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?)*$"
@@ -14,11 +26,6 @@ class ResourceLocationChecker:
     componentQueryValidator("#minecraft:stones") # -> #minecraft:stones
     ```
     """
-
-    # Currently missing:
-    #  - correctly adding 'minecraft:' when there is a ! or #
-    #  - checking for multiple ! or # when splitting
-    #  - toggle dots
 
     def __init__(self, *,
                  allow_tag: bool = False,

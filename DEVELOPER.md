@@ -2,7 +2,6 @@ cd .. & pip install . & cd example & beet build
 
 cd ..; pip install .; cd example; beet build
 
-
 ## Project Structure
 ```
 ├── core                      # Handle and verify data
@@ -23,3 +22,10 @@ graph LR
     library --> toolchain
     core --> toolchain(toolchain)
 ```
+
+## Beetroot Project Strcuture
+1. core
+   - Grundlagen für alle anderen Module
+2. library
+   - Eigentliche API
+3. 
