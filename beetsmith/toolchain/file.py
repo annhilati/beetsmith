@@ -5,7 +5,7 @@ import beet
 import inspect
 from pydantic import BaseModel, RootModel, Field, field_validator, model_validator, ConfigDict
 from typing import Any, Dict, List, Optional, ClassVar
-from beetsmith.v2.library.item import Item
+from beetsmith.library.item import Item
 
 _available_types = [Item]
 

@@ -6,10 +6,10 @@ import uuid
 import warnings
 from typing import Literal
 from dataclasses import dataclass, field, InitVar
-from beetsmith.v2.core.text_components import normalize
-from beetsmith.v2.core.resourcelocations import ensureNoSpecialRL, ensureTagLikeRL, ensureNoTagPathRL
-from beetsmith.v2.core.compat import watch_out_for_duplicates, behavior
-from beetsmith.v2.library.components import ItemComponents, REMOVED
+from beetsmith.core.text_components import normalize
+from beetsmith.core.resourcelocations import ensureNoSpecialRL, ensureTagLikeRL, ensureNoTagPathRL
+from beetsmith.core.compat import watch_out_for_duplicates, behavior
+from beetsmith.library.components import ItemComponents, REMOVED
 
 __minecraft_game_version__ = "1.21.9"
 __minecraft_data_version__ = 88
@@ -21,8 +21,8 @@ generated_file_pattern = "{technical_namespace}:{namespace}/{thing}/{id}"
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 @dataclass
-class Item:
-    """Class representing a Minecraft item.
+class CustomItem:
+    """Class representing a custom item.
 
     Parameter
     ----------

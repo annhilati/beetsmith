@@ -66,11 +66,11 @@ def main(ctx: Context):
 # ╰───────────────────────────────────────────────────────────────────────────────╯
 
 import beet
-from beetsmith.v2.library.components import (ItemComponents, REMOVED)
-from beetsmith.v2.core.resourcelocations import (ResourceLocationChecker)
-from beetsmith.v2.library.item import (Item)
+from beetsmith.library.components import (ItemComponents, REMOVED)
+from beetsmith.core.resourcelocations import (ResourceLocationChecker)
+from beetsmith.library.item import (CustomItem)
 
-_symbols = [Item,
+_symbols = [CustomItem,
             ItemComponents,
             beet]
 _constants = ["REMOVED"]

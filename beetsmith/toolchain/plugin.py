@@ -1,8 +1,8 @@
 import beet
 import warnings
 import pydantic
-from beetsmith.v2.library.item import Item
-from beetsmith.v2.toolchain.file import BeetSmithDefinitionFile
+from beetsmith.library.item import Item
+from beetsmith.toolchain.file import BeetSmithDefinitionFile
 
 class BeetSmithConfig(pydantic.BaseModel):
     auto: bool = True

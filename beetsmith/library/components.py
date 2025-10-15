@@ -2,11 +2,11 @@
 # https://misode.github.io/changelog?tags=component
 
 from dataclasses import dataclass, field, fields
-from beetsmith.v2.core.resourcelocations import ensureComponent
+from beetsmith.core.resourcelocations import ensureComponent
 from typing import TypeAlias
 
 class RemovedComponentState:
-    "Every instanciation of this class will result in identical objetcs."
+    "The Instance of this class is used to denote the state of removement to an item component.<br>Every instanciation of this class will result in identical objects."
     _instance = None
 
     def __new__(cls):
@@ -26,7 +26,7 @@ if component is REMOVED:
 ```
 """
 
-ValidValueInComponent: TypeAlias = list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"] | int | float | str
+ValidValueInComponent: TypeAlias = str | int | float | list["ValidValueInComponent"] | dict[str, "ValidValueInComponent"]
 ValidComponentValue:   TypeAlias = ValidValueInComponent | RemovedComponentState | None
 
 @dataclass
@@ -42,7 +42,7 @@ class ItemComponents():
 
     Supports
     ---------
-    - `·[...]`
+    - `... = ·[...]`
     - `·[...] = ...`
     - `str(·)`
     """
@@ -90,6 +90,15 @@ class ItemComponents():
     _other_components:           dict[str, ValidComponentValue] = field(default_factory=dict)
     "All components in the component stack that cannot be accessed by attribution. Complementary to `._builtin_components`"
 
+    def __str__(self) -> str:
+        return str(self.asDict())
+
+    def __getitem__(self, query: str) -> ValidComponentValue:
+        return self.get_component(component=query)
+
+    def __setitem__(self, query: str, value: ValidComponentValue) -> None:
+        self.set_component(component=query, value=value)
+
     @property
     def _builtin_components(self) -> dict[str, ValidComponentValue]:
         "All components in the component stack that can be accessed by attribution. Complementary to `._other_components`"
@@ -102,7 +111,7 @@ class ItemComponents():
 
     def set_component(self, component: str, value: ValidComponentValue) -> None:
         ensureComponent(component)
-        id = component.split(":")[-1]
+        id = component.split("minecraft:")[-1]
         
         if id in self._builtin_components:
             setattr(self, id, value)
@@ -110,9 +119,10 @@ class ItemComponents():
             self._other_components[component] = value
 
     def get_component(self, component: str) -> ValidComponentValue:
+        id = component.split("minecraft:")[-1]
         return (
-            getattr(self, component.split(":")[-1])
-            if component in self._builtin_components
+            getattr(self, id)
+            if id in self._builtin_components
             else self._other_components.get(component)
         )
     
@@ -159,7 +169,7 @@ class ItemComponents():
     def asDict(self) -> dict[str, ValidValueInComponent]:
         """Return the item components as a dictionary.
         
-        The type of dictionary produced is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables,<br>
+        The type of dictionary produced is like the ones used in every JSON definition of item components like in recipes, item modifiers and loot tables, 
         whereby the keys are the names of the components which can have a leading `!` and their values are the components values.
         """
         out = {}
@@ -178,11 +188,3 @@ class ItemComponents():
         
         return out
     
-    def __str__(self) -> str:
-        return str(self.asDict())
-
-    def __getitem__(self, query: str) -> ValidComponentValue:
-        return self.get_component(component=query)
-
-    def __setitem__(self, query: str, value: ValidComponentValue) -> None:
-        self.set_component(component=query, value=value)
