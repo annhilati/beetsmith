@@ -45,8 +45,8 @@ class CustomItem:
     components:                 ItemComponents                  = field(init=False, default_factory=ItemComponents.empty)
     required_tags:              list[str]                       = field(init=False, default_factory=list)
     _applied_behaviours:        list[str]                       = field(init=False, default_factory=list)
-    _specific_required_files:   list[tuple[str, beet.TextFile]] = field(init=False, default_factory=list)
-    "Don't use this. Use `.required_files()` instead"
+    _special_required_files:    list[tuple[str, beet.TextFile]] = field(init=False, default_factory=list)
+    "Don't use this. Use `.required_files()` instead."
 
     def __post_init__(self, name, model, texture):
         self.id = ensureNoSpecialRL(self.id)
@@ -182,7 +182,7 @@ class CustomItem:
                     ])
                 )
             ]
-            self._specific_required_files.extend(files)
+            self._special_required_files.extend(files)
     
     @behavior
     def damagable(self, *, durability: int, break_sound: str = "minecraft:entity.item.break", repair_materials: list[str] = [], additional_repair_cost: int = 0):
@@ -226,7 +226,7 @@ class CustomItem:
         """
         if len(damage_types) > 1:
             tag_data = {"values": [f"#{ensureNoTagPathRL(damage_type)}" for damage_type in damage_types]}
-            self._specific_required_files.append((self.id, beet.DamageTypeTag(tag_data)))
+            self._special_required_files.append((self.id, beet.DamageTypeTag(tag_data)))
             self.components.damage_resistant = {"types": f"#{self.id}"}
         else:
             self.components.damage_resistant = {"types": f"#{damage_types[0]}"}
@@ -334,7 +334,7 @@ class CustomItem:
                 ])
             )
         ]
-        self._specific_required_files.extend(files)
+        self._special_required_files.extend(files)
 
     @behavior
     def trim(self, pattern: str, material: str):
@@ -424,7 +424,7 @@ class CustomItem:
         ])
 
         # Explicitely needed files
-        files.extend(self._specific_required_files)
+        files.extend(self._special_required_files)
 
         return files
     

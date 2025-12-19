@@ -1,3 +1,8 @@
+> [!NOTE]
+> **State of Development**<br>
+> As of now, Beetsmith isn't a lot more than a mere proof of concept.<br>
+> Though any item data can be stored already and custom items can be configured with behaviours for typical weapons, etc.,<br> 
+> how things are done exactly has to be rethought most certainly.
 
 > [!TIP]
 > While being easy to use, this library is not that powerful. There are similar projects like [StewBeet](https://github.com/Stoupy51/StewBeet) and [simple_item_plugin](https://github.com/edayot/simple_item_plugin) that are a lot more powerful. This library mirrors my personal needs for making custom items in Minecraft.
@@ -11,12 +16,8 @@
 - 📂 Automatic implementation of files required for a desired behavior
 - ⛓️‍💥 [Beet](https://gitHub.com/mcbeet/beet)-Integration
 
-### RoadMap
-- [x] [Custom Items](https://github.com/annhilati/beetsmith/issues/38) ~ 70%  
-- [ ] Custom Armor Sets ~ 40%
-
 ### Usage
-> [!IMPORTANT]
+> [!WARNING]
 > BeetSmith is still heavily under development, not feature-complete and unstable. 
 
 #### 1. Defining an Item

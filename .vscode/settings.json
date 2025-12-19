@@ -21,7 +21,8 @@
         "beetsmith/v2/__pycache__": true,
         "beetsmith/core/__pycache__": true,
         "beetsmith/v2/core/__pycache__": true,
-        "beetsmith/v2/library/__pycache__": true
+        "beetsmith/v2/library/__pycache__": true,
+        "beetsmith/library/__pycache__": true
     },
     "hide-files.files": [
         "beetgear.egg-info",
@@ -38,7 +39,8 @@
         "beetsmith/v2/__pycache__",
         "beetsmith/core/__pycache__",
         "beetsmith/v2/core/__pycache__",
-        "beetsmith/v2/library/__pycache__"
+        "beetsmith/v2/library/__pycache__",
+        "beetsmith/library/__pycache__"
     ],
     "python-envs.defaultEnvManager": "ms-python.python:system",
     "python-envs.pythonProjects": []

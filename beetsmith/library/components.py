@@ -1,6 +1,7 @@
 # https://minecraft.wiki/w/Data_component_format#List_of_components
 # https://misode.github.io/changelog?tags=component
 
+from __future__ import annotations
 from dataclasses import dataclass, field, fields
 from beetsmith.core.resourcelocations import ensureComponent
 from typing import TypeAlias
@@ -34,13 +35,13 @@ class ItemComponents():
     """Class representing a Minecraft item's components.
 
     You really shouldn't use the constructor of this class.<br>
-    Use `.fromDict()`, `.fromVanillaItem()` or `.empty()` instead.
+    Use `.fromDict()`, `.fromVanillaItem()`, `.empty()` or `.sterile()` instead.
 
-    Only some vanilla components are accessible through attributes. Item setting and getting can be used instead.
+    Only some vanilla components are accessible through attributes. Other have to be accessed by `set_component()` and `get_component()` or by indexing.
 
-    To remove a component, set it's value to `REMOVED`. It can be imported from this same module.
+    To remove a component, set it's value to the constant `REMOVED`. It can be imported from this same module.
 
-    Supports
+    Supported Magic
     ---------
     - `... = ·[...]`
     - `·[...] = ...`
@@ -108,6 +109,11 @@ class ItemComponents():
             in fields(self)
             if field.name not in ["_other_components"]
         }
+    
+    @property
+    def _all_components(self) -> dict[str, ValidComponentValue]:
+        "All components in the component stack. Combines `._builtin_components` and `_other_components`."
+        return self._other_components | self._builtin_components
 
     def set_component(self, component: str, value: ValidComponentValue) -> None:
         ensureComponent(component)
@@ -128,7 +134,16 @@ class ItemComponents():
     
     @classmethod
     def empty(cls):
+        "Item component stack with no components set"
         return cls()
+    
+    @classmethod
+    def sterile(cls):
+        "Item component stack with all components removed"
+        instance = cls()
+        for id in instance._builtin_components:
+            setattr(instance, id, REMOVED)
+        return instance
      
     @classmethod
     def fromDict(cls, data: dict[str, ValidValueInComponent], /):
@@ -165,6 +180,11 @@ class ItemComponents():
             return cls()
         
         return cls.fromDict(data[query])
+
+    def update(self, other: ItemComponents, /) -> None:
+        "Overwrites the item components with the ones of `other`."
+        for component, value in other._all_components:
+            self.set_component(component, value)
 
     def asDict(self) -> dict[str, ValidValueInComponent]:
         """Return the item components as a dictionary.
