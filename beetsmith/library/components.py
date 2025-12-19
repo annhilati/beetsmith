@@ -46,6 +46,7 @@ class ItemComponents():
     - `... = ·[...]`
     - `·[...] = ...`
     - `str(·)`
+    - `a | b`
     """
     attribute_modifiers:         list[dict]        | RemovedComponentState | None = None
     block_attacks:               dict              | RemovedComponentState | None = None
@@ -99,6 +100,11 @@ class ItemComponents():
 
     def __setitem__(self, query: str, value: ValidComponentValue) -> None:
         self.set_component(component=query, value=value)
+
+    def __or__(self, other: ItemComponents):
+        new = self.asDict()
+        new.update(other.asDict())
+        return ItemComponents.fromDict(new)
 
     @property
     def _builtin_components(self) -> dict[str, ValidComponentValue]:
@@ -183,7 +189,7 @@ class ItemComponents():
 
     def update(self, other: ItemComponents, /) -> None:
         "Overwrites the item components with the ones of `other`."
-        for component, value in other._all_components:
+        for component, value in other._all_components.items():
             self.set_component(component, value)
 
     def asDict(self) -> dict[str, ValidValueInComponent]:

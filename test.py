@@ -8,8 +8,9 @@ from beetsmith.core.resourcelocations import ResourceLocationChecker
 # item.consumable(time=1.0, animation="none", nutrition=0, saturation=0, consume_always=False, particles=False)
 # item.implement(...)
 
-components = ItemComponents.sterile()
-print(components)
+cp1 = ItemComponents.fromDict({"item_model": "diamond"})
+cp2 = ItemComponents.fromDict({"item_model": "netherite"})
 
-def f(parg, /, arg, *, kwarg):
-    ...
+
+
+print(cp1 | cp2)
